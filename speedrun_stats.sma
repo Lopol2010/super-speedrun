@@ -99,7 +99,7 @@ new const PREFIX[] = "^1[^4Speedrun^1]";
 
 new const g_szCategory[][] = 
 {
-    "[100 FPS]", "[200 FPS]", "[250 FPS]", "[333 FPS]", "[500 FPS]", "[Fastrun]", "^4[^1Bhop^4]^1", "[Crazy Speed]", "[2K]"
+    "100 FPS", "200 FPS", "250 FPS", "333 FPS", "500 FPS", "Fastrun", "Bhop", "Crazy Speed", "2K"
 };
 
 new g_pCvars[Cvars];
@@ -298,7 +298,7 @@ public Command_Rank(id)
     
     if(g_iBestTime[id][category] == 0 && g_iBestTime[id][category] == 0)
     {
-        client_print_color(id, print_team_default, "%s%s^1 You never reach finish.", PREFIX, g_szCategory[category]);
+        client_print_color(id, print_team_default, "^4[^1%s^4]^1 You never reach finish.", g_szCategory[category]);
         return PLUGIN_CONTINUE;
     }
     
@@ -810,8 +810,8 @@ Forward_PlayerFinished(id)
     
     new szName[32]; get_user_name(id, szName, charsmax(szName));
 
-    console_print(id, "%s Time: %s!", g_szCategory[category], szTime);
-    client_print_color(0, print_team_blue, "%s ^3%s^1 finished in ^3%s ^1%s.", g_szCategory[category], szName, szTime, iTime<60000?"seconds":"minutes");
+    console_print(id, "^4[^1%s^4]^1 Time: %s!", g_szCategory[category], szTime);
+    client_print_color(0, print_team_blue, "^4[^1%s^4] ^3%s^1 finished in ^3%s ^1%s.", g_szCategory[category], szName, szTime, iTime<60000?"seconds":"minutes");
     
     if(g_iBestTime[id][category] == 0)
     {
@@ -842,11 +842,11 @@ Forward_PlayerFinished(id)
         if(g_iBestTimeofMap[category] > 0)
         {
             get_formated_time_smart(g_iBestTimeofMap[category] - iTime, szTimeDelta, charsmax(szTimeDelta));
-            client_print_color(0, print_team_default, "%s^4 %s^1 broke map record! WR ^4-%s", g_szCategory[category], szName, szTimeDelta);
+            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 broke map record! WR ^4-%s", g_szCategory[category], szName, szTimeDelta);
         } 
         else 
         {
-            client_print_color(0, print_team_default, "%s^4 %s^1 broke map record!", g_szCategory[category], szName);
+            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 broke map record!", g_szCategory[category], szName);
         }
         
         g_iBestTimeofMap[category] = iTime;
@@ -908,7 +908,7 @@ public Query_LoadRankHandle(failstate, Handle:query, error[], errnum, data[], si
     if(!is_user_connected(id) || !SQL_MoreResults(query)) return;
     
     new rank = SQL_ReadResult(query, Results_id) + 1;
-    client_print_color(id, print_team_default, "%s%s^1 Your rank is %d! %s", PREFIX, g_szCategory[category], rank);
+    client_print_color(id, print_team_default, "^4[^1%s^4]^1 Your rank is %d!", g_szCategory[category], rank);
 }
 
 ShowTop15(id, category)
