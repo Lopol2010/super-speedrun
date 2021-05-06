@@ -68,7 +68,6 @@ enum _:ResultsColumns
     Results_id,
     Results_mid,
     Results_category,
-    Results_skill,
     Results_checkpoints,
     Results_gochecks,
     Results_besttime,
@@ -108,7 +107,7 @@ new Handle:g_hTuple, g_szQuery[512];
 new g_szMapName[32];
 new g_iMapIndex;
 new g_ePlayerInfo[33][PlayerData];
-new g_iBestTime[33][Categories][SkillLevels];
+new g_iBestTime[33][Categories];
 new g_iFinishEnt;
 new g_iSprite;
 new g_szMotd[1536];
@@ -297,7 +296,7 @@ public Command_Rank(id)
     
     new category = get_user_category(id);
     
-    if(g_iBestTime[id][category][PRO] == 0 && g_iBestTime[id][category][NOOB] == 0)
+    if(g_iBestTime[id][category] == 0 && g_iBestTime[id][category] == 0)
     {
         client_print_color(id, print_team_default, "%s%s^1 You never reach finish.", PREFIX, g_szCategory[category]);
         return PLUGIN_CONTINUE;
@@ -392,14 +391,13 @@ SQL_Init()<sqlite>
             id			INTEGER 	NOT NULL, \
             mid 		INTEGER 	NOT NULL, \
             category	INTEGER 	NOT NULL, \
-            skill      INTEGER 	NOT NULL, \
             checkpoints INTEGER 	NOT NULL, \
             gochecks	INTEGER 	NOT NULL, \
             besttime	INTEGER 	NOT NULL, \
             recorddate	DATETIME	NULL, \
             FOREIGN KEY(id) REFERENCES `runners`(id) ON DELETE CASCADE, \
             FOREIGN KEY(mid) REFERENCES `maps`(mid) ON DELETE CASCADE, \
-            PRIMARY KEY(id, mid, category, skill))");
+            PRIMARY KEY(id, mid, category))");
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
     
@@ -447,14 +445,13 @@ SQL_Init()<mysql>
             id			INT(11)		UNSIGNED,\
             mid			INT(11)		UNSIGNED,\
             category	INT(11)		NOT NULL,\
-            skill      INT(11)		NOT NULL,\
             checkpoints INT(11)		NOT NULL,\
             gochecks    INT(11)		NOT NULL,\
             besttime	INT(11)		NOT NULL,\
             recorddate	DATETIME	NULL,\
             FOREIGN KEY(id) REFERENCES `runners`(id) ON DELETE CASCADE,\
             FOREIGN KEY(mid) REFERENCES `maps`(mid) ON DELETE CASCADE,\
-            PRIMARY KEY(id, mid, category, skill))");
+            PRIMARY KEY(id, mid, category))");
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
     
@@ -507,14 +504,12 @@ public Query_ClearTop(failstate, Handle:query, error[], errnum, data[], size)
         log_amx("SQL error[ClearTop]: %s", error); return;
     }
 
-    for(new i = 0; i < Categories; i++)
+    for(new o = 0; o < sizeof(g_iBestTime); o++)
     {
-        for(new o = 0; o < sizeof(g_iBestTime); o++)
-        {
-            arrayset(g_iBestTime[o][i], 0, sizeof(g_iBestTime[][]));
-        }
-        g_iBestTimeofMap[i] = 0;
+        arrayset(g_iBestTime[o], 0, sizeof(g_iBestTime[]));
     }
+    arrayset(g_iBestTimeofMap, 0, sizeof(g_iBestTimeofMap));
+
     client_print(0, print_chat, "Top15 just cleared.");
 }
 public Query_IngnoredHandle(failstate, Handle:query, error[], errnum, data[], size)
@@ -605,10 +600,7 @@ client_authorized_db(id, pid)
     g_ePlayerInfo[id][m_iPlayerIndex] = pid;
     g_ePlayerInfo[id][m_bAuthorized] = true;
     
-    for(new i = 0; i < Categories; i++)
-    {
-        arrayset(g_iBestTime[id][i], 0, sizeof(g_iBestTime[][]));
-    }
+    arrayset(g_iBestTime[id], 0, sizeof(g_iBestTime[]));
 
     LoadRunnerData(id);
 }
@@ -634,8 +626,7 @@ public Query_LoadDataHandle(failstate, Handle:query, error[], errnum, data[], si
     while(SQL_MoreResults(query))
     {
         new category = SQL_ReadResult(query, Results_category);
-        new skill   = SQL_ReadResult(query, Results_skill);
-        g_iBestTime[id][category][skill] = SQL_ReadResult(query, Results_besttime);
+        g_iBestTime[id][category] = SQL_ReadResult(query, Results_besttime);
         
         SQL_NextRow(query);
     }
@@ -815,7 +806,6 @@ Forward_PlayerFinished(id)
     new record = false;
     new iTime = get_running_time(id);
     new category = get_user_category(id);
-    new skill = get_gochecks_count(id) > 0;
     new szTime[32]; get_formated_time_smart(iTime, szTime, charsmax(szTime));
     
     new szName[32]; get_user_name(id, szName, charsmax(szName));
@@ -823,19 +813,19 @@ Forward_PlayerFinished(id)
     console_print(id, "%s Time: %s!", g_szCategory[category], szTime);
     client_print_color(0, print_team_blue, "%s ^3%s^1 finished in ^3%s ^1%s.", g_szCategory[category], szName, szTime, iTime<60000?"seconds":"minutes");
     
-    if(g_iBestTime[id][category][skill] == 0)
+    if(g_iBestTime[id][category] == 0)
     {
         // client_print_color(id, print_team_default, "%s^1 First finish.", g_szCategory[category]);
-        SaveRunnerData(id, category, skill, iTime);
+        SaveRunnerData(id, category, iTime);
     }
-    else if(g_iBestTime[id][category][skill] > iTime)
+    else if(g_iBestTime[id][category] > iTime)
     {
-        get_formated_time(g_iBestTime[id][category][skill] - iTime, szTime, charsmax(szTime));
+        get_formated_time(g_iBestTime[id][category] - iTime, szTime, charsmax(szTime));
         // console_print(id, "%s Own record: -%s!", g_szCategory[category], szTime);
         // client_print_color(id, print_team_default, "%s Own record: -%s!", g_szCategory[category], szTime);
-        SaveRunnerData(id, category, skill, iTime);
+        SaveRunnerData(id, category, iTime);
     }
-    else if(g_iBestTime[id][category][skill] < iTime)
+    else if(g_iBestTime[id][category] < iTime)
     {
         // get_formated_time(iTime - g_iBestTime[id][category], szTime, charsmax(szTime));
         // console_print(id, "%s Own record: +%s!", g_szCategory[category], szTime);
@@ -872,25 +862,25 @@ Forward_PlayerFinished(id)
     
     hide_timer(id);
 }
-public SaveRunnerData(id, category, skill, iTime)
+public SaveRunnerData(id, category, iTime)
 {
     if(!g_ePlayerInfo[id][m_bAuthorized]) return;
     
-    new query_type = g_iBestTime[id][category][skill] ? 1 : 0;
+    new query_type = g_iBestTime[id][category] ? 1 : 0;
 
-    g_iBestTime[id][category][skill] = iTime;
+    g_iBestTime[id][category] = iTime;
     
     new szRecordTime[32]; get_time("%Y-%m-%d %H:%M:%S", szRecordTime, charsmax(szRecordTime));
     
     if(query_type)
     {
-        formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `results` SET skill = %d, checkpoints=%d, gochecks=%d, besttime=%d, recorddate='%s' WHERE id=%d AND mid=%d AND category=%d",
-            skill, get_checkpoints_count(id), get_gochecks_count(id), iTime, szRecordTime, g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category);
+        formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `results` SET checkpoints=%d, gochecks=%d, besttime=%d, recorddate='%s' WHERE id=%d AND mid=%d AND category=%d",
+            get_checkpoints_count(id), get_gochecks_count(id), iTime, szRecordTime, g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category);
     }
     else
     {
-        formatex(g_szQuery, charsmax(g_szQuery), "INSERT INTO `results` VALUES (%d, %d, %d, %d, %d, %d, %d, '%s')",
-            g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category, skill, get_checkpoints_count(id), get_gochecks_count(id), iTime, szRecordTime);
+        formatex(g_szQuery, charsmax(g_szQuery), "INSERT INTO `results` VALUES (%d, %d, %d, %d, %d, %d, '%s')",
+            g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category, get_checkpoints_count(id), get_gochecks_count(id), iTime, szRecordTime);
     }
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
@@ -899,11 +889,10 @@ public SaveRunnerData(id, category, skill, iTime)
 
 ShowRank(id, category)
 {
-    new skill = g_iBestTime[id][category][PRO] == 0;
-    formatex(g_szQuery, charsmax(g_szQuery), "SELECT COUNT(*) FROM `results` WHERE mid=%d AND category=%d AND besttime > 0 AND besttime < %d AND skill = %d", 
-            g_iMapIndex, category, g_iBestTime[id][category][skill], skill);
+    formatex(g_szQuery, charsmax(g_szQuery), "SELECT COUNT(*) FROM `results` WHERE mid=%d AND category=%d AND besttime > 0 AND besttime < %d", 
+            g_iMapIndex, category, g_iBestTime[id][category]);
         
-    new data[3]; data[0] = id; data[1] = category; data[2] = skill;
+    new data[3]; data[0] = id; data[1] = category;
     SQL_ThreadQuery(g_hTuple, "Query_LoadRankHandle", g_szQuery, data, sizeof(data));
 }
 public Query_LoadRankHandle(failstate, Handle:query, error[], errnum, data[], size)
@@ -915,12 +904,11 @@ public Query_LoadRankHandle(failstate, Handle:query, error[], errnum, data[], si
     
     new id = data[0];
     new category = data[1];
-    new skill = data[2];
     
     if(!is_user_connected(id) || !SQL_MoreResults(query)) return;
     
     new rank = SQL_ReadResult(query, Results_id) + 1;
-    client_print_color(id, print_team_default, "%s%s^1 Your rank is %d! %s", PREFIX, g_szCategory[category], rank, skill == PRO ? "" : "(With Checkpoints)");
+    client_print_color(id, print_team_default, "%s%s^1 Your rank is %d! %s", PREFIX, g_szCategory[category], rank);
 }
 
 ShowTop15(id, category)
