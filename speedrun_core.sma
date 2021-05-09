@@ -257,10 +257,24 @@ public plugin_natives()
 {
 	register_native("get_user_category", "_get_user_category", 1);
 	register_native("set_user_category", "_set_user_category", 1);
+	register_native("rotate_user_category", "_rotate_user_category", 1);
+
 }
 public _get_user_category(id)
 {
 	return g_ePlayerInfo[id][m_iCategory];
+}
+public _rotate_user_category(id)
+{
+    switch(_get_user_category(id))
+    {
+        case Cat_Default: g_ePlayerInfo[id][m_iCategory] = Cat_CrazySpeed;
+        case Cat_CrazySpeed: g_ePlayerInfo[id][m_iCategory] = Cat_2k;
+        case Cat_2k: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
+        default: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
+    }
+
+	if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
 }
 public _set_user_category(id, category)
 {
@@ -412,7 +426,7 @@ public CategoryMenu_Handler(id, key)
 
 	if(key <= 3)
 	{
-		if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
+		// if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
 
 		// strip_user_weapons(id);
 		// give_item(id,"weapon_knife");

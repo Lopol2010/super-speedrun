@@ -1,10 +1,12 @@
 /* 
     TODO: 
-    1. When map starts decide if timer should be managed by buttons on the map or by speedrun zones
-    2. Auto bind for menus (game, category)
-    3. (? optional ?) Auto change invalid FPS
-    4. checkpoints.sma beautify chat messages on checkpoin/gocheck
-    5. 
+        3. (? optional ?) Auto change invalid FPS
+        4. checkpoints.sma beautify chat messages on checkpoin/gocheck
+        5. start/stop zones are visible
+        5.1 these zones should be easy to make, for example not by dragging each corner but copy world brush geometry and move it up as start/stop zone
+    DONE:
+        1. When map starts decide if timer should be managed by buttons on the map or by speedrun zones
+        2. Auto bind for menus (game, category)
 */
 #include <amxmodx>
 #include <amxmisc>
@@ -19,6 +21,7 @@
 #include <checkpoints>
 #include <speedrun_hook>
 #include <hidemenu>
+#include <beams>
 #pragma loadlib sqlite
 
 #if AMXX_VERSION_NUM < 183
@@ -32,7 +35,7 @@
 #pragma semicolon 1
 
 #define FINISH_CLASSNAME "SR_FINISH"
-#define BOXLIFE 3
+#define BOXLIFE 0.4
 
 enum _:PlayerData
 {
@@ -736,8 +739,8 @@ Create_Line(id, num, const Float:start[], const Float:stop[])
     write_short(g_iSprite);
     write_byte(1);
     write_byte(5);
-    write_byte(10*BOXLIFE);
-    write_byte(50);
+    write_byte(floatround(BOXLIFE * 10.0)); //10*BOXLIFE
+    write_byte(30); //width 50
     write_byte(0);
     write_byte(iColor[0]);	// Red
     write_byte(iColor[1]);	// Green
