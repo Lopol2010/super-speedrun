@@ -1,9 +1,13 @@
 /* 
     TODO: 
-        3. (? optional ?) Auto change invalid FPS
-        4. checkpoints.sma beautify chat messages on checkpoin/gocheck
-        5. start/stop zones are visible
-        5.1 these zones should be easy to make, for example not by dragging each corner but copy world brush geometry and move it up as start/stop zone
+        5. first rewrite finish drawing, now its temp-entity, need use <beams> stocks. Those can change color faster and seem to be much more reliable!
+        5.1 at the beginning only finish zone will be visible and with static size.
+        5.2 then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
+                So you move corners as if its 2D plane. 
+        5.3 Do the same for start. (add visibility for start zone? and then resizing)
+        // 5. start/stop zones are visible
+        // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
+        // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
         1. When map starts decide if timer should be managed by buttons on the map or by speedrun zones
         2. Auto bind for menus (game, category)
@@ -35,6 +39,7 @@
 #pragma semicolon 1
 
 #define FINISH_CLASSNAME "SR_FINISH"
+#define FINISH_SPRITENAME "sprites/white.spr"
 #define BOXLIFE 0.4
 
 enum _:PlayerData
@@ -112,6 +117,7 @@ new g_iMapIndex;
 new g_ePlayerInfo[33][PlayerData];
 new g_iBestTime[33][Categories];
 new g_iFinishEnt;
+new g_iFinishBeams[12];
 new g_iSprite;
 new g_szMotd[1536];
 new g_iBestTimeofMap[Categories];
@@ -124,7 +130,6 @@ new Trie:g_tStops;
 
 native get_user_category(id);
 forward SR_PlayerOnStart(id);
-forward CP_OnGocheck(id);
 
 public plugin_init()
 {
@@ -135,7 +140,7 @@ public plugin_init()
     g_pCvars[SQL_PASSWORD] = register_cvar("speedrun_password", "root");
     g_pCvars[SQL_DATABASE] = register_cvar("speedrun_database", "speedrun");
     
-    register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
+    // register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
     register_clcmd("setfinish", "Command_SetFinish", ADMIN_CFG);
     register_clcmd("say /rank", "Command_Rank");
     register_clcmd("say /top15", "Command_Top15");
@@ -478,6 +483,7 @@ public Query_LoadMapHandle(failstate, Handle:query, error[], errnum, data[], siz
         g_iMapIndex = SQL_ReadResult(query, 0);
         
         CreateFinishI(SQL_ReadResult(query, 1),  SQL_ReadResult(query, 2),  SQL_ReadResult(query, 3));
+
     }
     else
     {		
@@ -644,16 +650,33 @@ public Think_DrawFinishBox(ent)
 {
     for(new id = 1; id <= 32; id++)
     {
-        if(g_ePlayerInfo[id][m_bConnected]) Create_Box(id, ent);
+        // if(g_ePlayerInfo[id][m_bConnected]) Create_Box(id, ent);
     }
-    set_entvar(ent, var_nextthink, get_gametime() + BOXLIFE);
+    // set_entvar(ent, var_nextthink, get_gametime() + BOXLIFE);
 }
 public Engine_TouchFinish(ent, id)
 {
     if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished])
     {
-        Create_Box(id, ent);
+        // Create_Box(id, ent);
+        SetFinishColor(200, 0, 0);
         Forward_PlayerFinished(id);
+    }
+}
+public SetFinishColor(r, g, b)
+{
+    new Float:fColor[3];
+    fColor[0] = float(r);
+    fColor[1] = float(g);
+    fColor[2] = float(b);
+    for(new i = 0; i < sizeof g_iFinishBeams; i++)
+    {
+        new iBeamEntity = g_iFinishBeams[i];
+        if(!is_valid_ent(iBeamEntity)) return;
+        
+        server_print("Finish beam is valid!");
+
+        Beam_SetColor(iBeamEntity, fColor);
     }
 }
 CreateFinishI(x, y, z)
@@ -686,7 +709,8 @@ CreateFinish(const Float:fOrigin[3])
     
     g_iFinishEnt = ent;
     
-    set_entvar(ent, var_nextthink, get_gametime());
+    Create_Box(0, g_iFinishEnt);
+    // set_entvar(ent, var_nextthink, get_gametime());
 }
 Create_Box(id, ent)
 {
@@ -696,19 +720,20 @@ Create_Box(id, ent)
     new Float:fOrigin[3]; get_entvar(ent, var_origin, fOrigin);
     
     new Float:z, Float:fOff = -5.0;
+
     
-    for(new i = 0; i < 3; i++)
+    for(new i = 0, b = 0; i < 3; i++)
     {
         z = fOrigin[2] + fOff;
-        DrawLine(id, i, maxs[0], maxs[1], z, mins[0], maxs[1], z);
-        DrawLine(id, i, maxs[0], maxs[1], z, maxs[0], mins[1], z);
-        DrawLine(id, i, maxs[0], mins[1], z, mins[0], mins[1], z);
-        DrawLine(id, i, mins[0], mins[1], z, mins[0], maxs[1], z);
+        DrawLine(id, i, b++, maxs[0], maxs[1], z, mins[0], maxs[1], z);
+        DrawLine(id, i, b++, maxs[0], maxs[1], z, maxs[0], mins[1], z);
+        DrawLine(id, i, b++, maxs[0], mins[1], z, mins[0], mins[1], z);
+        DrawLine(id, i, b++, mins[0], mins[1], z, mins[0], maxs[1], z);
         
         fOff += 5.0;
     }
 }
-DrawLine(id, i, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) 
+DrawLine(id, i, ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) 
 {
     new Float:start[3], Float:stop[3];
     start[0] = x1;
@@ -718,7 +743,12 @@ DrawLine(id, i, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2)
     stop[0] = x2;
     stop[1] = y2;
     stop[2] = z2;
-    Create_Line(id, i, start, stop);
+    
+    new beamEnt = Beam_Create(FINISH_SPRITENAME, 50.0);
+    Beam_PointsInit(beamEnt, start, stop);
+    g_iFinishBeams[ibeam] = beamEnt;
+    
+    // Create_Line(id, i, start, stop);
 }
 Create_Line(id, num, const Float:start[], const Float:stop[])
 {
@@ -767,6 +797,7 @@ public Think_Timer(ent)
 public SR_PlayerOnStart(id)
 {
     HC_CBasePlayer_Spawn_Post(id);
+    SetFinishColor(0, 200, 0);
 }
 public HC_CBasePlayer_Spawn_Post(id)
 {
