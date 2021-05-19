@@ -122,6 +122,14 @@ public plugin_init()
 	set_cvar_string("humans_join_team", "CT");
 
 }
+public plugin_natives()
+{
+    // register_native("sr_set_user_team", "sr_set_user_team");
+}
+public sr_set_user_team(id, TeamName:team)
+{
+
+}
 new Trie:g_tRemoveEntities, g_iForwardSpawn;
 
 public SR_ChangedCategory(id, cat)

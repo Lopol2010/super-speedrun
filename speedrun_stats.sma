@@ -1,14 +1,24 @@
 /* 
     TODO: 
-        5. first rewrite finish drawing, now its temp-entity, need use <beams> stocks. Those can change color faster and seem to be much more reliable!
+        * use box system's forwards to make start zone visible!
+        
         5.1 at the beginning only finish zone will be visible and with static size.
         5.2 then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
                 So you move corners as if its 2D plane. 
         5.3 Do the same for start. (add visibility for start zone? and then resizing)
+        5.3.1 how to check for player leaving start zone? possible solutions: 
+                    1. see Box.sma (set_task) 
+                    2. using client_prethink and touch hooks 
+                    3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
+
         // 5. start/stop zones are visible
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        2. spectators menu
+        1. fix hook in speedrun maps
+        5. first rewrite finish drawing, now its temp-entity, need use <beams> stocks. Those can change color faster and seem to be much more reliable!
+                    addtofullpack static version: https://github.com/ddenzer/addtofullpack_manager
         1. When map starts decide if timer should be managed by buttons on the map or by speedrun zones
         2. Auto bind for menus (game, category)
 */
@@ -38,6 +48,7 @@
 
 #pragma semicolon 1
 
+#define HOOK_ANTICHEAT_TIME 3.0
 #define FINISH_CLASSNAME "SR_FINISH"
 #define FINISH_SPRITENAME "sprites/white.spr"
 #define BOXLIFE 0.4
@@ -50,7 +61,8 @@ enum _:PlayerData
     m_bFinished,
     m_iPlayerIndex,
     // m_iSkillLevel,
-    Float:m_fStartRun
+    Float:m_fStartRun,
+    m_bWasUseHook
 };
 enum _:Categories
 {
@@ -123,6 +135,7 @@ new g_szMotd[1536];
 new g_iBestTimeofMap[Categories];
 new g_fwFinished;
 new g_iReturn;
+// new bool:g_wasUseHook[33];
 
 new bool:g_bStartButton;
 new Trie:g_tStarts;
@@ -140,7 +153,7 @@ public plugin_init()
     g_pCvars[SQL_PASSWORD] = register_cvar("speedrun_password", "root");
     g_pCvars[SQL_DATABASE] = register_cvar("speedrun_database", "speedrun");
     
-    // register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
+    register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
     register_clcmd("setfinish", "Command_SetFinish", ADMIN_CFG);
     register_clcmd("say /rank", "Command_Rank");
     register_clcmd("say /top15", "Command_Top15");
@@ -150,9 +163,10 @@ public plugin_init()
     RegisterHookChain(RG_CBasePlayer_Duck, "HC_CheckStartTimer", false);
     RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
 
+    // register_forward(FM_AddToFullPack, "FM_AddToFullPack_Post", 1);
     RegisterHam( Ham_Use, "func_button", "fwdUse", 0);
 
-    register_think(FINISH_CLASSNAME, "Think_DrawFinishBox");
+    // register_think(FINISH_CLASSNAME, "Think_DrawFinishBox");
     register_touch(FINISH_CLASSNAME, "player", "Engine_TouchFinish");
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
@@ -182,6 +196,30 @@ public plugin_init()
         TrieSetCell( g_tStops, szStops[ i ], 1 );
 
 }
+public plugin_natives()
+{
+    register_native("sr_show_toplist", "sr_show_toplist");
+}
+public sr_show_toplist(plugin, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    Command_Top15(id);
+}
+public FM_AddToFullPack_Post(const STATE/* = 0*/, e, ent, host, hostflags, player, set)
+{
+   if (is_user_alive(host) && g_ePlayerInfo[host][m_bFinished] && pev_valid(ent))
+   {
+      static classname[8];
+      pev(ent, pev_classname, classname, 7);
+      if (equal(classname, "beamfin"))
+      {
+        set_es(STATE, ES_RenderColor, Float:{0,200,0});
+        return FMRES_HANDLED;
+      }
+   }
+   return FMRES_IGNORED;
+} 
 public fwdUse(ent, id)
 {
     if( !ent || id > 32 )
@@ -204,6 +242,14 @@ public fwdUse(ent, id)
     if( TrieKeyExists( g_tStarts, szTarget ) )
     {
         g_bStartButton = true;
+
+        if(is_hook_active(id) || is_time_after_hook_passed(id, HOOK_ANTICHEAT_TIME))
+        {
+            
+            client_print_color(id, print_team_default, "%s^1 Wait %f seconds after using hook!", PREFIX, HOOK_ANTICHEAT_TIME);
+            return HAM_IGNORED;
+        }
+
         StartTimer(id);
 
         strip_user_weapons(id);
@@ -223,7 +269,7 @@ public fwdUse(ent, id)
 
             if(get_user_noclip(id))
             {
-                return PLUGIN_HANDLED;
+                return HAM_IGNORED;
             }
                 
             Forward_PlayerFinished(id);
@@ -254,6 +300,7 @@ public Command_SetFinish(id, level, cid)
         client_print_color(id, print_team_red, "%s^1 Finish zone is ^3removed^1.", PREFIX);
         DeleteFinishOrigin();	
         remove_entity(g_iFinishEnt);
+        DeleteFinishBeams();
         g_iFinishEnt = 0;
         g_bStartButton = true;
         g_ePlayerInfo[id][m_bFinished] = true;
@@ -264,10 +311,24 @@ public Command_SetFinish(id, level, cid)
     g_ePlayerInfo[id][m_bFinished] = true;
     
     new Float:fOrigin[3]; get_entvar(id, var_origin, fOrigin);
+    fOrigin[2] = fOrigin[2] - 20.0;
     CreateFinish(fOrigin);
     SaveFinishOrigin();
     
     return PLUGIN_HANDLED;
+}
+DeleteFinishBeams()
+{
+
+    for(new i = 0; i < sizeof g_iFinishBeams; i++)
+    {
+        new iBeamEntity = g_iFinishBeams[i];
+        if(!is_valid_ent(iBeamEntity)) return;
+
+        remove_entity(iBeamEntity);
+        g_iFinishBeams[i] = 0;
+    }
+        
 }
 DeleteFinishOrigin()
 {
@@ -291,8 +352,7 @@ public Command_ClearTop(id, level, cid)
 {
     if(!cmd_access(id, level, cid, 0)) return PLUGIN_HANDLED;
     
-    formatex(g_szQuery, charsmax(g_szQuery), "DELETE FROM `results`");
-
+    formatex(g_szQuery, charsmax(g_szQuery), "DELETE FROM `results` WHERE mid=%d", g_iMapIndex);
 
     SQL_ThreadQuery(g_hTuple, "Query_ClearTop", g_szQuery);
     
@@ -659,7 +719,7 @@ public Engine_TouchFinish(ent, id)
     if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished])
     {
         // Create_Box(id, ent);
-        SetFinishColor(200, 0, 0);
+        // SetFinishColor(200, 0, 0);
         Forward_PlayerFinished(id);
     }
 }
@@ -674,7 +734,7 @@ public SetFinishColor(r, g, b)
         new iBeamEntity = g_iFinishBeams[i];
         if(!is_valid_ent(iBeamEntity)) return;
         
-        server_print("Finish beam is valid!");
+        // server_print("Finish beam is valid!");
 
         Beam_SetColor(iBeamEntity, fColor);
     }
@@ -710,6 +770,7 @@ CreateFinish(const Float:fOrigin[3])
     g_iFinishEnt = ent;
     
     Create_Box(0, g_iFinishEnt);
+    SetFinishColor(200, 0, 0);
     // set_entvar(ent, var_nextthink, get_gametime());
 }
 Create_Box(id, ent)
@@ -722,7 +783,7 @@ Create_Box(id, ent)
     new Float:z, Float:fOff = -5.0;
 
     
-    for(new i = 0, b = 0; i < 3; i++)
+    for(new i = 0, b = 0; i < 1; i++)
     {
         z = fOrigin[2] + fOff;
         DrawLine(id, i, b++, maxs[0], maxs[1], z, mins[0], maxs[1], z);
@@ -744,8 +805,10 @@ DrawLine(id, i, ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z
     stop[1] = y2;
     stop[2] = z2;
     
-    new beamEnt = Beam_Create(FINISH_SPRITENAME, 50.0);
+    new beamEnt = Beam_Create(FINISH_SPRITENAME, 10.0);
+    set_pev(beamEnt, pev_classname, "beamfin");
     Beam_PointsInit(beamEnt, start, stop);
+	Beam_SetBrightness(beamEnt, 200.0);
     g_iFinishBeams[ibeam] = beamEnt;
     
     // Create_Line(id, i, start, stop);
@@ -797,11 +860,16 @@ public Think_Timer(ent)
 public SR_PlayerOnStart(id)
 {
     HC_CBasePlayer_Spawn_Post(id);
-    SetFinishColor(0, 200, 0);
+}
+public OnHookStart(id)
+{
+    g_ePlayerInfo[id][m_bWasUseHook] = true;
 }
 public HC_CBasePlayer_Spawn_Post(id)
 {
     g_ePlayerInfo[id][m_bTimerStarted] = false;
+    g_ePlayerInfo[id][m_bFinished] = false;
+    g_ePlayerInfo[id][m_bWasUseHook] = false;
     user_hook_enable(id, true);
     hide_timer(id);
 }
@@ -809,14 +877,14 @@ public HC_CheckStartTimer(id)
 {
     if(g_bStartButton) return;
     
-    if(g_ePlayerInfo[id][m_bAuthorized] && !g_ePlayerInfo[id][m_bTimerStarted])
+    if(g_ePlayerInfo[id][m_bAuthorized] && !g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bWasUseHook])
     {
         StartTimer(id);
     }
 }
 public box_stop_touch(box, id, const szClass[])
 {
-    if(g_ePlayerInfo[id][m_bAuthorized] && !g_ePlayerInfo[id][m_bTimerStarted])
+    if(g_ePlayerInfo[id][m_bAuthorized] && !g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bWasUseHook])
     {
         StartTimer(id);
     }	
@@ -890,6 +958,21 @@ Forward_PlayerFinished(id)
     {
         // get_formated_time(iTime - g_iBestTimeofMap[category], szTime, charsmax(szTime));
         // console_print(id, "%s Map record: +%s!", g_szCategory[category], szTime);
+    }
+    if(record)
+    {
+        client_cmd( 0, "spk woop" );
+    }
+    else
+    {
+        if(g_bStartButton)
+        {
+	        client_cmd(0, "spk buttons/bell1");
+        }
+        else
+        {
+	        client_cmd(0, "spk buttons/spark1");
+        }
     }
     
     // ExecuteForward(g_fwFinished, g_iReturn, id, iTime, record);
