@@ -10,9 +10,12 @@
 #define VERSION "0.1"
 #define AUTHOR "Lopol2010"
 
+#define ADMIN_TELEGRAM "@flowershy"
+
 native rotate_user_category(id);
 native get_user_category(id);
 
+new const PREFIX[] = "^1[^4Speedrun^1]";
 new const g_szCategory[][] = 
 {
     "100 FPS", "200 FPS", "250 FPS", "333 FPS", "500 FPS", "Fastrun", "Bhop", "Crazy Speed", "2K"
@@ -21,15 +24,20 @@ new const g_szCategory[][] =
 public plugin_init(){
     register_plugin(PLUGIN,VERSION,AUTHOR);
     register_clcmd("say /menu","Command_Menu");
-    // register_menucmd(register_menuid("MainMenu"), 1023, "Menu_Handler");
-    // register_menucmd(register_menuid("MainMenu_Spec"), 0, "Menu_Handler_Spec");
+    register_clcmd("say /m","Command_Menu");
+    register_clcmd("say_team /menu","Command_Menu");
+    register_clcmd("say_team /m","Command_Menu");
+    RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
 }
-
+public HC_CBasePlayer_Spawn_Post(id)
+{
+    Command_Menu(id);
+}
 public Command_Menu(id)
 {
     new szMenu[64], iLen, iMax = charsmax(szMenu), Keys;
 
-    new menu = menu_create("\wSuper Speedrun \rv1.0", "Menu_Handler")
+    new menu = menu_create("\wSuper Speedrun \rv1.0-beta", "Menu_Handler")
 
     if(get_user_team(id) == TEAM_CT)
     {
@@ -55,6 +63,9 @@ public Command_Menu(id)
 
         formatex(szMenu, charsmax(szMenu), "\w Go Spectator");
         menu_additem(menu, szMenu, "5");
+
+        formatex(szMenu, charsmax(szMenu), "\w Contact admin");
+        menu_additem(menu, szMenu, "6");
     }
     else
     {
@@ -66,6 +77,9 @@ public Command_Menu(id)
 
         formatex(szMenu, charsmax(szMenu), "\w FPS Settings");
         menu_additem(menu, szMenu, "4");
+
+        formatex(szMenu, charsmax(szMenu), "\w Contact admin");
+        menu_additem(menu, szMenu, "6");
     }
     
     // menu_setprop(menu, MPROP_EXITNAME, fmt("%l", "EXIT"));
@@ -101,6 +115,9 @@ public Menu_Handler(id, menu, item)
             // cs_set_user_team()
             rg_set_user_team(id, TEAM_SPECTATOR);
             user_kill(id);
+        }
+        case 6: {
+            client_print_color(id, print_team_default, "%s Send any problems and suggestions in telegram ^4%s", PREFIX, ADMIN_TELEGRAM);
         }
         case 10: {
             rg_round_respawn(id);

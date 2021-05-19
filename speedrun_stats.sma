@@ -1,20 +1,24 @@
 /* 
     TODO: 
-        * use box system's forwards to make start zone visible!
+        * Bugs & suggestions system. 
+                    Get module that can work with telegram and create command for players 
+                    like 'say @text' so that 'text' will be sended to admin's telegram. 
+        * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
+                So you move corners as if its 2D plane. 
 
         5.1 at the beginning only finish zone will be visible and with static size.
-        5.2 then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
-                So you move corners as if its 2D plane. 
         5.3 Do the same for start. (add visibility for start zone? and then resizing)
-        5.3.1 how to check for player leaving start zone? possible solutions: 
-                    1. see Box.sma (set_task) 
-                    2. using client_prethink and touch hooks 
-                    3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
 
+
+        // 5.3.1 how to check for player leaving start zone? possible solutions: 
+        //             1. see Box.sma (set_task) 
+        //             2. using client_prethink and touch hooks 
+        //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 5. start/stop zones are visible
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * use box system's forwards to make start zone visible!
         2. spectators menu
         1. fix hook in speedrun maps
         5. first rewrite finish drawing, now its temp-entity, need use <beams> stocks. Those can change color faster and seem to be much more reliable!
@@ -133,8 +137,8 @@ new g_iFinishBeams[12];
 new g_iSprite;
 new g_szMotd[1536];
 new g_iBestTimeofMap[Categories];
-new g_fwFinished;
-new g_iReturn;
+stock g_fwFinished;
+stock g_iReturn;
 // new bool:g_wasUseHook[33];
 
 new bool:g_bStartButton;
@@ -769,11 +773,11 @@ CreateFinish(const Float:fOrigin[3])
     
     g_iFinishEnt = ent;
     
-    Create_Box(0, g_iFinishEnt);
+    Create_Box(g_iFinishEnt);
     SetFinishColor(200, 0, 0);
     // set_entvar(ent, var_nextthink, get_gametime());
 }
-Create_Box(id, ent)
+Create_Box(ent)
 {
     new Float:maxs[3]; get_entvar(ent, var_absmax, maxs);
     new Float:mins[3]; get_entvar(ent, var_absmin, mins);
@@ -786,15 +790,15 @@ Create_Box(id, ent)
     for(new i = 0, b = 0; i < 1; i++)
     {
         z = fOrigin[2] + fOff;
-        DrawLine(id, i, b++, maxs[0], maxs[1], z, mins[0], maxs[1], z);
-        DrawLine(id, i, b++, maxs[0], maxs[1], z, maxs[0], mins[1], z);
-        DrawLine(id, i, b++, maxs[0], mins[1], z, mins[0], mins[1], z);
-        DrawLine(id, i, b++, mins[0], mins[1], z, mins[0], maxs[1], z);
+        DrawLine(b++, maxs[0], maxs[1], z, mins[0], maxs[1], z);
+        DrawLine(b++, maxs[0], maxs[1], z, maxs[0], mins[1], z);
+        DrawLine(b++, maxs[0], mins[1], z, mins[0], mins[1], z);
+        DrawLine(b++, mins[0], mins[1], z, mins[0], maxs[1], z);
         
         fOff += 5.0;
     }
 }
-DrawLine(id, i, ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
+DrawLine(ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
 {
     new Float:start[3], Float:stop[3];
     start[0] = x1;
@@ -808,13 +812,12 @@ DrawLine(id, i, ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z
     new beamEnt = Beam_Create(FINISH_SPRITENAME, 10.0);
     set_pev(beamEnt, pev_classname, "beamfin");
     Beam_PointsInit(beamEnt, start, stop);
-	Beam_SetBrightness(beamEnt, 200.0);
+    Beam_SetBrightness(beamEnt, 200.0);
     Beam_SetColor(beamEnt, color);
     g_iFinishBeams[ibeam] = beamEnt;
     
-    // Create_Line(id, i, start, stop);
 }
-Create_Line(id, num, const Float:start[], const Float:stop[])
+stock Create_Line(id, num, const Float:start[], const Float:stop[])
 {
     static const iColorFinished[][3] = {{0, 100, 0}, {0, 50, 0}, {0, 10, 0}};
     static const iColorRun[][3] = {{100, 0, 0}, {50, 0, 0}, {10, 0, 0}};
@@ -893,10 +896,10 @@ public box_created(ent, const szClass[])
         get_entvar(ent, var_origin, origin);
         new b = 0, Float:z;
         z = mins[2];
-        DrawLine(0, 0, b++, maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
-        DrawLine(0, 0, b++, maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
-        DrawLine(0, 0, b++, maxs[0], mins[1], z, mins[0], mins[1], z, color);
-        DrawLine(0, 0, b++, mins[0], mins[1], z, mins[0], maxs[1], z, color);
+        DrawLine(b++, maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
+        DrawLine(b++, maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
+        DrawLine(b++, maxs[0], mins[1], z, mins[0], mins[1], z, color);
+        DrawLine(b++, mins[0], mins[1], z, mins[0], maxs[1], z, color);
     }
 }
 public box_stop_touch(box, id, const szClass[])
@@ -984,11 +987,11 @@ Forward_PlayerFinished(id)
     {
         if(g_bStartButton)
         {
-	        client_cmd(0, "spk buttons/bell1");
+            client_cmd(0, "spk buttons/bell1");
         }
         else
         {
-	        client_cmd(0, "spk buttons/spark1");
+            client_cmd(0, "spk buttons/spark1");
         }
     }
     
