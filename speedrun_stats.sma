@@ -1,7 +1,7 @@
 /* 
     TODO: 
         * use box system's forwards to make start zone visible!
-        
+
         5.1 at the beginning only finish zone will be visible and with static size.
         5.2 then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
                 So you move corners as if its 2D plane. 
@@ -794,7 +794,7 @@ Create_Box(id, ent)
         fOff += 5.0;
     }
 }
-DrawLine(id, i, ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) 
+DrawLine(id, i, ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
 {
     new Float:start[3], Float:stop[3];
     start[0] = x1;
@@ -809,6 +809,7 @@ DrawLine(id, i, ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z
     set_pev(beamEnt, pev_classname, "beamfin");
     Beam_PointsInit(beamEnt, start, stop);
 	Beam_SetBrightness(beamEnt, 200.0);
+    Beam_SetColor(beamEnt, color);
     g_iFinishBeams[ibeam] = beamEnt;
     
     // Create_Line(id, i, start, stop);
@@ -880,6 +881,22 @@ public HC_CheckStartTimer(id)
     if(g_ePlayerInfo[id][m_bAuthorized] && !g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bWasUseHook])
     {
         StartTimer(id);
+    }
+}
+public box_created(ent, const szClass[])
+{
+    if(equal("start", szClass))
+    {
+        new Float:maxs[3], Float:mins[3], Float:origin[3], Float:color[3] = {0.0, 255.0, 0.0};
+        get_entvar(ent, var_absmax, maxs);
+        get_entvar(ent, var_absmin, mins);
+        get_entvar(ent, var_origin, origin);
+        new b = 0, Float:z;
+        z = mins[2];
+        DrawLine(0, 0, b++, maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
+        DrawLine(0, 0, b++, maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
+        DrawLine(0, 0, b++, maxs[0], mins[1], z, mins[0], mins[1], z, color);
+        DrawLine(0, 0, b++, mins[0], mins[1], z, mins[0], maxs[1], z, color);
     }
 }
 public box_stop_touch(box, id, const szClass[])
