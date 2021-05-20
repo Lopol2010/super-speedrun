@@ -1,10 +1,12 @@
 /* 
     TODO: 
-        * Bugs & suggestions system. 
-                    Get module that can work with telegram and create command for players 
-                    like 'say @text' so that 'text' will be sended to admin's telegram. 
+        * check my notebook
+        * migrate toplist 
+        * and then launch new plugins!
         * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
                 So you move corners as if its 2D plane. 
+        * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
+        * change timer appearence
 
         5.1 at the beginning only finish zone will be visible and with static size.
         5.3 Do the same for start. (add visibility for start zone? and then resizing)
@@ -18,6 +20,9 @@
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * Bugs & suggestions system. 
+                    Get module that can work with telegram and create command for players 
+                    like 'say @text' so that 'text' will be sended to admin's telegram. 
         * use box system's forwards to make start zone visible!
         2. spectators menu
         1. fix hook in speedrun maps
@@ -66,7 +71,7 @@ enum _:PlayerData
     m_iPlayerIndex,
     // m_iSkillLevel,
     Float:m_fStartRun,
-    m_bWasUseHook
+    m_bWasUseHook       // true if player used hook and until next respawn (by command or death)
 };
 enum _:Categories
 {
@@ -247,7 +252,7 @@ public fwdUse(ent, id)
     {
         g_bStartButton = true;
 
-        if(is_hook_active(id) || is_time_after_hook_passed(id, HOOK_ANTICHEAT_TIME))
+        if(is_hook_active(id) || !is_time_after_hook_passed(id, HOOK_ANTICHEAT_TIME))
         {
             
             client_print_color(id, print_team_default, "%s^1 Wait %f seconds after using hook!", PREFIX, HOOK_ANTICHEAT_TIME);
@@ -902,12 +907,19 @@ public box_created(ent, const szClass[])
         DrawLine(b++, mins[0], mins[1], z, mins[0], maxs[1], z, color);
     }
 }
+public box_start_touch(box, ent, const szClass[])
+{
+    if(equal(szClass, "finish"))
+    {
+        Engine_TouchFinish(box, ent);
+    }
+}
 public box_stop_touch(box, id, const szClass[])
 {
-    if(g_ePlayerInfo[id][m_bAuthorized] && !g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bWasUseHook])
+    if(equal(szClass, "start"))
     {
-        StartTimer(id);
-    }	
+        HC_CheckStartTimer(id);
+    }
 }
 StartTimer(id)
 {
@@ -991,7 +1003,7 @@ Forward_PlayerFinished(id)
         }
         else
         {
-            client_cmd(0, "spk buttons/spark1");
+            // client_cmd(0, "spk buttons/spark1");
         }
     }
     
@@ -1071,7 +1083,7 @@ public Query_LoadTop15Handle(failstate, Handle:query, error[], errnum, data[], s
     new iLen = 0, iMax = charsmax(g_szMotd);
     iLen = formatex(g_szMotd[iLen], iMax-iLen, "<meta charset=utf-8>");
     iLen += formatex(g_szMotd[iLen], iMax-iLen, "<style>{font:normal 10px} table, th, td{border: 1px solid black;border-collapse:collapse;text-align:center;}");
-    iLen += formatex(g_szMotd[iLen], iMax-iLen, "</style><html><table width=100%%><thead><tr><th width=10%%>%s</th> <th width=50%%>%s</th><th width=10%%>%s</th><th width=10%%>%s</th><th width=10%%>%s</th><th width=20%%></th></tr></thead><tbody>", "№", "", "CP", "Gochecks", "");
+    iLen += formatex(g_szMotd[iLen], iMax-iLen, "</style><html><table width=100%%><thead><tr><th width=10%%>%s</th> <th width=50%%>%s</th><th width=10%%>%s</th><th width=10%%>%s</th><th width=10%%>%s</th></tr></thead><tbody>", "№", "", "CP", "Gochecks", "");
     
     
     new i = 1;
@@ -1091,15 +1103,16 @@ public Query_LoadTop15Handle(failstate, Handle:query, error[], errnum, data[], s
         if(i == 1)
         {
             g_iBestTimeofMap[category] = iTime;
-            iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>%s</td><td></td>",  szTime);
+            iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>%s</td>",  szTime);
+            // iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>%s</td><td></td>",  szTime);
             if(id == 0) return;
         }
         else
         {
             iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>%s</td>", szTime);
             
-            get_formated_time(iTime-g_iBestTimeofMap[category] , szTime, 31);
-            iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>+%s</td>", szTime);
+            // get_formated_time(iTime-g_iBestTimeofMap[category] , szTime, 31);
+            // iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>+%s</td>", szTime);
         }
         iLen += formatex(g_szMotd[iLen], iMax-iLen, "</tr>");
         

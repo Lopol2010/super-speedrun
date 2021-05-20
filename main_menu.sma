@@ -31,7 +31,8 @@ public plugin_init(){
 }
 public HC_CBasePlayer_Spawn_Post(id)
 {
-    Command_Menu(id);
+    if(is_user_alive(id))
+        Command_Menu(id);
 }
 public Command_Menu(id)
 {
@@ -117,7 +118,8 @@ public Menu_Handler(id, menu, item)
             user_kill(id);
         }
         case 6: {
-            client_print_color(id, print_team_default, "%s Send any problems and suggestions in telegram ^4%s", PREFIX, ADMIN_TELEGRAM);
+            client_print_color(id, print_team_default, "%s Use command ^4/tg^1 to send your feedback", PREFIX, ADMIN_TELEGRAM);
+            // client_print_color(id, print_team_default, "%s Send any problems and suggestions in telegram ^4%s", PREFIX, ADMIN_TELEGRAM);
         }
         case 10: {
             rg_round_respawn(id);
