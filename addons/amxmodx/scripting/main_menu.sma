@@ -28,6 +28,7 @@ public plugin_init(){
     register_clcmd("say_team /menu","Command_Menu");
     register_clcmd("say_team /m","Command_Menu");
     RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
+    register_dictionary("speedrun.txt")
 }
 public HC_CBasePlayer_Spawn_Post(id)
 {
@@ -44,46 +45,47 @@ public Command_Menu(id)
     {
 
         if(get_checkpoints_count(id) < 1) 
-            formatex(szMenu, charsmax(szMenu), "\w Checkpoint");
+            formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CHECKPOINT");
         else
-            formatex(szMenu, charsmax(szMenu), "\w Checkpoint \y#%d", get_checkpoints_count(id));
+            formatex(szMenu, charsmax(szMenu), "%L \y#%d", LANG_PLAYER, "SR_MENU_CHECKPOINT", get_checkpoints_count(id));
         menu_additem(menu, szMenu, "0");
 
-        formatex(szMenu, charsmax(szMenu), "\w Gocheck");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_GOCHECK");
         menu_additem(menu, szMenu, "1");
 
-        formatex(szMenu, charsmax(szMenu), "\w Category [\y%s\w]", g_szCategory[get_user_category(id)]);
+        formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", LANG_PLAYER, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
         menu_additem(menu, szMenu, "2");
 
         
-        formatex(szMenu, charsmax(szMenu), "\w Statistics");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_STATISTICS");
         menu_additem(menu, szMenu, "3");
 
-        formatex(szMenu, charsmax(szMenu), "\w FPS Settings");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_FPS");
         menu_additem(menu, szMenu, "4");
 
-        formatex(szMenu, charsmax(szMenu), "\w Go Spectator");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_SPEC");
         menu_additem(menu, szMenu, "5");
 
-        formatex(szMenu, charsmax(szMenu), "\w Contact admin");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CONTACT");
         menu_additem(menu, szMenu, "6");
     }
     else
     {
-        formatex(szMenu, charsmax(szMenu), "\w Join game");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_JOINCT");
         menu_additem(menu, szMenu, "10");
 
-        formatex(szMenu, charsmax(szMenu), "\w Statistics");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_STATISTICS");
         menu_additem(menu, szMenu, "3");
 
-        formatex(szMenu, charsmax(szMenu), "\w FPS Settings");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_FPS");
         menu_additem(menu, szMenu, "4");
 
-        formatex(szMenu, charsmax(szMenu), "\w Contact admin");
+        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CONTACT");
         menu_additem(menu, szMenu, "6");
     }
     
-    // menu_setprop(menu, MPROP_EXITNAME, fmt("%l", "EXIT"));
+    formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CLOSE");
+    menu_setprop(menu, MPROP_EXITNAME, szMenu);
     // menu_setprop(menu, MPROP_EXIT, MEXIT_FORCE);                // Force an EXIT item since pagination is disabled.
     // menu_setprop(menu, MPROP_PERPAGE, 0);
     menu_display(id, menu);

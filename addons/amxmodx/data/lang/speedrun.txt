@@ -1,0 +1,21 @@
+[ru]
+SR_MENU_CHECKPOINT = Сохранить позицию 
+SR_MENU_GOCHECK = Загрузить позицию
+SR_MENU_CATEGORY  = Категория
+SR_MENU_STATISTICS = Статистика
+SR_MENU_FPS  = Настройка производительности
+SR_MENU_SPEC  = В наблюдатели
+SR_MENU_JOINCT = Вернутся в игру
+SR_MENU_CONTACT  = Связь с администрацией
+SR_MENU_CLOSE = Закрыть
+
+[en]
+SR_MENU_CHECKPOINT = Checkpoint
+SR_MENU_GOCHECK = Gocheck
+SR_MENU_CATEGORY  = Category 
+SR_MENU_STATISTICS = Statistics
+SR_MENU_FPS  = FPS Settings
+SR_MENU_SPEC  = Go Spectator
+SR_MENU_JOINCT = Join game
+SR_MENU_CONTACT  = Contact admin
+SR_MENU_CLOSE = Exit
