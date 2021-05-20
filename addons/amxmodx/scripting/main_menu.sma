@@ -28,7 +28,6 @@ public plugin_init(){
     register_clcmd("say_team /menu","Command_Menu");
     register_clcmd("say_team /m","Command_Menu");
     RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
-    register_dictionary("speedrun.txt")
 }
 public HC_CBasePlayer_Spawn_Post(id)
 {

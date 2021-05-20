@@ -122,6 +122,7 @@ public plugin_init()
 	set_cvar_num("mp_auto_join_team", 1);
 	set_cvar_string("humans_join_team", "CT");
 
+    register_dictionary("speedrun.txt");
 }
 new Trie:g_tRemoveEntities, g_iForwardSpawn;
 

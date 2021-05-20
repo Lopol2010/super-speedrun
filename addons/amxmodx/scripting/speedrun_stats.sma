@@ -1,7 +1,7 @@
 /* 
     TODO: 
         * check my notebook
-        * migrate toplist 
+        * migrate toplist
         * and then launch new plugins!
         * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
                 So you move corners as if its 2D plane. 
@@ -137,7 +137,7 @@ new g_iMapIndex;
 new g_ePlayerInfo[33][PlayerData];
 new g_iBestTime[33][Categories];
 new g_iFinishEnt;
-new g_iFinishBeams[12];
+// new g_iFinishBeams[12];
 // new g_iSprite;
 new g_szMotd[1536];
 new g_iBestTimeofMap[Categories];
@@ -177,7 +177,7 @@ public plugin_init()
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
     
-    CreateTimer();
+    // CreateTimer();
 
     // Timer managed by buttons on the map
     g_tStarts = TrieCreate( );
@@ -249,12 +249,17 @@ public fwdUse(ent, id)
     {
         g_bStartButton = true;
 
+        static bool:antispam;
         if(is_hook_active(id) || !is_time_after_hook_passed(id, HOOK_ANTICHEAT_TIME))
         {
-            
-            client_print_color(id, print_team_default, "%s^1 Wait %f seconds after using hook!", PREFIX, HOOK_ANTICHEAT_TIME);
+            if(!antispam)
+            {
+                client_print_color(id, print_team_default, "%s^1 Wait %f seconds after using hook!", PREFIX, HOOK_ANTICHEAT_TIME);
+                antispam = true;
+            }
             return HAM_IGNORED;
         }
+        antispam = false;
 
         StartTimer(id);
 
@@ -306,7 +311,7 @@ public Command_SetFinish(id, level, cid)
         client_print_color(id, print_team_red, "%s^1 Finish zone is ^3removed^1.", PREFIX);
         DeleteFinishOrigin();	
         remove_entity(g_iFinishEnt);
-        DeleteFinishBeams();
+        // DeleteFinishBeams();
         g_iFinishEnt = 0;
         g_bStartButton = true;
         g_ePlayerInfo[id][m_bFinished] = true;
@@ -323,19 +328,19 @@ public Command_SetFinish(id, level, cid)
     
     return PLUGIN_HANDLED;
 }
-DeleteFinishBeams()
-{
+// DeleteFinishBeams()
+// {
 
-    for(new i = 0; i < sizeof g_iFinishBeams; i++)
-    {
-        new iBeamEntity = g_iFinishBeams[i];
-        if(!is_valid_ent(iBeamEntity)) return;
+//     for(new i = 0; i < sizeof g_iFinishBeams; i++)
+//     {
+//         new iBeamEntity = g_iFinishBeams[i];
+//         if(!is_valid_ent(iBeamEntity)) return;
 
-        remove_entity(iBeamEntity);
-        g_iFinishBeams[i] = 0;
-    }
+//         remove_entity(iBeamEntity);
+//         g_iFinishBeams[i] = 0;
+//     }
         
-}
+// }
 DeleteFinishOrigin()
 {
     formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `maps` SET finishX = '0', finishY = '0', finishZ = '0' WHERE mid=%d", g_iMapIndex);
@@ -399,13 +404,13 @@ public Command_Update(id)
     
     return PLUGIN_CONTINUE;
 }
-CreateTimer()
-{
-    new ent = create_entity("info_target");	
-    set_entvar(ent, var_classname, "timer_think");
-    set_entvar(ent, var_nextthink, get_gametime() + 1.0);	
-    register_think("timer_think", "Think_Timer");
-}
+// CreateTimer()
+// {
+//     new ent = create_entity("info_target");	
+//     set_entvar(ent, var_classname, "timer_think");
+//     set_entvar(ent, var_nextthink, get_gametime() + 1.0);	
+//     register_think("timer_think", "Think_Timer");
+// }
 public DB_Init()
 {
     state mysql;
@@ -721,22 +726,22 @@ public Engine_TouchFinish(ent, id)
         Forward_PlayerFinished(id);
     }
 }
-public SetFinishColor(r, g, b)
-{
-    new Float:fColor[3];
-    fColor[0] = float(r);
-    fColor[1] = float(g);
-    fColor[2] = float(b);
-    for(new i = 0; i < sizeof g_iFinishBeams; i++)
-    {
-        new iBeamEntity = g_iFinishBeams[i];
-        if(!is_valid_ent(iBeamEntity)) return;
+// public SetFinishColor(r, g, b)
+// {
+//     new Float:fColor[3];
+//     fColor[0] = float(r);
+//     fColor[1] = float(g);
+//     fColor[2] = float(b);
+//     for(new i = 0; i < sizeof g_iFinishBeams; i++)
+//     {
+//         new iBeamEntity = g_iFinishBeams[i];
+//         if(!is_valid_ent(iBeamEntity)) return;
         
-        // server_print("Finish beam is valid!");
+//         // server_print("Finish beam is valid!");
 
-        Beam_SetColor(iBeamEntity, fColor);
-    }
-}
+//         Beam_SetColor(iBeamEntity, fColor);
+//     }
+// }
 CreateFinishI(x, y, z)
 {
     if(!x && !y && !z) return;
@@ -767,30 +772,25 @@ CreateFinish(const Float:fOrigin[3])
     
     g_iFinishEnt = ent;
     
-    Create_Box(g_iFinishEnt);
-    SetFinishColor(200, 0, 0);
+    Create_Box(g_iFinishEnt, Float:{255.0,0.0,0.0});
+    // SetFinishColor(200, 0, 0);
     // set_entvar(ent, var_nextthink, get_gametime());
 }
-Create_Box(ent)
+Create_Box(ent, Float:color[3] = {255.0,255.0,255.0}, zIsMin = false)
 {
     new Float:maxs[3]; get_entvar(ent, var_absmax, maxs);
     new Float:mins[3]; get_entvar(ent, var_absmin, mins);
     
     new Float:fOrigin[3]; get_entvar(ent, var_origin, fOrigin);
     
-    new Float:z, Float:fOff = -5.0;
+    new Float:z;
 
-    
-    for(new i = 0, b = 0; i < 1; i++)
-    {
-        z = fOrigin[2] + fOff;
-        g_iFinishBeams[b++] = DrawLine(maxs[0], maxs[1], z, mins[0], maxs[1], z);
-        g_iFinishBeams[b++] = DrawLine(maxs[0], maxs[1], z, maxs[0], mins[1], z);
-        g_iFinishBeams[b++] = DrawLine(maxs[0], mins[1], z, mins[0], mins[1], z);
-        g_iFinishBeams[b++] = DrawLine(mins[0], mins[1], z, mins[0], maxs[1], z);
+    z = zIsMin ? mins[2] : fOrigin[2];
+    DrawLine(maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
+    DrawLine(maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
+    DrawLine(maxs[0], mins[1], z, mins[0], mins[1], z, color);
+    DrawLine(mins[0], mins[1], z, mins[0], maxs[1], z, color);
 
-        fOff += 5.0;
-    }
 }
 DrawLine(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
 {
@@ -811,19 +811,19 @@ DrawLine(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color
     return beamEnt;
 }
 
-public Think_Timer(ent)
-{
-    set_entvar(ent, var_nextthink, get_gametime() + 0.009);
+// public Think_Timer(ent)
+// {
+//     set_entvar(ent, var_nextthink, get_gametime() + 0.009);
     
-    for(new id = 1; id <= 32; id++)
-    {
-        if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished] && is_user_alive(id))
-        {		
-            display_time(id, get_running_time(id));
+//     for(new id = 1; id <= 32; id++)
+//     {
+//         if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished] && is_user_alive(id))
+//         {		
+//             display_time(id, get_running_time(id));
 
-        }
-    }
-}
+//         }
+//     }
+// }
 
 public SR_PlayerOnStart(id)
 {
@@ -839,7 +839,7 @@ public HC_CBasePlayer_Spawn_Post(id)
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_bWasUseHook] = false;
     user_hook_enable(id, true);
-    hide_timer(id);
+    // hide_timer(id);
 }
 public HC_CheckStartTimer(id)
 {
@@ -852,18 +852,19 @@ public HC_CheckStartTimer(id)
 }
 public box_created(ent, const szClass[])
 {
+    static Float:color_start[3] = {0.0, 255.0, 0.0}, Float:color_finish[3] = {255.0, 0.0, 0.0};
     if(equal("start", szClass))
     {
-        new Float:maxs[3], Float:mins[3], Float:origin[3], Float:color[3] = {0.0, 255.0, 0.0};
-        get_entvar(ent, var_absmax, maxs);
-        get_entvar(ent, var_absmin, mins);
-        get_entvar(ent, var_origin, origin);
-        new Float:z;
-        z = mins[2];
-        DrawLine(maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
-        DrawLine(maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
-        DrawLine(maxs[0], mins[1], z, mins[0], mins[1], z, color);
-        DrawLine(mins[0], mins[1], z, mins[0], maxs[1], z, color);
+        Create_Box(ent, color_start, true);
+        g_bStartButton = false;
+        // g_ePlayerInfo[id][m_bFinished] = true;
+    }
+    if(equal("finish", szClass))
+    {
+        Create_Box(ent, color_finish, true);
+        g_bStartButton = false;
+        // g_ePlayerInfo[id][m_bFinished] = true;
+        g_iFinishEnt = ent;
     }
 }
 public box_start_touch(box, ent, const szClass[])
@@ -903,8 +904,9 @@ Forward_PlayerFinished(id)
     
     new szName[32]; get_user_name(id, szName, charsmax(szName));
 
-    console_print(id, "^4[^1%s^4]^1 Time: %s!", g_szCategory[category], szTime);
-    client_print_color(0, print_team_blue, "^4[^1%s^4] ^3%s^1 finished in ^3%s ^1%s.", g_szCategory[category], szName, szTime, iTime<60000?"seconds":"minutes");
+    // console_print(id, "^4[^1%s^4]^1 Time: %s!", g_szCategory[category], szTime);
+    // client_print_color(0, print_team_blue, "^4[^1%s^4] ^3%s^1 %L ^3%s", 
+        // g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_FINISH", szTime);
     
     if(g_iBestTime[id][category] == 0)
     {
@@ -930,16 +932,18 @@ Forward_PlayerFinished(id)
     
     if(g_iBestTimeofMap[category] == 0 || g_iBestTimeofMap[category] > iTime)
     {
-        get_formated_time(iTime, szTime, charsmax(szTime));
+        get_formated_time_smart(iTime, szTime, charsmax(szTime));
         new szTimeDelta[32];
         if(g_iBestTimeofMap[category] > 0)
         {
             get_formated_time_smart(g_iBestTimeofMap[category] - iTime, szTimeDelta, charsmax(szTimeDelta));
-            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 broke map record! WR ^4-%s", g_szCategory[category], szName, szTimeDelta);
+            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 %L ^3%s^1 %L ^4%s", 
+                g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_FINISH", szTime, LANG_PLAYER, "SR_TIME_WR_BY", szTimeDelta);
         } 
         else 
         {
-            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 broke map record!", g_szCategory[category], szName);
+            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 %L", 
+                g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_WR_FIRST");
         }
         
         g_iBestTimeofMap[category] = iTime;
@@ -947,8 +951,12 @@ Forward_PlayerFinished(id)
     }
     if(g_iBestTimeofMap[category] != 0 && g_iBestTimeofMap[category] < iTime)
     {
+        // new szTimeDelta[32];
+        // get_formated_time_smart(g_iBestTimeofMap[category] - iTime, szTimeDelta, charsmax(szTimeDelta));
         // get_formated_time(iTime - g_iBestTimeofMap[category], szTime, charsmax(szTime));
         // console_print(id, "%s Map record: +%s!", g_szCategory[category], szTime);
+        client_print_color(0, print_team_blue, "^4[^1%s^4] ^3%s^1 %L ^3%s", 
+            g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_FINISH", szTime);
     }
     if(record)
     {
@@ -968,7 +976,7 @@ Forward_PlayerFinished(id)
     
     // ExecuteForward(g_fwFinished, g_iReturn, id, iTime, record);
     
-    hide_timer(id);
+    // hide_timer(id);
 }
 public SaveRunnerData(id, category, iTime)
 {
@@ -1041,7 +1049,7 @@ public Query_LoadTop15Handle(failstate, Handle:query, error[], errnum, data[], s
     
     new iLen = 0, iMax = charsmax(g_szMotd);
     iLen = formatex(g_szMotd[iLen], iMax-iLen, "<meta charset=utf-8>");
-    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<style>{font:normal 10px} table, th, td{border: 1px solid black;border-collapse:collapse;text-align:center;}");
+    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<style>{font:normal 10px} body {margin:0px;} table, th, td{border: 1px solid lightgray;border-collapse:collapse;text-align:center;}");
     iLen += formatex(g_szMotd[iLen], iMax-iLen, "</style><html><table width=100%%><thead><tr><th width=10%%>%s</th> <th width=50%%>%s</th><th width=10%%>%s</th><th width=10%%>%s</th><th width=10%%>%s</th></tr></thead><tbody>", "№", "", "CP", "Gochecks", "");
     
     
@@ -1083,24 +1091,24 @@ public Query_LoadTop15Handle(failstate, Handle:query, error[], errnum, data[], s
 }
 
 
-hide_timer(id)
-{
-    show_status(id, "");
-}
-display_time(id, iTime)
-{
-    show_status(id, "Time: %d:%02d.%03ds", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
-}
-show_status(id, const szMsg[], any:...)
-{
-    static szStatus[128]; vformat(szStatus, charsmax(szStatus), szMsg, 3);
-    static StatusText; if(!StatusText) StatusText = get_user_msgid("StatusText");
+// hide_timer(id)
+// {
+//     // show_status(id, "");
+// }
+// display_time(id, iTime)
+// {
+//     show_status(id, "Time: %d:%02d.%03ds", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
+// }
+// show_status(id, const szMsg[], any:...)
+// {
+//     static szStatus[128]; vformat(szStatus, charsmax(szStatus), szMsg, 3);
+//     static StatusText; if(!StatusText) StatusText = get_user_msgid("StatusText");
     
-    message_begin(MSG_ONE_UNRELIABLE, StatusText, _, id);
-    write_byte(0);
-    write_string(szStatus);
-    message_end();
-}
+//     message_begin(MSG_ONE_UNRELIABLE, StatusText, _, id);
+//     write_byte(0);
+//     write_string(szStatus);
+//     message_end();
+// }
 get_running_time(id)
 {
     return floatround((get_gametime() - g_ePlayerInfo[id][m_fStartRun]) * 1000, floatround_ceil);
