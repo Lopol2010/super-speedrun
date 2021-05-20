@@ -60,7 +60,6 @@
 #define HOOK_ANTICHEAT_TIME 3.0
 #define FINISH_CLASSNAME "SR_FINISH"
 #define FINISH_SPRITENAME "sprites/white.spr"
-#define BOXLIFE 0.4
 
 enum _:PlayerData
 {
@@ -139,12 +138,11 @@ new g_ePlayerInfo[33][PlayerData];
 new g_iBestTime[33][Categories];
 new g_iFinishEnt;
 new g_iFinishBeams[12];
-new g_iSprite;
+// new g_iSprite;
 new g_szMotd[1536];
 new g_iBestTimeofMap[Categories];
 stock g_fwFinished;
 stock g_iReturn;
-// new bool:g_wasUseHook[33];
 
 new bool:g_bStartButton;
 new Trie:g_tStarts;
@@ -175,7 +173,6 @@ public plugin_init()
     // register_forward(FM_AddToFullPack, "FM_AddToFullPack_Post", 1);
     RegisterHam( Ham_Use, "func_button", "fwdUse", 0);
 
-    // register_think(FINISH_CLASSNAME, "Think_DrawFinishBox");
     register_touch(FINISH_CLASSNAME, "player", "Engine_TouchFinish");
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
@@ -299,7 +296,7 @@ public plugin_cfg()
 }
 public plugin_precache()
 {
-    g_iSprite = precache_model("sprites/white.spr");
+    // g_iSprite = precache_model("sprites/white.spr");
 }
 public Command_SetFinish(id, level, cid)
 {
@@ -715,14 +712,6 @@ public client_disconnected(id)
     g_ePlayerInfo[id][m_bConnected] = false;
 }
 
-public Think_DrawFinishBox(ent)
-{
-    for(new id = 1; id <= 32; id++)
-    {
-        // if(g_ePlayerInfo[id][m_bConnected]) Create_Box(id, ent);
-    }
-    // set_entvar(ent, var_nextthink, get_gametime() + BOXLIFE);
-}
 public Engine_TouchFinish(ent, id)
 {
     if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished])
@@ -795,15 +784,15 @@ Create_Box(ent)
     for(new i = 0, b = 0; i < 1; i++)
     {
         z = fOrigin[2] + fOff;
-        DrawLine(b++, maxs[0], maxs[1], z, mins[0], maxs[1], z);
-        DrawLine(b++, maxs[0], maxs[1], z, maxs[0], mins[1], z);
-        DrawLine(b++, maxs[0], mins[1], z, mins[0], mins[1], z);
-        DrawLine(b++, mins[0], mins[1], z, mins[0], maxs[1], z);
-        
+        g_iFinishBeams[b++] = DrawLine(maxs[0], maxs[1], z, mins[0], maxs[1], z);
+        g_iFinishBeams[b++] = DrawLine(maxs[0], maxs[1], z, maxs[0], mins[1], z);
+        g_iFinishBeams[b++] = DrawLine(maxs[0], mins[1], z, mins[0], mins[1], z);
+        g_iFinishBeams[b++] = DrawLine(mins[0], mins[1], z, mins[0], maxs[1], z);
+
         fOff += 5.0;
     }
 }
-DrawLine(ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
+DrawLine(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
 {
     new Float:start[3], Float:stop[3];
     start[0] = x1;
@@ -819,37 +808,7 @@ DrawLine(ibeam, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Floa
     Beam_PointsInit(beamEnt, start, stop);
     Beam_SetBrightness(beamEnt, 200.0);
     Beam_SetColor(beamEnt, color);
-    g_iFinishBeams[ibeam] = beamEnt;
-    
-}
-stock Create_Line(id, num, const Float:start[], const Float:stop[])
-{
-    static const iColorFinished[][3] = {{0, 100, 0}, {0, 50, 0}, {0, 10, 0}};
-    static const iColorRun[][3] = {{100, 0, 0}, {50, 0, 0}, {10, 0, 0}};
-    
-    new iColor[3];
-    iColor = g_ePlayerInfo[id][m_bFinished] ? iColorFinished[num] : iColorRun[num];
-    
-    message_begin(MSG_ONE_UNRELIABLE, SVC_TEMPENTITY, _, id);
-    write_byte(TE_BEAMPOINTS);
-    engfunc(EngFunc_WriteCoord, start[0]);
-    engfunc(EngFunc_WriteCoord, start[1]);
-    engfunc(EngFunc_WriteCoord, start[2]);
-    engfunc(EngFunc_WriteCoord, stop[0]);
-    engfunc(EngFunc_WriteCoord, stop[1]);
-    engfunc(EngFunc_WriteCoord, stop[2]);
-    write_short(g_iSprite);
-    write_byte(1);
-    write_byte(5);
-    write_byte(floatround(BOXLIFE * 10.0)); //10*BOXLIFE
-    write_byte(30); //width 50
-    write_byte(0);
-    write_byte(iColor[0]);	// Red
-    write_byte(iColor[1]);	// Green
-    write_byte(iColor[2]);	// Blue
-    write_byte(250);	// brightness
-    write_byte(5);
-    message_end();
+    return beamEnt;
 }
 
 public Think_Timer(ent)
@@ -899,12 +858,12 @@ public box_created(ent, const szClass[])
         get_entvar(ent, var_absmax, maxs);
         get_entvar(ent, var_absmin, mins);
         get_entvar(ent, var_origin, origin);
-        new b = 0, Float:z;
+        new Float:z;
         z = mins[2];
-        DrawLine(b++, maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
-        DrawLine(b++, maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
-        DrawLine(b++, maxs[0], mins[1], z, mins[0], mins[1], z, color);
-        DrawLine(b++, mins[0], mins[1], z, mins[0], maxs[1], z, color);
+        DrawLine(maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
+        DrawLine(maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
+        DrawLine(maxs[0], mins[1], z, mins[0], mins[1], z, color);
+        DrawLine(mins[0], mins[1], z, mins[0], maxs[1], z, color);
     }
 }
 public box_start_touch(box, ent, const szClass[])
