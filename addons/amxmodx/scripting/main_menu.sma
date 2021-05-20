@@ -120,8 +120,8 @@ public Menu_Handler(id, menu, item)
             user_kill(id);
         }
         case 6: {
-            client_print_color(id, print_team_default, "%s Use command ^4/tg^1 to send your feedback", PREFIX);
-            client_print_color(id, print_team_default, "%s Or contact admin directly in telegram ^4%s", PREFIX, ADMIN_TELEGRAM);
+            client_print_color(id, print_team_default, "%s %L", PREFIX, LANG_PLAYER, "SR_MENU_FEEDBACK");
+            client_print_color(id, print_team_default, "%s %L ^4%s", PREFIX, LANG_PLAYER, "SR_MENU_TELEGRAM", ADMIN_TELEGRAM);
             // client_print_color(id, print_team_default, "%s Send any problems and suggestions in telegram ^4%s", PREFIX, ADMIN_TELEGRAM);
         }
         case 10: {
