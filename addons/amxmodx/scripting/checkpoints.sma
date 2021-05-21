@@ -12,12 +12,12 @@ new const FL_ONGROUND2 = ( FL_ONGROUND | FL_PARTIALGROUND | FL_INWATER |  FL_CON
 new checknumbers[33]
 new gochecknumbers[33]
 new Float:Checkpoints[33][2][3]
-new kz_checkpoints
+new pCvar_checkpoints
 new bool:g_bCpAlternate[33]
 
 public plugin_init()
 {
-	kz_checkpoints = register_cvar("kz_checkpoints","1")
+	pCvar_checkpoints = register_cvar("checkpoints","1")
 
 	register_plugin("Checkpoints API", VERSION, "Lopol2010")
 	register_clcmd("cp","CheckPoint",0)
@@ -59,25 +59,25 @@ public CheckPoint(id)
 	
 	if( !is_user_alive( id ) )
 	{
-		client_print(id, print_chat, "%L", id, "KZ_NOT_ALIVE")
+		client_print(id, print_chat, "%L", id, "CP_NOT_ALIVE")
 		return PLUGIN_HANDLED
 	}
 	
-	if(get_pcvar_num(kz_checkpoints) == 0)
+	if(get_pcvar_num(pCvar_checkpoints) == 0)
 	{
-		client_print(id,  print_chat,"%L",  id,"KZ_CHECKPOINT_OFF")
+		client_print(id,  print_chat,"%L",  id, "CP_CHECKPOINT_OFF")
 		return PLUGIN_HANDLED
 	}
 
 	if( !( pev( id, pev_flags ) & FL_ONGROUND2 ) && !IsOnLadder(id))
 	{
-		client_print(id,  print_chat,"%L",  id,"KZ_CHECKPOINT_AIR")
+		client_print(id,  print_chat,"%L", id, "CP_CHECKPOINT_AIR")
 		return PLUGIN_HANDLED
 	}
 		
 	// if( IsPaused[id] )
 	// {
-	// 	client_print(id, "%L", id, "KZ_CHECKPOINT_PAUSE")
+	// 	client_print(id, "%L", id, "CP_CHECKPOINT_PAUSE")
 	// 	return PLUGIN_HANDLED
 	// }
 		
@@ -86,7 +86,7 @@ public CheckPoint(id)
 	checknumbers[id]++
 
 
-	client_print(id, print_chat, "%L", id, "KZ_CHECKPOINT", checknumbers[id])
+	client_print(id, print_chat, "%L", id, "CP_CHECKPOINT", checknumbers[id])
 
 	return PLUGIN_HANDLED
 }
@@ -95,19 +95,19 @@ public GoCheck(id)
 {
 	if( !is_user_alive( id ) )
 	{
-		client_print(id, print_chat, "%L",  id, "KZ_NOT_ALIVE")
+		client_print(id, print_chat, "%L",  id, "CP_NOT_ALIVE")
 		return PLUGIN_HANDLED
 	}
 
 	if( checknumbers[id] == 0  ) 
 	{
-		client_print(id,  print_chat,"%L",  id, "KZ_NOT_ENOUGH_CHECKPOINTS")
+		client_print(id,  print_chat,"%L",  id, "CP_NOT_ENOUGH_CHECKPOINTS")
 		return PLUGIN_HANDLED
 	}
 
 	// if( IsPaused[id] )
 	// {
-	// 	client_print(id,  print_chat,"%L", "KZ_TELEPORT_PAUSE")	
+	// 	client_print(id,  print_chat,"%L", "CP_TELEPORT_PAUSE")	
 	// 	return PLUGIN_HANDLED
 	// }
 	

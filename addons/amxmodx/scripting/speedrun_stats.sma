@@ -1,6 +1,5 @@
 /* 
     TODO: 
-        * copy main menu from nightjump
         * change time for map vote and time after map vote to 15 and 15
         * fix message on finish showing wrong time
         * set language automaticaly https://dev-cs.ru/resources/469/
@@ -8,13 +7,9 @@
                                     (remove AutoLang - seems not work)
         * check my notebook
         * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
-        * add antispam (maybe)
-
-        5.1 at the beginning only finish zone will be visible and with static size.
-        5.3 Do the same for start. (add visibility for start zone? and then resizing)
-
 
         // 5.3.1 how to check for player leaving start zone? possible solutions: 
+        //             4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
         //             1. see Box.sma (set_task) 
         //             2. using client_prethink and touch hooks 
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
@@ -22,6 +17,8 @@
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * add antispam (done by chatmanager_addon)
+        * copy main menu from nightjump
         * fixed bug with checkpoints
         * change "set a map record"
         * change timer appearence
