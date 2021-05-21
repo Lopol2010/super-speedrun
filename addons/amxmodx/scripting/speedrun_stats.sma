@@ -1,12 +1,17 @@
 /* 
     TODO: 
-        * check my notebook
-        * migrate toplist
-        * and then launch new plugins!
-        * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
-                So you move corners as if its 2D plane. 
-        * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
+        * set default lang [ru] (in amxx.cfg)
+        * add antispam (maybe)
+        * add voteban/kick for players
+        * fix message on finish showing wrong time
+        * copy main menu from nightjump
+        * change "set a map record"
+        * set language automaticaly https://dev-cs.ru/resources/469/
+                                    https://dev-cs.ru/resources/570/field?field=source
+                                    (remove AutoLang - seems not work)
         * change timer appearence
+        * check my notebook
+        * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
 
         5.1 at the beginning only finish zone will be visible and with static size.
         5.3 Do the same for start. (add visibility for start zone? and then resizing)
@@ -20,6 +25,10 @@
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
+                So you move corners as if its 2D plane. 
+        * and then launch new plugins!
+        * migrate toplist
         * Bugs & suggestions system. 
                     Get module that can work with telegram and create command for players 
                     like 'say @text' so that 'text' will be sended to admin's telegram. 

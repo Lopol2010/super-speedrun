@@ -40,7 +40,7 @@ public Command_Menu(id)
 
     new menu = menu_create("\wSuper Speedrun \rv1.0-beta", "Menu_Handler")
 
-    if(get_user_team(id) == TEAM_CT)
+    if(get_user_team(id) == 2)
     {
 
         if(get_checkpoints_count(id) < 1) 
@@ -114,9 +114,7 @@ public Menu_Handler(id, menu, item)
           return PLUGIN_HANDLED;
         } 
         case 5: {
-            // cs_set_user_team()
-            rg_set_user_team(id, TEAM_SPECTATOR);
-            user_kill(id);
+		    rg_join_team(id, TEAM_SPECTATOR);
         }
         case 6: {
             client_print_color(id, print_team_default, "%s %L", PREFIX, LANG_PLAYER, "SR_MENU_FEEDBACK");
@@ -124,8 +122,9 @@ public Menu_Handler(id, menu, item)
             // client_print_color(id, print_team_default, "%s Send any problems and suggestions in telegram ^4%s", PREFIX, ADMIN_TELEGRAM);
         }
         case 10: {
-            rg_round_respawn(id);
             rg_set_user_team(id, TEAM_CT);
+            rg_round_respawn(id);
+		    // HC_CBasePlayer_GiveDefaultItems(id);
         }
     }
     if(key != 9)
