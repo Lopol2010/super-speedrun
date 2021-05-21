@@ -47,7 +47,6 @@ public CmdStart(id, uc_handle)
                 // client_print(id, print_chat, "Your fps is %f. Player's fps that you see is %f.", fps_info[id][fps], fps_info[spec][fps]);
                 if(spec)
                 {
-
                     set_hudmessage(RED, GREEN, BLUE, 0.15, 0.15, 0, 0.0, UPDATE-0.01);
                     show_hudmessage(id, "FPS: %f", fps_info[spec][fps]);
                 }
