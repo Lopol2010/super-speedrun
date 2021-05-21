@@ -35,26 +35,26 @@ public plugin_init()
 
 public plugin_natives()
 {
-    register_native("is_hook_active","is_hook_active",1)
-    register_native("is_hook_allowed","is_hook_allowed",1)
+    register_native("is_hook_active","_is_hook_active",1)
+    register_native("is_hook_allowed","_is_hook_allowed",1)
     /* register_native("give_hook","give_hook",1) */
-    register_native("user_hook_enable","user_hook_enable",1)
-    register_native("is_time_after_hook_passed","is_time_after_hook_passed",1)
+    register_native("user_hook_enable","_user_hook_enable",1)
+    register_native("is_time_after_hook_passed","_is_time_after_hook_passed",1)
 }
-public bool:is_time_after_hook_passed(id, Float:time)
+public bool:_is_time_after_hook_passed(id, Float:time)
 {
     // server_print("%f %f %f", lastTimeHook[id], get_gametime(), (get_gametime() - lastTimeHook[id]))
     return lastTimeHook[id] < 0.0 ? true : ((get_gametime() - lastTimeHook[id]) >= time)
 }
-public is_hook_active(id)
+public _is_hook_active(id)
 {
     return ishooked[id]
 }
-public is_hook_allowed(id)
+public _is_hook_allowed(id)
 {
     return canusehook[id]
 }
-public user_hook_enable(id, bool:isEnabled)
+public _user_hook_enable(id, bool:isEnabled)
 {
     canusehook[id] = isEnabled
     if(!isEnabled) remove_hook(id)

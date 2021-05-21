@@ -1,8 +1,5 @@
 /* 
     TODO: 
-        * set default lang [ru] (in amxx.cfg)
-        * add antispam (maybe)
-        * add voteban/kick for players
         * fix message on finish showing wrong time
         * copy main menu from nightjump
         * change "set a map record"
@@ -12,6 +9,7 @@
         * change timer appearence
         * check my notebook
         * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
+        * add antispam (maybe)
 
         5.1 at the beginning only finish zone will be visible and with static size.
         5.3 Do the same for start. (add visibility for start zone? and then resizing)
@@ -25,6 +23,8 @@
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * ??? really need this ??? add voteban/kick for players
+        * set default lang [ru] (in amxx.cfg)
         * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
                 So you move corners as if its 2D plane. 
         * and then launch new plugins!
@@ -51,7 +51,7 @@
 #include <sqlx>
 #include <box_system>
 #include <checkpoints>
-#include <speedrun_hook>
+#include <speedrun>
 #include <hidemenu>
 #include <beams>
 #pragma loadlib sqlite
@@ -157,9 +157,6 @@ new bool:g_bStartButton;
 new Trie:g_tStarts;
 new Trie:g_tStops;
 
-native get_user_category(id);
-forward SR_PlayerOnStart(id);
-
 public plugin_init()
 {
     register_plugin(PLUGIN, VERSION, AUTHOR);
@@ -186,7 +183,7 @@ public plugin_init()
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
     
-    // CreateTimer();
+    CreateTimer();
 
     // Timer managed by buttons on the map
     g_tStarts = TrieCreate( );
@@ -213,12 +210,10 @@ public plugin_init()
 }
 public plugin_natives()
 {
-    register_native("sr_show_toplist", "sr_show_toplist");
+    register_native("sr_show_toplist", "_sr_show_toplist", 1);
 }
-public sr_show_toplist(plugin, argc)
+public _sr_show_toplist(id)
 {
-    enum { arg_id = 1 }
-    new id = get_param(arg_id);
     Command_Top15(id);
 }
 public FM_AddToFullPack_Post(const STATE/* = 0*/, e, ent, host, hostflags, player, set)
@@ -413,13 +408,13 @@ public Command_Update(id)
     
     return PLUGIN_CONTINUE;
 }
-// CreateTimer()
-// {
-//     new ent = create_entity("info_target");	
-//     set_entvar(ent, var_classname, "timer_think");
-//     set_entvar(ent, var_nextthink, get_gametime() + 1.0);	
-//     register_think("timer_think", "Think_Timer");
-// }
+CreateTimer()
+{
+    new ent = create_entity("info_target");	
+    set_entvar(ent, var_classname, "timer_think");
+    set_entvar(ent, var_nextthink, get_gametime() + 1.0);	
+    register_think("timer_think", "Think_Timer");
+}
 public DB_Init()
 {
     state mysql;
@@ -820,19 +815,22 @@ DrawLine(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color
     return beamEnt;
 }
 
-// public Think_Timer(ent)
-// {
-//     set_entvar(ent, var_nextthink, get_gametime() + 0.009);
+public Think_Timer(ent)
+{
+    set_entvar(ent, var_nextthink, get_gametime() + 0.009);
     
-//     for(new id = 1; id <= 32; id++)
-//     {
-//         if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished] && is_user_alive(id))
-//         {		
-//             display_time(id, get_running_time(id));
-
-//         }
-//     }
-// }
+    for(new id = 1; id <= 32; id++)
+    {
+        if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished] && is_user_alive(id))
+        {		
+            new iTime = get_running_time(id);
+            new szTime[32];
+            formatex(szTime, charsmax(szTime), "Time: %d:%02d.%03ds", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
+            set_dhudmessage(200, 200, 200, _, 0.70, _, _, 0.009, 0.0, 0.0);
+            show_dhudmessage(id, szTime);
+        }
+    }
+}
 
 public SR_PlayerOnStart(id)
 {
