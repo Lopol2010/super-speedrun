@@ -16,6 +16,7 @@ new g_Langs[MAX_LANGS_NUM][LANG], g_LangsNum;
 new g_DefaultLang;
 new g_PlayersSettings;
 new g_PlayersLang[MAX_PLAYERS + 1];
+new g_opened_once = false
 
 public plugin_init() {
 	register_plugin("Language Menu", "1.0", "F@nt0M");
@@ -69,7 +70,10 @@ public _show_langmenu(id)
     get_user_authid(id, authid, charsmax(authid));
     formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
     if(!nvault_get(g_PlayersSettings, opened_once))
+    {
         nvault_set(g_PlayersSettings, opened_once, "1");
+        g_opened_once = true;
+    }
     
 }
 
@@ -141,7 +145,7 @@ public CmdLangMenu(id) {
 	new len = formatex(menu, charsmax(menu), "\r%L^n^n", id, "LANG_MENU_TITLE");
 
 	for (new i = 0; i < g_LangsNum; i++) {
-		if (g_PlayersLang[id] == i) {
+		if (g_PlayersLang[id] == i && g_opened_once) {
 			len += formatex(menu[len], charsmax(menu) - len, "\r[\y%i\r]\d %s \y(%L)^n", i + 1, g_Langs[i][LANG_NAME], id, "LANG_MENU_CURRENT");
 		} else {
 			keys |= (1 << i);
