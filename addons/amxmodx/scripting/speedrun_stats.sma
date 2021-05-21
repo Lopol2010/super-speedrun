@@ -1,6 +1,5 @@
 /* 
     TODO: 
-        *fix can't start in the start of map (hook block)
         * fix message on finish showing wrong time
         * set language              https://dev-cs.ru/resources/469/
                                     https://dev-cs.ru/resources/570/field?field=source
@@ -15,6 +14,7 @@
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        *fix can't start in the start of map (hook block)
         * change time for map vote and time after map vote to 15 and 15
         // 5. start/stop zones are visible
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
