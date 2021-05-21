@@ -1,6 +1,5 @@
 /* 
     TODO: 
-        * change time for map vote and time after map vote to 15 and 15
         * fix message on finish showing wrong time
         * set language automaticaly https://dev-cs.ru/resources/469/
                                     https://dev-cs.ru/resources/570/field?field=source
@@ -13,10 +12,11 @@
         //             1. see Box.sma (set_task) 
         //             2. using client_prethink and touch hooks 
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
-        // 5. start/stop zones are visible
-        // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * change time for map vote and time after map vote to 15 and 15
+        // 5. start/stop zones are visible
+        // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         * add antispam (done by chatmanager_addon)
         * copy main menu from nightjump
         * fixed bug with checkpoints
