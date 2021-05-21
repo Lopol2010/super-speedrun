@@ -1,7 +1,8 @@
 /* 
     TODO: 
+        *fix can't start in the start of map (hook block)
         * fix message on finish showing wrong time
-        * set language automaticaly https://dev-cs.ru/resources/469/
+        * set language              https://dev-cs.ru/resources/469/
                                     https://dev-cs.ru/resources/570/field?field=source
                                     (remove AutoLang - seems not work)
         * check my notebook

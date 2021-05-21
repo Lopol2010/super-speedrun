@@ -43,7 +43,7 @@ public plugin_natives()
 }
 public bool:_is_time_after_hook_passed(id, Float:time)
 {
-    // server_print("%f %f %f", lastTimeHook[id], get_gametime(), (get_gametime() - lastTimeHook[id]))
+    server_print("%f %f %f", lastTimeHook[id], get_gametime(), (get_gametime() - lastTimeHook[id]))
     return lastTimeHook[id] < 0.0 ? true : ((get_gametime() - lastTimeHook[id]) >= time)
 }
 public _is_hook_active(id)
@@ -130,7 +130,6 @@ public hook_on(id)
 public hook_off(id)
 {
     remove_hook(id)
-    lastTimeHook[id] = get_gametime()
     
     return PLUGIN_HANDLED
 }
