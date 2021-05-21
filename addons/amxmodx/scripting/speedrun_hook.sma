@@ -147,9 +147,10 @@ public hook_task(id)
     new origin[3], Float:velocity[3]
     get_user_origin(id,origin)
     new distance = get_distance(hookorigin[id],origin)
-    velocity[0] = (hookorigin[id][0] - origin[0]) * (2.0 * get_pcvar_num(hook_speed) / distance)
-    velocity[1] = (hookorigin[id][1] - origin[1]) * (2.0 * get_pcvar_num(hook_speed) / distance)
-    velocity[2] = (hookorigin[id][2] - origin[2]) * (2.0 * get_pcvar_num(hook_speed) / distance)
+    
+    velocity[0] = (hookorigin[id][0] - origin[0]) * (get_pcvar_float(hook_speed) / distance)
+    velocity[1] = (hookorigin[id][1] - origin[1]) * (get_pcvar_float(hook_speed) / distance)
+    velocity[2] = (hookorigin[id][2] - origin[2]) * (get_pcvar_float(hook_speed) / distance)
         
     set_pev(id,pev_velocity,velocity)
 }
