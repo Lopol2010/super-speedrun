@@ -271,13 +271,10 @@ public plugin_natives()
     register_native("set_user_category", "_set_user_category", 1);
     register_native("rotate_user_category", "_rotate_user_category", 1);
     register_native("sr_command_spec", "Command_Spec", 1);
+    register_native("sr_command_start", "Command_Start", 1);
     register_native("test", "_test", 1);
 }
 
-public _test(id)
-{
-    server_print("test");
-}
 public _get_user_category(id)
 {
     return g_ePlayerInfo[id][m_iCategory];
@@ -352,7 +349,7 @@ public Command_Start(id)
     {
         ExecuteHamB(Ham_CS_RoundRespawn, id);
     }
-
+    reset_checkpoints(id);
     ExecuteForward(g_fwOnStart, g_iReturn, id);
 
     return PLUGIN_HANDLED;

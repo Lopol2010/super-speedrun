@@ -2,24 +2,26 @@
 SR_MENU_CHECKPOINT = Сохранить позицию 
 SR_MENU_GOCHECK = Загрузить позицию
 SR_MENU_CATEGORY  = Категория
+SR_MENU_RESTART = Рестарт
 SR_MENU_STATISTICS = Статистика
-SR_MENU_FPS  = Настройка производительности
+SR_MENU_FPS  = Настройки
 SR_MENU_SPEC  = В наблюдатели
 SR_MENU_JOINCT = Вернутся в игру
-SR_MENU_CONTACT  = Связь с администрацией
+SR_MENU_CONTACT  = Контакты
 SR_MENU_CLOSE = Закрыть
 SR_MENU_FEEDBACK = Используйте команду ^4/tg^1 чтобы оставить сообщение администрации
 SR_MENU_TELEGRAM = Или пишите напрямую в телеграм
 
-SR_TIME_WR_BY = и побил рекорд карты на
-SR_TIME_WR_FIRST = установил рекорд карты!
-SR_TIME_FINISH = финишировал за
+SR_TIME_FINISH = ^3%s^1 финишировал за ^3%s
+SR_TIME_WR_FIRST = ^3%s^1 финишировал за ^3%s^1 и установил рекорд карты!
+SR_TIME_WR_BY = ^3%s^1 Побил рекорд карты на ^4%s
 
 
 [en]
 SR_MENU_CHECKPOINT = Checkpoint
 SR_MENU_GOCHECK = Gocheck
 SR_MENU_CATEGORY  = Category 
+SR_MENU_RESTART = Restart
 SR_MENU_STATISTICS = Statistics
 SR_MENU_FPS  = FPS Settings
 SR_MENU_SPEC  = Go Spectator
@@ -29,6 +31,6 @@ SR_MENU_CLOSE = Exit
 SR_MENU_FEEDBACK = Use command ^4/tg^1 to send your feedback
 SR_MENU_TELEGRAM = Or contact admin directly in telegram 
 
-SR_TIME_WR_BY = and broke map record by 
-SR_TIME_WR_FIRST = set a map record!
-SR_TIME_FINISH = finish in 
+SR_TIME_FINISH = ^3%s^1 finish in ^3%s
+SR_TIME_WR_FIRST = ^3%s^1 finish in ^3%s^1 and set a map record!
+SR_TIME_WR_BY = ^3%s^1 and broke map record by ^4%s

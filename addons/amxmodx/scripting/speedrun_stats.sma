@@ -1,12 +1,11 @@
 /* 
     TODO: 
-        * fix message on finish showing wrong time
         * copy main menu from nightjump
-        * change "set a map record"
+        * change time for map vote and time after map vote to 15 and 15
+        * fix message on finish showing wrong time
         * set language automaticaly https://dev-cs.ru/resources/469/
                                     https://dev-cs.ru/resources/570/field?field=source
                                     (remove AutoLang - seems not work)
-        * change timer appearence
         * check my notebook
         * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
         * add antispam (maybe)
@@ -23,6 +22,9 @@
         // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * fixed bug with checkpoints
+        * change "set a map record"
+        * change timer appearence
         * ??? really need this ??? add voteban/kick for players
         * set default lang [ru] (in amxx.cfg)
         * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
@@ -220,7 +222,7 @@ public _sr_get_timer_display_text(plugin, argc)
     {		
         new iTime = get_running_time(id);
         new szTime[32];
-        formatex(szTime, charsmax(szTime), "Time: %d:%02d.%03ds", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
+        formatex(szTime, charsmax(szTime), "Time: %d:%02d.%03d", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
 
         set_string(arg_text, szTime, len);
     }
@@ -897,6 +899,7 @@ Forward_PlayerFinished(id)
     new iTime = get_running_time(id);
     new category = get_user_category(id);
     new szTime[32]; get_formated_time_smart(iTime, szTime, charsmax(szTime));
+    new szTimeDelta[32]; get_formated_time_smart(g_iBestTimeofMap[category] - iTime, szTimeDelta, charsmax(szTimeDelta));
     
     new szName[32]; get_user_name(id, szName, charsmax(szName));
 
@@ -911,7 +914,7 @@ Forward_PlayerFinished(id)
     }
     else if(g_iBestTime[id][category] > iTime)
     {
-        get_formated_time(g_iBestTime[id][category] - iTime, szTime, charsmax(szTime));
+        // get_formated_time(g_iBestTime[id][category] - iTime, szTime, charsmax(szTime));
         // console_print(id, "%s Own record: -%s!", g_szCategory[category], szTime);
         // client_print_color(id, print_team_default, "%s Own record: -%s!", g_szCategory[category], szTime);
         SaveRunnerData(id, category, iTime);
@@ -928,18 +931,18 @@ Forward_PlayerFinished(id)
     
     if(g_iBestTimeofMap[category] == 0 || g_iBestTimeofMap[category] > iTime)
     {
-        get_formated_time_smart(iTime, szTime, charsmax(szTime));
-        new szTimeDelta[32];
+        // get_formated_time_smart(iTime, szTime, charsmax(szTime));
         if(g_iBestTimeofMap[category] > 0)
         {
-            get_formated_time_smart(g_iBestTimeofMap[category] - iTime, szTimeDelta, charsmax(szTimeDelta));
-            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 %L ^3%s^1 %L ^4%s", 
-                g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_FINISH", szTime, LANG_PLAYER, "SR_TIME_WR_BY", szTimeDelta);
+            client_print_color(0, print_team_blue, "^4[^1%s^4] %L", 
+                g_szCategory[category], LANG_PLAYER, "SR_TIME_FINISH", szName, szTime);
+            client_print_color(0, print_team_default, "^4[^1%s^4] %L", 
+                g_szCategory[category], LANG_PLAYER, "SR_TIME_WR_BY", szName, szTimeDelta);
         } 
         else 
         {
-            client_print_color(0, print_team_default, "^4[^1%s^4]^3 %s^1 %L", 
-                g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_WR_FIRST");
+            client_print_color(0, print_team_blue, "^4[^1%s^4] %L", 
+                g_szCategory[category], LANG_PLAYER, "SR_TIME_WR_FIRST", szName, szTime);
         }
         
         g_iBestTimeofMap[category] = iTime;
@@ -951,8 +954,8 @@ Forward_PlayerFinished(id)
         // get_formated_time_smart(g_iBestTimeofMap[category] - iTime, szTimeDelta, charsmax(szTimeDelta));
         // get_formated_time(iTime - g_iBestTimeofMap[category], szTime, charsmax(szTime));
         // console_print(id, "%s Map record: +%s!", g_szCategory[category], szTime);
-        client_print_color(0, print_team_blue, "^4[^1%s^4] ^3%s^1 %L ^3%s", 
-            g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_FINISH", szTime);
+        client_print_color(0, print_team_blue, "^4[^1%s^4] %L", 
+            g_szCategory[category], LANG_PLAYER, "SR_TIME_FINISH", szName, szTime);
     }
     if(record)
     {
@@ -966,6 +969,7 @@ Forward_PlayerFinished(id)
         }
         else
         {
+            client_cmd(0, "spk buttons/bell1");
             // client_cmd(0, "spk buttons/spark1");
         }
     }
