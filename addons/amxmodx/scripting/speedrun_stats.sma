@@ -164,7 +164,7 @@ public plugin_init()
     g_pCvars[SQL_HOST] = register_cvar("speedrun_host", "127.0.0.1");
     g_pCvars[SQL_USER] = register_cvar("speedrun_user", "root");
     g_pCvars[SQL_PASSWORD] = register_cvar("speedrun_password", "root");
-    g_pCvars[SQL_DATABASE] = register_cvar("speedrun_database", "speedrun");
+    g_pCvars[SQL_DATABASE] = register_cvar("speedrun_database", "speedrun_stats.db");
     
     register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
     register_clcmd("setfinish", "Command_SetFinish", ADMIN_CFG);
