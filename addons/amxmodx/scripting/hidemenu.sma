@@ -74,6 +74,9 @@ public plugin_init()
 	register_forward(FM_AddToFullPack, "FM_client_AddToFullPack_Post", 1) 
 
 	register_clcmd("say /hide", "HideMenu");
+	register_clcmd("say /invis", "HideMenu");
+	register_clcmd("say_team /hide", "HideMenu");
+	register_clcmd("say_team /invis", "HideMenu");
 
 	g_msgHideWeapon = get_user_msgid("HideWeapon")
 	register_event("ResetHUD", "onResetHUD", "b")
