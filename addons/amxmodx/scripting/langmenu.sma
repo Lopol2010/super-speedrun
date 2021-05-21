@@ -59,19 +59,26 @@ public plugin_cfg() {
 public plugin_natives()
 {
     register_native("is_langmenu_shown", "_is_langmenu_shown", 1);
-    register_native("show_langmenu", "CmdLangMenu", 1);
+    register_native("show_langmenu", "_show_langmenu", 1);
 }
 
-// public _show_langmenu(id)
-// {
-//     CmdLangMenu()
-// }
+public _show_langmenu(id)
+{
+    CmdLangMenu(id);
+    new authid[24], opened_once[40];
+    get_user_authid(id, authid, charsmax(authid));
+    formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
+    if(!nvault_get(g_PlayersSettings, opened_once))
+        nvault_set(g_PlayersSettings, opened_once, "1");
+    
+}
 
 public _is_langmenu_shown(id)
 {
-	new authid[24], langKey[MAX_LANG_KEY_LENGTH + 1], lang;
-	get_user_authid(id, authid, charsmax(authid));
-    return nvault_lookup(g_PlayersSettings, authid, langKey, charsmax(langKey), lang)
+    new authid[24], opened_once[40], lang, langKey[3];
+    get_user_authid(id, authid, charsmax(authid));
+    formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
+    return nvault_lookup(g_PlayersSettings, opened_once, langKey, charsmax(langKey), lang)
 }
 
 public plugin_end() {
