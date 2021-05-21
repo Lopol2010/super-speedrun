@@ -38,7 +38,16 @@ public _main_menu_display(id)
 public HC_CBasePlayer_Spawn_Post(id)
 {
     if(is_user_alive(id))
-        Command_Menu(id);
+    {
+        if(is_langmenu_shown(id))
+        {
+            Command_Menu(id);
+        }
+        else
+        {
+            show_langmenu(id);
+        }
+    }
 }
 public Command_Menu(id)
 {

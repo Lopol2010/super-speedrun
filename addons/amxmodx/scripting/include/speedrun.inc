@@ -21,3 +21,6 @@ native is_hook_allowed(id);
 native user_hook_enable(id, isEnabled);
 native bool:is_time_after_hook_passed(id, Float:time);
 forward OnHookStart(id);
+
+native is_langmenu_shown(id);
+native show_langmenu(id);

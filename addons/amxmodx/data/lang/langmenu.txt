@@ -1,0 +1,17 @@
+[en]
+LANG_MENU_TITLE = Choose Language \y/lang
+LANG_MENU_CURRENT = Current
+LANG_MENU_CANCEL = Cancel
+LANG_MENU_SAVED = ^3[^4LANG^3] ^1Your language was saved
+
+[ru]
+LANG_MENU_TITLE = Выберите Язык \y/lang
+LANG_MENU_CURRENT = Текущий
+LANG_MENU_CANCEL = Отмена
+LANG_MENU_SAVED = ^3[^4LANG^3] ^1Ваш язык был сохранен
+
+[ua]
+LANG_MENU_TITLE = Виберіть Мову \y/lang
+LANG_MENU_CURRENT = Поточна
+LANG_MENU_CANCEL = Скасувати
+LANG_MENU_SAVED = ^3[^4LANG^3] ^1Вашу мову було збережено
