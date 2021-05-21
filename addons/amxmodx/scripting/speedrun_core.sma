@@ -272,7 +272,6 @@ public plugin_natives()
     register_native("rotate_user_category", "_rotate_user_category", 1);
     register_native("sr_command_spec", "Command_Spec", 1);
     register_native("sr_command_start", "Command_Start", 1);
-    register_native("test", "_test", 1);
 }
 
 public _get_user_category(id)
