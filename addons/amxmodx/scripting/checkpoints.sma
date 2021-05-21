@@ -25,8 +25,7 @@ public plugin_init()
 	register_clcmd("say /cp","CheckPoint")
 	register_clcmd("say /gc", "GoCheck")
 
-	register_dictionary("prokreedz.txt")
-
+	register_dictionary("checkpoints.txt")
 }
 
 public plugin_natives()
