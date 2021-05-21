@@ -183,8 +183,6 @@ public plugin_init()
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
     
-    CreateTimer();
-
     // Timer managed by buttons on the map
     g_tStarts = TrieCreate( );
     g_tStops  = TrieCreate( );
@@ -211,6 +209,21 @@ public plugin_init()
 public plugin_natives()
 {
     register_native("sr_show_toplist", "_sr_show_toplist", 1);
+    register_native("sr_get_timer_display_text", "_sr_get_timer_display_text");
+}
+public _sr_get_timer_display_text(plugin, argc)
+{
+    enum { arg_id = 1, arg_text = 2, arg_len = 3 }
+    new id = get_param(arg_id);
+    new len = get_param(arg_len);
+    if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished] && is_user_alive(id))
+    {		
+        new iTime = get_running_time(id);
+        new szTime[32];
+        formatex(szTime, charsmax(szTime), "Time: %d:%02d.%03ds", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
+
+        set_string(arg_text, szTime, len);
+    }
 }
 public _sr_show_toplist(id)
 {
@@ -407,13 +420,6 @@ public Command_Update(id)
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
     
     return PLUGIN_CONTINUE;
-}
-CreateTimer()
-{
-    new ent = create_entity("info_target");	
-    set_entvar(ent, var_classname, "timer_think");
-    set_entvar(ent, var_nextthink, get_gametime() + 1.0);	
-    register_think("timer_think", "Think_Timer");
 }
 public DB_Init()
 {
@@ -813,23 +819,6 @@ DrawLine(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color
     Beam_SetBrightness(beamEnt, 200.0);
     Beam_SetColor(beamEnt, color);
     return beamEnt;
-}
-
-public Think_Timer(ent)
-{
-    set_entvar(ent, var_nextthink, get_gametime() + 0.009);
-    
-    for(new id = 1; id <= 32; id++)
-    {
-        if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished] && is_user_alive(id))
-        {		
-            new iTime = get_running_time(id);
-            new szTime[32];
-            formatex(szTime, charsmax(szTime), "Time: %d:%02d.%03ds", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
-            set_dhudmessage(200, 200, 200, _, 0.70, _, _, 0.009, 0.0, 0.0);
-            show_dhudmessage(id, szTime);
-        }
-    }
 }
 
 public SR_PlayerOnStart(id)

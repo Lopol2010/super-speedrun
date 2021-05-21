@@ -1,4 +1,5 @@
 #include <amxmodx>
+#include <engine>
 #include <fakemeta>
 #include <hamsandwich>
 #include <reapi>
@@ -69,6 +70,7 @@ new g_fwChangedCategory;
 new g_fwOnStart;
 new g_iReturn;
 new Float:g_fSavedOrigin[33][3], Float:g_fSavedVAngles[33][3];
+new Trie:g_tRemoveEntities, g_iForwardSpawn;
 
 public plugin_init()
 {
@@ -113,7 +115,8 @@ public plugin_init()
 
     g_iSyncHudSpeed = CreateHudSyncObj();
 
-    set_task(0.1, "Task_ShowSpeed", TASK_SHOWSPEED, .flags = "b");
+    // set_task(0.1, "Task_ShowSpeed", TASK_SHOWSPEED, .flags = "b");
+    CreateHudThink();
     set_task(1.0, "Task_CheckFrames", TASK_CHECKFRAMES, .flags = "b");
 
     set_cvar_num("mp_autoteambalance", 0);
@@ -125,8 +128,13 @@ public plugin_init()
 
     register_dictionary("speedrun.txt");
 }
-new Trie:g_tRemoveEntities, g_iForwardSpawn;
-
+CreateHudThink()
+{
+    new ent = create_entity("info_target");	
+    set_entvar(ent, var_classname, "timer_think");
+    set_entvar(ent, var_nextthink, get_gametime() + 1.0);	
+    register_think("timer_think", "Think_Hud");
+}
 public SR_ChangedCategory(id, cat)
 {
 
@@ -645,9 +653,12 @@ public FM_ClientKill_Pre(id)
     return FMRES_SUPERCEDE;
 }
 //*******************************************************************//
-public Task_ShowSpeed()
+public Think_Hud(ent)
 {
-    new Float:fSpeed, Float:fVelocity[3], iSpecMode;
+    new Float:rate = 0.091;
+    set_entvar(ent, var_nextthink, get_gametime() + rate);
+
+    new Float:fSpeed, Float:fVelocity[3], iSpecMode, szTime[32];
     for(new id = 1, target; id <= MAX_PLAYERS; id++)
     {
         if(!g_ePlayerInfo[id][m_bSpeed]) continue;
@@ -658,10 +669,10 @@ public Task_ShowSpeed()
 
         fSpeed = vector_length(fVelocity);
 
-        // set_dhudmessage(0, 55, 255, -1.0, 0.7, 0, _, 0.1, 0.0, 0.0);
-        // show_dhudmessage(id, "%3.2f", fSpeed);
-        set_hudmessage(0, 55, 255, -1.0, 0.7, 0, _, 0.1, _, _, 2);
-        ShowSyncHudMsg(id, g_iSyncHudSpeed, "%3.2f", fSpeed);
+        sr_get_timer_display_text(id, szTime, charsmax(szTime));
+
+        set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, 2);
+        ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s^n%3.2f", szTime, fSpeed);
     }
 }
 public Task_CheckFrames()
