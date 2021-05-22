@@ -1,7 +1,12 @@
 /* 
     TODO: 
+        * allow use /save menu for maps with buttons
+        * world record bot (do a research on that, https://dev-cs.ru/resources/142/)
         * fix message on finish showing wrong time
-        * set language              https://dev-cs.ru/resources/469/
+        * set language automaticaly with sxGeo and:
+            or ask Kushfield how to implement that. 
+            Or see myself how it works on his server
+                                    https://dev-cs.ru/resources/469/
                                     https://dev-cs.ru/resources/570/field?field=source
                                     (remove AutoLang - seems not work)
         * check my notebook

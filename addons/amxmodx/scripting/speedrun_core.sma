@@ -392,8 +392,7 @@ public Command_BlockJointeam(id)
 }
 public Command_Chooseteam(id)
 {
-    /* client_print_color(id, print_team_default, "%s^1 Sometime there will be menu.", PREFIX); */
-    client_cmd(id, "say /menu");
+    main_menu_display(id);
     return PLUGIN_HANDLED;
 }
 public Command_Category2k(id)
