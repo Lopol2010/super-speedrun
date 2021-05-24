@@ -39,7 +39,7 @@ public HC_CBasePlayer_Spawn_Post(id)
 {
     if(is_user_alive(id))
     {
-        if(is_langmenu_shown(id))
+        if(is_langmenu_ever_shown(id))
         {
             Command_Menu(id);
         }
