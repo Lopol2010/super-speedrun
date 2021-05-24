@@ -164,6 +164,13 @@ public HideMenu(id)
 	menu_display(id, g_menu)
 	return PLUGIN_HANDLED
 }
+public client_disconnected(id)
+{
+    g_weaponHidden[id] = false
+    gViewInvisible[id] = false
+    gWaterInvisible[id] = false
+    g_viewmodel[id] = false
+}
 public HideMenu_Handler(id, menu, key)
 {
 	if( key == MENU_EXIT )
