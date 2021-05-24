@@ -59,53 +59,53 @@ public Command_Menu(id)
     {
 
         if(get_checkpoints_count(id) < 1) 
-            formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CHECKPOINT");
+            formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CHECKPOINT");
         else
-            formatex(szMenu, charsmax(szMenu), "%L \y#%d", LANG_PLAYER, "SR_MENU_CHECKPOINT", get_checkpoints_count(id));
+            formatex(szMenu, charsmax(szMenu), "%L \y#%d", id, "SR_MENU_CHECKPOINT", get_checkpoints_count(id));
         menu_additem(menu, szMenu, "0");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_GOCHECK");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_GOCHECK");
         menu_additem(menu, szMenu, "1");
 
         menu_addblank2(menu);
 
-        formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", LANG_PLAYER, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
+        formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", id, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
         menu_additem(menu, szMenu, "2");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_RESTART");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_RESTART");
         menu_additem(menu, szMenu, "7");
         
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_SPEC");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_SPEC");
         menu_additem(menu, szMenu, "5");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_STATISTICS");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_STATISTICS");
         menu_additem(menu, szMenu, "3");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_FPS");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_FPS");
         menu_additem(menu, szMenu, "4");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CONTACT");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CONTACT");
         menu_additem(menu, szMenu, "6");
     }
     else
     {
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_JOINCT");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_JOINCT");
         menu_additem(menu, szMenu, "10");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_STATISTICS");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_STATISTICS");
         menu_additem(menu, szMenu, "3");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_FPS");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_FPS");
         menu_additem(menu, szMenu, "4");
 
-        formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", LANG_PLAYER, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
+        formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", id, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
         menu_additem(menu, szMenu, "2");
 
-        formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CONTACT");
+        formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CONTACT");
         menu_additem(menu, szMenu, "6");
     }
     
-    formatex(szMenu, charsmax(szMenu), "%L", LANG_PLAYER, "SR_MENU_CLOSE");
+    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CLOSE");
     menu_setprop(menu, MPROP_EXITNAME, szMenu);
     menu_setprop(menu, MPROP_EXIT, MEXIT_FORCE);                // Force an EXIT item since pagination is disabled.
     menu_setprop(menu, MPROP_PERPAGE, 0);
@@ -136,8 +136,8 @@ public Menu_Handler(id, menu, item)
             sr_command_spec(id);
         }
         case 6: {
-            client_print_color(id, print_team_default, "%s %L", PREFIX, LANG_PLAYER, "SR_MENU_FEEDBACK");
-            client_print_color(id, print_team_default, "%s %L ^4%s", PREFIX, LANG_PLAYER, "SR_MENU_TELEGRAM", ADMIN_TELEGRAM);
+            client_print_color(id, print_team_default, "%s %L", PREFIX, id, "SR_MENU_FEEDBACK");
+            client_print_color(id, print_team_default, "%s %L ^4%s", PREFIX, id, "SR_MENU_TELEGRAM", ADMIN_TELEGRAM);
             // client_print_color(id, print_team_default, "%s Send any problems and suggestions in telegram ^4%s", PREFIX, ADMIN_TELEGRAM);
         }
         case 7: {

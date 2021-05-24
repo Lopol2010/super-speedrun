@@ -1,5 +1,17 @@
 /* 
     TODO: 
+        * multilang for remaining client_prints
+        * see if multilang will work if comment out multilang.amxx
+        * add map ds_ice
+        * fix invis menu after reconnect still hides things
+        * add server to monitorings
+        * fix bug with language not set correctly! (probably need replace LANG_PLAYER to ids)
+        * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
+        * add plugin to freeze entites, for example dooors
+        * add plugin to remove entities
+        * fix weapon hidding (not work properly)
+        * fix timer on speedrun maps (it starts earlier than should)
+        * add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
         * allow use /save menu for maps with buttons
         * world record bot (do a research on that, https://dev-cs.ru/resources/142/)
         * fix message on finish showing wrong time

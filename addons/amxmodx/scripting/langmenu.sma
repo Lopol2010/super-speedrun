@@ -55,6 +55,15 @@ public plugin_cfg() {
 	if (days > 0 && g_PlayersSettings != INVALID_HANDLE) {
 		nvault_prune( g_PlayersSettings , 0 , get_systime() - (days * 86400)); 
 	}
+    
+    new authid[24], opened_once[40];
+    get_user_authid(id, authid, charsmax(authid));
+    formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
+    if(!nvault_get(g_PlayersSettings, opened_once))
+    {
+        nvault_set(g_PlayersSettings, opened_once, "1");
+        g_opened_once = true;
+    }
 }
 
 public plugin_natives()
@@ -66,14 +75,6 @@ public plugin_natives()
 public _show_langmenu(id)
 {
     CmdLangMenu(id);
-    new authid[24], opened_once[40];
-    get_user_authid(id, authid, charsmax(authid));
-    formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
-    if(!nvault_get(g_PlayersSettings, opened_once))
-    {
-        nvault_set(g_PlayersSettings, opened_once, "1");
-        g_opened_once = true;
-    }
     
 }
 
