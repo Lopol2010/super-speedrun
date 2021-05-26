@@ -141,12 +141,10 @@ public SR_ChangedCategory(id, cat)
     if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
 
     strip_user_weapons(id);
-    if(!is_weapon_hidden(id))
-    {
-        give_item(id,"weapon_knife");
-        give_item(id,"weapon_usp");
-        rg_set_user_bpammo(id, WEAPON_USP, 24);
-    }
+    rg_give_item(id,"weapon_knife");
+    rg_give_item(id,"weapon_usp");
+    rg_set_user_bpammo(id, WEAPON_USP, 24);
+    
     reset_checkpoints(id);
 }
 

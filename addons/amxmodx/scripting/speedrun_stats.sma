@@ -1,11 +1,9 @@
 /* 
     TODO: 
         * multilang for remaining client_prints
-        * see if multilang will work if comment out multilang.amxx
-        * add map ds_ice
         * add server to monitorings
-        * fix bug with language not set correctly! (probably need replace LANG_PLAYER to ids)
         * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
+                поллучить ответ https://dev-cs.ru/threads/2457/page-44
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities
         * fix weapon hidding (not work properly)
@@ -30,6 +28,9 @@
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * add map ds_ice (also big speedrun pack)
+        * comment out multilang.amxx
+        * fix bug with language not set correctly! (probably need replace LANG_PLAYER to ids)
         * fix invis menu after reconnect still hides things
         *fix can't start in the start of map (hook block)
         * change time for map vote and time after map vote to 15 and 15
@@ -299,12 +300,9 @@ public fwdUse(ent, id)
 
         strip_user_weapons(id);
 
-        if(!is_weapon_hidden(id))
-        {
-            give_item(id,"weapon_knife");
-            give_item(id,"weapon_usp");
-            rg_set_user_bpammo(id, WEAPON_USP, 24);
-        }
+        rg_give_item(id, "weapon_knife");
+        rg_give_item(id, "weapon_usp");
+        rg_set_user_bpammo(id, WEAPON_USP, 24);
     }
     
     if( TrieKeyExists( g_tStops, szTarget ) )
