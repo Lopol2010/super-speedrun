@@ -1,12 +1,11 @@
 /* 
     TODO: 
-        * multilang for remaining client_prints
-        * add server to monitorings
         * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
                 поллучить ответ https://dev-cs.ru/threads/2457/page-44
+        * multilang for remaining client_prints
+        * add server to monitorings
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities
-        * fix weapon hidding (not work properly)
         * fix timer on speedrun maps (it starts earlier than should)
         * add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
         * allow use /save menu for maps with buttons
@@ -28,6 +27,7 @@
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * fix weapon hidding (not work properly)
         * add map ds_ice (also big speedrun pack)
         * comment out multilang.amxx
         * fix bug with language not set correctly! (probably need replace LANG_PLAYER to ids)
