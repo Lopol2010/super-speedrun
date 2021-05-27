@@ -1,7 +1,10 @@
 /* 
     TODO: 
+        * стала слишком долгая интермиссия
+                возможные причины: 1. отключить все плагины и проверить 2. нехватает места на диске (сейчас 93% занято было, команда df для проверки на ubuntu)
         * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
                 поллучить ответ https://dev-cs.ru/threads/2457/page-44
+                ОТВЕТ: переписал сам scheduler, юзать mapm_intermission_delay и mp_chattime
         * multilang for remaining client_prints
         * add server to monitorings
         * add plugin to freeze entites, for example dooors
