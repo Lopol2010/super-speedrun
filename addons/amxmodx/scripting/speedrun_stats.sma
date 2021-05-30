@@ -2,7 +2,6 @@
     TODO: 
         * add bhop_bloody , clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
-        * добавить nightvision
         * стала слишком долгая интермиссия
                 взять тестовый сервак помощнее, проверить как он справиться со сменой карты https://www.ipserver.su/ru/page/tos
                 через htop видно загрузка проца на 100% возможно он не вывозит?
@@ -10,11 +9,7 @@
                 отключить все плагины и проверить (6 sec стало, 5 сек без pluigns.ini но с map-manager, наоборот тоже 5сек)
                 если это не помогло, отключать модули
                 возможные причины: 1. отключить все плагины и проверить 2. нехватает места на диске (сейчас 93% занято было, команда df для проверки на ubuntu)
-        * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
-                поллучить ответ https://dev-cs.ru/threads/2457/page-44
-                ОТВЕТ: переписал сам scheduler, юзать mapm_intermission_delay и mp_chattime
         * multilang for remaining client_prints
-        * add server to monitorings
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities
         * fix timer on speedrun maps (it starts earlier than should)
@@ -38,6 +33,11 @@
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * add server to monitorings
+        * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
+                поллучить ответ https://dev-cs.ru/threads/2457/page-44
+                ОТВЕТ: переписал сам scheduler, юзать mapm_intermission_delay и mp_chattime
+        * добавить nightvision
         * player can't join at speedrun_rqnjar (see if its not enough spawns, maybe should enable kz_auto_add_spawns...)
         * fix weapon hidding (not work properly)
         * add map ds_ice (also big speedrun pack)
