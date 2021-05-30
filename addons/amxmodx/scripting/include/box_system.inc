@@ -26,6 +26,11 @@ forward box_touch(box, ent, const szClass[]);
 forward box_created(ent, const szClass[]);
 
 /**
+ * Called after box resized
+ */
+forward box_resized(ent, const szClass[]);
+
+/**
  * Called before box uninitialization
  */
 forward box_deleted(ent, const szClass[]);

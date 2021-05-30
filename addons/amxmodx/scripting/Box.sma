@@ -56,6 +56,7 @@ new fwOnStartTouch;
 new fwOnStopTouch;
 new fwOnTouch;
 new fwOnCreate;
+new fwOnResize;
 new fwOnDelete;
 
 
@@ -79,6 +80,7 @@ public plugin_init()
     fwOnStopTouch = CreateMultiForward("box_stop_touch", ET_STOP, FP_CELL, FP_CELL, FP_STRING);
     fwOnTouch = CreateMultiForward("box_touch", ET_STOP, FP_CELL, FP_CELL, FP_STRING);
     fwOnCreate = CreateMultiForward("box_created", ET_STOP, FP_CELL, FP_STRING);
+    fwOnResize = CreateMultiForward("box_resized", ET_STOP, FP_CELL, FP_STRING);
     fwOnDelete = CreateMultiForward("box_deleted", ET_STOP, FP_CELL, FP_STRING);
     
     register_clcmd("radio1", "cmdUndo", ADMIN_CFG);
@@ -686,15 +688,12 @@ TracelineThroughAnchor(id, ent, Float:hit[3])
     xs_vec_copy(fOrigin, start);
     xs_vec_copy(fVec, end);
 
-    // new Float:fViewDir[3];
-    // angle_vector(fViewDir, ANGLEVECTOR_FORWARD, fViewDir);
-    // xs_vec_mul_scalar(fViewDir, 32.0, fViewDir);
-    // xs_vec_add(start, fViewDir, start);
 
+    // SNIPPET SOURCE: https://forums.alliedmods.net/showpost.php?p=1399838&postcount=5
+    // Traceline through multiple obstacles, in this case through player and anchor, then hit what's behind them.
     new iTraceHit; // hitted entity
     new iEntToIgnore = id; // this would change at every trace
     new iTraceHandle = create_tr2(); // trace handle
-    new bPrevHitAnchor = false;
     new iMaxTraces = 3, iCurTraceNum = 0;
 
     while(engfunc(EngFunc_TraceLine, start, end, IGNORE_MONSTERS | IGNORE_MISSILE, iEntToIgnore, iTraceHandle)) // will always return 1, see engfunc.cpp
@@ -705,17 +704,8 @@ TracelineThroughAnchor(id, ent, Float:hit[3])
         if(get_global_float(GL_trace_fraction) >= 1.0) // the traceline finished at the original end position, so we will stop here
             break;
 
-        // if(bPrevHitAnchor)
-        //     break;
-
         if(iTraceHit != ent)
             break;
-            // bPrevHitAnchor = true;
-        
-        // if(!is_user_alive(iTraceHit) && iTraceHit != ent) // if you want to stop the traceline when it hits a wall, use this
-        //     break;
-            
-        // your functions here
         
         // the next traceline will start at the end of the last one
         iEntToIgnore = iTraceHit;
@@ -768,8 +758,8 @@ BOX_AnchorMoveProcess(id, ent)
     new Float:fVec2[3];
     pev(ent2, pev_origin, fVec2);
     
-    client_print(id, print_chat, "fVec %f %f %f", fVec[0], fVec[1], fVec[2]);
-    client_print(id, print_chat, "fVec2 %f %f %f", fVec2[0], fVec2[1], fVec2[2]);
+    // client_print(id, print_chat, "fVec %f %f %f", fVec[0], fVec[1], fVec[2]);
+    // client_print(id, print_chat, "fVec2 %f %f %f", fVec2[0], fVec2[1], fVec2[2]);
     BOX_UpdateSize(box, fVec, fVec2, num1);
 }
 
@@ -781,8 +771,9 @@ BOX_AnchorMoveProcessSticky(id, ent)
     new Float:hit[3];
     TracelineThroughAnchor(id, ent, hit);
 
-    client_print(id, print_chat, "hit %f %f %f", hit[0], hit[1], hit[2]);
+    // client_print(id, print_chat, "hit %f %f %f", hit[0], hit[1], hit[2]);
     
+    hit[2] += 2.0;
     set_pev(ent, pev_origin, hit);	
     
     new box = pev(ent, pev_owner);
@@ -828,6 +819,15 @@ BOX_UpdateSize(box, const Float:fVec[3], const Float:fVec2[3], anchor = -1)
     
     entity_set_origin(box, fOrigin);
     entity_set_size(box, fMins, fMaxs);
+
+    new szClass[32];
+    pev(box, PEV_TYPE, szClass, 31);
+
+    new iRet;
+    if(!ExecuteForward(fwOnResize, iRet, box, szClass))
+    {
+        
+    }
 }
 
 BOX_AnchorMoveMark(id, ent)

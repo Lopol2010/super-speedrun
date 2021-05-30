@@ -1,5 +1,11 @@
 /* 
     TODO: 
+        * расставить зона на спидран картах
+        * box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
+        * ?? box_system add more precise modify-mode, such as moving in 1 unit in certain direction 
+        * ?? box_system when move in sticky mode, anchor should have offset from target normal (now its only z-axis)
+        * delete finish stuff from database
+        * рефактор кода отрисовки зон старта финиши, продумать.
         * add bhop_bloody , clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
         * стала слишком долгая интермиссия
@@ -97,7 +103,6 @@
 #pragma semicolon 1
 
 #define HOOK_ANTICHEAT_TIME 3.0
-#define FINISH_CLASSNAME "SR_FINISH"
 #define FINISH_SPRITENAME "sprites/white.spr"
 
 enum _:PlayerData
@@ -176,8 +181,6 @@ new g_iMapIndex;
 new g_ePlayerInfo[33][PlayerData];
 new g_iBestTime[33][Categories];
 new g_iFinishEnt;
-// new g_iFinishBeams[12];
-// new g_iSprite;
 new g_szMotd[1536];
 new g_iBestTimeofMap[Categories];
 stock g_fwFinished;
@@ -197,7 +200,7 @@ public plugin_init()
     g_pCvars[SQL_DATABASE] = register_cvar("speedrun_database", "speedrun_stats.db");
     
     register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
-    register_clcmd("setfinish", "Command_SetFinish", ADMIN_CFG);
+    // register_clcmd("setfinish", "Command_SetFinish", ADMIN_CFG);
     register_clcmd("say /rank", "Command_Rank");
     register_clcmd("say /top15", "Command_Top15");
     register_clcmd("say /update", "Command_Update");
@@ -206,10 +209,7 @@ public plugin_init()
     RegisterHookChain(RG_CBasePlayer_Duck, "HC_CheckStartTimer", false);
     RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
 
-    // register_forward(FM_AddToFullPack, "FM_AddToFullPack_Post", 1);
     RegisterHam( Ham_Use, "func_button", "fwdUse", 0);
-
-    register_touch(FINISH_CLASSNAME, "player", "Engine_TouchFinish");
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
     
@@ -259,20 +259,6 @@ public _sr_show_toplist(id)
 {
     Command_Top15(id);
 }
-public FM_AddToFullPack_Post(const STATE/* = 0*/, e, ent, host, hostflags, player, set)
-{
-   if (is_user_alive(host) && g_ePlayerInfo[host][m_bFinished] && pev_valid(ent))
-   {
-      static classname[8];
-      pev(ent, pev_classname, classname, 7);
-      if (equal(classname, "beamfin"))
-      {
-        set_es(STATE, ES_RenderColor, Float:{0,200,0});
-        return FMRES_HANDLED;
-      }
-   }
-   return FMRES_IGNORED;
-} 
 public fwdUse(ent, id)
 {
     if( !ent || id > 32 )
@@ -346,62 +332,6 @@ public plugin_cfg()
 public plugin_precache()
 {
     // g_iSprite = precache_model("sprites/white.spr");
-}
-public Command_SetFinish(id, level, cid)
-{
-    if(!cmd_access(id, level, cid, 1)) return PLUGIN_HANDLED;
-    if(g_iFinishEnt)
-    {
-        client_print_color(id, print_team_red, "%s^1 Finish zone is ^3removed^1.", PREFIX);
-        DeleteFinishOrigin();	
-        remove_entity(g_iFinishEnt);
-        // DeleteFinishBeams();
-        g_iFinishEnt = 0;
-        g_bStartButton = true;
-        g_ePlayerInfo[id][m_bFinished] = true;
-        return PLUGIN_HANDLED;
-    }
-    
-    g_bStartButton = false;
-    g_ePlayerInfo[id][m_bFinished] = true;
-    
-    new Float:fOrigin[3]; get_entvar(id, var_origin, fOrigin);
-    fOrigin[2] = fOrigin[2] - 20.0;
-    CreateFinish(fOrigin);
-    SaveFinishOrigin();
-    
-    return PLUGIN_HANDLED;
-}
-// DeleteFinishBeams()
-// {
-
-//     for(new i = 0; i < sizeof g_iFinishBeams; i++)
-//     {
-//         new iBeamEntity = g_iFinishBeams[i];
-//         if(!is_valid_ent(iBeamEntity)) return;
-
-//         remove_entity(iBeamEntity);
-//         g_iFinishBeams[i] = 0;
-//     }
-        
-// }
-DeleteFinishOrigin()
-{
-    formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `maps` SET finishX = '0', finishY = '0', finishZ = '0' WHERE mid=%d", g_iMapIndex);
-    SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
-}
-SaveFinishOrigin()
-{
-    if(is_valid_ent(g_iFinishEnt))
-    {
-        new Float:fOrigin[3]; get_entvar(g_iFinishEnt, var_origin, fOrigin);
-        new iOrigin[3]; FVecIVec(fOrigin, iOrigin);
-        
-        formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `maps` SET finishX = '%d', finishY = '%d', finishZ = '%d' WHERE mid=%d", 
-            iOrigin[0], iOrigin[1], iOrigin[2], g_iMapIndex);
-        
-        SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
-    }
 }
 public Command_ClearTop(id, level, cid)
 {
@@ -589,9 +519,6 @@ public Query_LoadMapHandle(failstate, Handle:query, error[], errnum, data[], siz
     if(SQL_MoreResults(query))
     {
         g_iMapIndex = SQL_ReadResult(query, 0);
-        
-        CreateFinishI(SQL_ReadResult(query, 1),  SQL_ReadResult(query, 2),  SQL_ReadResult(query, 3));
-
     }
     else
     {		
@@ -758,62 +685,11 @@ public Engine_TouchFinish(ent, id)
 {
     if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished])
     {
-        // Create_Box(id, ent);
-        // SetFinishColor(200, 0, 0);
         Forward_PlayerFinished(id);
     }
 }
-// public SetFinishColor(r, g, b)
-// {
-//     new Float:fColor[3];
-//     fColor[0] = float(r);
-//     fColor[1] = float(g);
-//     fColor[2] = float(b);
-//     for(new i = 0; i < sizeof g_iFinishBeams; i++)
-//     {
-//         new iBeamEntity = g_iFinishBeams[i];
-//         if(!is_valid_ent(iBeamEntity)) return;
-        
-//         // server_print("Finish beam is valid!");
 
-//         Beam_SetColor(iBeamEntity, fColor);
-//     }
-// }
-CreateFinishI(x, y, z)
-{
-    if(!x && !y && !z) return;
-    
-    new Float:fOrigin[3];
-    fOrigin[0] = float(x);
-    fOrigin[1] = float(y);
-    fOrigin[2] = float(z);
-    
-    CreateFinish(fOrigin);
-}
-CreateFinish(const Float:fOrigin[3])
-{	
-    if(is_valid_ent(g_iFinishEnt)) remove_entity(g_iFinishEnt);
-    
-    g_iFinishEnt = 0;
-    
-    new ent = create_entity("trigger_multiple");
-    set_entvar(ent, var_classname, FINISH_CLASSNAME);
-    
-    set_entvar(ent, var_origin, fOrigin);
-    dllfunc(DLLFunc_Spawn, ent);
-    
-    entity_set_size(ent, Float:{-100.0, -100.0, -50.0}, Float:{100.0, 100.0, 50.0});
-    
-    set_entvar(ent, var_solid, SOLID_TRIGGER);
-    set_entvar(ent, var_movetype, MOVETYPE_NONE);
-    
-    g_iFinishEnt = ent;
-    
-    Create_Box(g_iFinishEnt, Float:{255.0,0.0,0.0});
-    // SetFinishColor(200, 0, 0);
-    // set_entvar(ent, var_nextthink, get_gametime());
-}
-Create_Box(ent, Float:color[3] = {255.0,255.0,255.0}, zIsMin = false)
+Create_Box(ent, Float:color[3] = {255.0,255.0,255.0})
 {
     new Float:maxs[3]; get_entvar(ent, var_absmax, maxs);
     new Float:mins[3]; get_entvar(ent, var_absmin, mins);
@@ -822,14 +698,29 @@ Create_Box(ent, Float:color[3] = {255.0,255.0,255.0}, zIsMin = false)
     
     new Float:z;
 
-    z = zIsMin ? mins[2] : fOrigin[2];
-    DrawLine(maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
-    DrawLine(maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
-    DrawLine(maxs[0], mins[1], z, mins[0], mins[1], z, color);
-    DrawLine(mins[0], mins[1], z, mins[0], maxs[1], z, color);
+    // z = zIsMin ? mins[2] : fOrigin[2];
+    z = mins[2];
+    DrawLine(ent, maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
+    DrawLine(ent, maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
+    DrawLine(ent, maxs[0], mins[1], z, mins[0], mins[1], z, color);
+    DrawLine(ent, mins[0], mins[1], z, mins[0], maxs[1], z, color);
 
 }
-DrawLine(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
+ReDrawLine(beamEnt, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) 
+{
+    new Float:start[3], Float:stop[3];
+    start[0] = x1;
+    start[1] = y1;
+    start[2] = z1;
+    
+    stop[0] = x2;
+    stop[1] = y2;
+    stop[2] = z2;
+
+    Beam_SetStartPos(beamEnt, start);
+    Beam_SetEndPos(beamEnt, stop);
+}
+DrawLine(ent, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color[3] = {255.0,255.0,255.0}) 
 {
     new Float:start[3], Float:stop[3];
     start[0] = x1;
@@ -841,10 +732,16 @@ DrawLine(Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:color
     stop[2] = z2;
     
     new beamEnt = Beam_Create(FINISH_SPRITENAME, 10.0);
-    set_pev(beamEnt, pev_classname, "beamfin");
+
+    new class[20];
+    pev(ent, FAKEMETA_PEV_TYPE, class, charsmax(class));
+    format(class, charsmax(class), "beam_%s", class);
+    set_pev(beamEnt, pev_classname, class);
+
     Beam_PointsInit(beamEnt, start, stop);
     Beam_SetBrightness(beamEnt, 200.0);
     Beam_SetColor(beamEnt, color);
+    set_pev(beamEnt, pev_owner, ent);
     return beamEnt;
 }
 
@@ -878,17 +775,53 @@ public box_created(ent, const szClass[])
     static Float:color_start[3] = {0.0, 255.0, 0.0}, Float:color_finish[3] = {255.0, 0.0, 0.0};
     if(equal("start", szClass))
     {
-        Create_Box(ent, color_start, true);
+        Create_Box(ent, color_start);
         g_bStartButton = false;
         // g_ePlayerInfo[id][m_bFinished] = true;
     }
     if(equal("finish", szClass))
     {
-        Create_Box(ent, color_finish, true);
+        Create_Box(ent, color_finish);
         g_bStartButton = false;
         // g_ePlayerInfo[id][m_bFinished] = true;
         g_iFinishEnt = ent;
     }
+}
+public box_deleted(box, const szClass[])
+{
+    new a = -1;
+    new class[32];
+    format(class, charsmax(class), "beam_%s", szClass);
+    
+    while((a = find_ent_by_class(a, class)))
+    {
+        remove_entity(a);
+    }
+    g_iFinishEnt = 0;
+}
+public box_resized(box, const szClass[])
+{
+    new beams[4], a = -1, count = 0;
+
+    new class[32];
+    format(class, charsmax(class), "beam_%s", szClass);
+    
+    while((a = find_ent_by_class(a, class)))
+    {
+        beams[count++] = a;
+    }
+
+    new Float:maxs[3]; get_entvar(box, var_absmax, maxs);
+    new Float:mins[3]; get_entvar(box, var_absmin, mins);
+    
+    // maxs[2] = mins[2];
+    new Float:z = mins[2];
+
+    ReDrawLine(beams[0], maxs[0], maxs[1], z, mins[0], maxs[1], z);
+    ReDrawLine(beams[1], maxs[0], maxs[1], z, maxs[0], mins[1], z);
+    ReDrawLine(beams[2], maxs[0], mins[1], z, mins[0], mins[1], z);
+    ReDrawLine(beams[3], mins[0], mins[1], z, mins[0], maxs[1], z);
+
 }
 public box_start_touch(box, ent, const szClass[])
 {
