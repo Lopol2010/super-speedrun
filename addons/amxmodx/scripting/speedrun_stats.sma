@@ -1,7 +1,6 @@
 /* 
     TODO: 
         * расставить зона на спидран картах
-        * box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
         * ?? box_system add more precise modify-mode, such as moving in 1 unit in certain direction 
         * ?? box_system when move in sticky mode, anchor should have offset from target normal (now its only z-axis)
         * delete finish stuff from database
@@ -39,6 +38,8 @@
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * box_system баг при создании финишной зоны после стартовой
+        * box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
         * add server to monitorings
         * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
                 поллучить ответ https://dev-cs.ru/threads/2457/page-44
@@ -770,21 +771,22 @@ public HC_CheckStartTimer(id)
         StartTimer(id);
     }
 }
-public box_created(ent, const szClass[])
+public box_created(box, const szClass[])
 {
+
     static Float:color_start[3] = {0.0, 255.0, 0.0}, Float:color_finish[3] = {255.0, 0.0, 0.0};
     if(equal("start", szClass))
     {
-        Create_Box(ent, color_start);
+        Create_Box(box, color_start);
         g_bStartButton = false;
         // g_ePlayerInfo[id][m_bFinished] = true;
     }
     if(equal("finish", szClass))
     {
-        Create_Box(ent, color_finish);
+        Create_Box(box, color_finish);
         g_bStartButton = false;
         // g_ePlayerInfo[id][m_bFinished] = true;
-        g_iFinishEnt = ent;
+        g_iFinishEnt = box;
     }
 }
 public box_deleted(box, const szClass[])
@@ -793,7 +795,7 @@ public box_deleted(box, const szClass[])
     new class[32];
     format(class, charsmax(class), "beam_%s", szClass);
     
-    while((a = find_ent_by_class(a, class)))
+    while((a = find_ent_by_owner(a, class, box)))
     {
         remove_entity(a);
     }
@@ -806,7 +808,7 @@ public box_resized(box, const szClass[])
     new class[32];
     format(class, charsmax(class), "beam_%s", szClass);
     
-    while((a = find_ent_by_class(a, class)))
+    while((a = find_ent_by_owner(a, class, box)))
     {
         beams[count++] = a;
     }
