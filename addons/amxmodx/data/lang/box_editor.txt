@@ -1,0 +1,21 @@
+[ru]
+CREATE_BOX = Создать
+REMOVE_BOX = Удалить последний использованный
+BOX_CLASS = Тип 
+BOX_STICKY = Прилипание
+GOTO_LAST = Переместиться к последнему использованному
+USE_NEAREST = Использовать ближайший ящик
+BOX_EXIT = Выход
+THERE_IS_NO = Здесь нет ящиков
+UNIQUE = Уникальный ID: %s
+
+[en]
+CREATE_BOX = Create
+REMOVE_BOX = Remove last used
+BOX_CLASS = Kind
+BOX_STICKY = Sticky
+GOTO_LAST = Go to last used
+USE_NEAREST = Use the nearest box
+BOX_EXIT = Exit
+THERE_IS_NO = There is no boxes here
+UNIQUE = Unique ID: %s
