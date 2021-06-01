@@ -2,7 +2,7 @@
 #include <amxmodx>
 #include <fakemeta>
 
-#define UPDATE 1.0	// Частота обновлений худа
+#define UPDATE 0.5	// Частота обновлений худа
 /*** Настройка цвета в RGB ***/
 #define RED 64		// Количество красного
 #define GREEN 64	// Количество зеленого
@@ -11,12 +11,16 @@
 
 #define FPS_CHECK_CMD       "/fps"
 
+
 public plugin_init()
 {
     register_plugin("Fps Checker", "0.3", "Dev-CS.ru & Lopol2010");
     register_forward(FM_CmdStart, "CmdStart");
 
     register_clcmd("say", "check");
+
+    set_task(UPDATE, "ShowFpsHud", .flags="b");
+
 }
 
 enum fps_s {
@@ -37,32 +41,40 @@ public CmdStart(id, uc_handle)
     if (fps_info[id][next_check] <= get_gametime())
     {         
         fps_info[id][fps] = (fps_info[id][num_cmds] * 1000.0) / fps_info[id][msec_sum];
-        if (fps_info[id][fps] > 101.0)
-        {
-            if(!is_user_alive(id)){
 
-                new spec;
-                spec = pev(id, pev_iuser2);
-                // client_print(id, print_chat, "%i", spec);
-                // client_print(id, print_chat, "Your fps is %f. Player's fps that you see is %f.", fps_info[id][fps], fps_info[spec][fps]);
-                if(spec)
-                {
-                    set_hudmessage(RED, GREEN, BLUE, 0.15, 0.15, 0, 0.0, UPDATE-0.01);
-                    show_hudmessage(id, "FPS: %f", fps_info[spec][fps]);
-                }
-            }
-
-            // if (++fps_info[id][warnings] > 3)
-            // {
-            //     // kick_user(id, "100+ fps")
-            // }                     
-        }
         fps_info[id][num_cmds] = 0;
         fps_info[id][msec_sum] = 0;
         fps_info[id][next_check] = get_gametime() + 1.0;
     }
     fps_info[id][num_cmds]++;
     fps_info[id][msec_sum] += get_uc(uc_handle, UC_Msec);
+}
+
+public ShowFpsHud() {
+
+    for(new id = 1; id <= MAX_PLAYERS; id++)
+    {
+        if(!is_user_alive(id)){
+            new spec;
+            spec = pev(id, pev_iuser2);
+            if(spec)
+            {
+                set_hudmessage(RED, GREEN, BLUE, 0.15, 0.15, 0, _, UPDATE, UPDATE, UPDATE, .channel = 3);
+                show_hudmessage(id, "FPS: %f", fps_info[spec][fps]);
+            }
+        }
+    }
+}
+public plugin_natives()
+{
+    register_native("get_user_fps", "_get_user_fps");
+}
+
+public _get_user_fps(plugin, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    return floatround(fps_info[id][fps]);
 }
 
 public check(id)
@@ -82,7 +94,7 @@ public check(id)
 
     if(strlen(arg) - cmdlen == 0)
     {
-        client_print_color(id, print_team_default, "[^4FPS Check^1] Usage: /fps nickname");
+        client_print_color(id, print_team_default, "[^4FPS Checker^1] Usage: /fps nickname");
         return PLUGIN_HANDLED_MAIN;
     }
 
@@ -93,11 +105,11 @@ public check(id)
     {
         new targetName[32];
         get_user_name(targetId, targetName, charsmax(targetName));
-        client_print_color(id, print_team_default, "[^4FPS Check^1] Player ^4%s ^1has ^4%f ^1fps", targetName, fps_info[targetId][fps]);
+        client_print_color(id, print_team_default, "[^4FPS Checker^1] Player ^4%s ^1has ^4%f ^1fps", targetName, fps_info[targetId][fps]);
     }
     else 
     {
-        client_print_color(id, print_team_default, "[^4FPS Check^1] Player ^4%s ^1not found", nick);
+        client_print_color(id, print_team_default, "[^4FPS Checker^1] Player ^4%s ^1not found", nick);
     }
     return PLUGIN_HANDLED_MAIN;
 }

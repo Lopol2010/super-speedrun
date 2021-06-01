@@ -664,7 +664,7 @@ public Think_Hud(ent)
 
         sr_get_timer_display_text(id, szTime, charsmax(szTime));
 
-        set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, 2);
+        set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, 1);
         ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s^n%3.2f", szTime, fSpeed);
     }
 }

@@ -6,7 +6,7 @@
 #endif
 
 #define IMMUNITY_FLAG ADMIN_BAN	// Флаг с которым игрока не будет выводить в speclist, закомментируйте если хотите чтобы выводило всех.
-#define UPDATE 1.0				// Частота обновлений списка
+#define UPDATE 0.5				// Частота обновлений списка
 
 /*** Настройка цвета в RGB ***/
 #define RED 64		// Количество красного
@@ -20,8 +20,6 @@ new gCvarPluginEnabled;
 new gCvarImmunity;
 new bool:gOnOff[33] = { true, ... };
 
-
-
 public plugin_init() {
 	register_plugin("SpecList", "1.0", "Lopol2010");	// Remake Spectators List by FatalisDK
 	register_dictionary("speclist.txt");
@@ -32,6 +30,7 @@ public plugin_init() {
 
 	set_task(UPDATE, "ShowSpecList", .flags="b");
 }
+
 public plugin_natives()
 {
     register_native("speclist_toggle", "speclist_toggle");
@@ -92,8 +91,9 @@ public ShowSpecList() {
 		if(!gOnOff[id] && is_user_alive(id)) continue;
 		if(!szDhud[id][0]) continue;
 
-		set_hudmessage(RED, GREEN, BLUE, 0.75, 0.15, 0, 0.0, UPDATE-0.01);
+		set_hudmessage(RED, GREEN, BLUE, 0.75, 0.15, 0, _, UPDATE, UPDATE, UPDATE, .channel = 2);
 		show_hudmessage(id, "%L:^n%s", LANG_PLAYER, "SPECT", szDhud[id]);
+
 		arrayset(szDhud[id], 0, sizeof(szDhud[]));
 	}
 }
