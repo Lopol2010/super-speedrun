@@ -9,9 +9,9 @@
 #define UPDATE 0.5				// Частота обновлений списка
 
 /*** Настройка цвета в RGB ***/
-#define RED 24		// Количество красного
-#define GREEN 24	// Количество зеленого
-#define BLUE 24		// Количество синего
+#define RED 34		// Количество красного
+#define GREEN 34	// Количество зеленого
+#define BLUE 34		// Количество синего
 /*** Конец настройки цвета ***/
 
 #pragma semicolon 1
@@ -92,7 +92,6 @@ public ShowSpecList() {
 		if(!szDhud[id][0]) continue;
 
 		set_hudmessage(RED, GREEN, BLUE, 0.75, 0.15, 0, _, UPDATE, UPDATE, UPDATE, .channel = 2);
-		// set_hudmessage(RED, GREEN, BLUE, 0.75, 0.15, 0, _, UPDATE, UPDATE, UPDATE, .channel = 2);
 		show_hudmessage(id, "%L:^n%s", LANG_PLAYER, "SPECT", szDhud[id]);
 
 		arrayset(szDhud[id], 0, sizeof(szDhud[]));
