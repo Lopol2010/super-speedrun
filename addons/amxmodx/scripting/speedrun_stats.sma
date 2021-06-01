@@ -2,7 +2,6 @@
     TODO: 
         * использовать спидометра от нани с оттображением кнопок?
         * show fps near "Specatotrs" in hud
-        * fix timer shows for everyone (core line 649)
         * allow map change when 2 players afk and third player says rtv
         * пункт меню 6 оставить 6ым когда в спектрах
         * speedrun_CrazySpeed! (miss aaacredits.wad)
@@ -56,6 +55,7 @@
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * fix timer shows for everyone (core line 649)
         * speclist & fpscchecker мерцают
         * поставить низкий приоритет картам speedrun для map manager
         * box_system баг при создании финишной зоны после стартовой

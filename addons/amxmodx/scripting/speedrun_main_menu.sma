@@ -89,6 +89,14 @@ public Command_Menu(id)
     }
     else
     {
+        menu_addblank2(menu);
+        menu_addblank2(menu);
+        menu_addblank2(menu);
+
+        formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", id, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
+        menu_additem(menu, szMenu, "2");
+
+        menu_addblank2(menu);
         formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_JOINCT");
         menu_additem(menu, szMenu, "10");
 
@@ -97,9 +105,6 @@ public Command_Menu(id)
 
         formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_FPS");
         menu_additem(menu, szMenu, "4");
-
-        formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", id, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
-        menu_additem(menu, szMenu, "2");
 
         formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CONTACT");
         menu_additem(menu, szMenu, "6");
