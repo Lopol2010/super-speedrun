@@ -666,6 +666,7 @@ public Think_Hud(ent)
 
         set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, 1);
         ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s^n%3.2f", szTime, fSpeed);
+        szTime[0] = '^0';
     }
 }
 public Task_CheckFrames()
