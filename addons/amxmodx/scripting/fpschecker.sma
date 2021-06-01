@@ -54,7 +54,7 @@ public ShowFpsHud() {
 
     for(new id = 1; id <= MAX_PLAYERS; id++)
     {
-        if(!is_user_alive(id)){
+        if(!is_user_alive(id) && is_user_connected(id)){
             new spec;
             spec = pev(id, pev_iuser2);
             if(spec)

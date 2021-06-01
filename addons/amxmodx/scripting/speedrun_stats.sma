@@ -18,10 +18,12 @@
         * L 31/05/2021 - 15:01:57: (map "speedrun_action") CalcSurfaceExtents: Bad surface extents
         * L 31/05/2021 - 14:51:56: (map "speedrun_omg") TEX_InitFromWad: couldn't open srhelvis.wad
 
+        * 5.3.1 how to check for player leaving start zone? possible solutions: 
+                    4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
+                    3. use th //is or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         * ?? box_system add more precise modify-mode, such as moving in 1 unit in certain direction 
         * ?? box_system when move in sticky mode, anchor should have offset from target normal (now its only z-axis)
-        * delete finish stuff from database
-        * рефактор кода отрисовки зон старта финиши, продумать.
+        * ?? delete finish stuff from database
         * add bhop_bloody , clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
         * стала слишком долгая интермиссия
@@ -34,11 +36,10 @@
         * multilang for remaining client_prints
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities (entity remover, or use ripent)
-        * fix timer on speedrun maps (it starts earlier than should)
         * add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
-        * allow use /save menu for maps with buttons
+        * ?? allow use /save menu for maps with buttons
         * world record bot (do a research on that, https://dev-cs.ru/resources/142/)
-        * fix message on finish showing wrong time
+        * (fixed?) fix message on finish showing wrong time
         * set language automaticaly with sxGeo and:
             or ask Kushfield how to implement that. 
             Or see myself how it works on his server
@@ -48,11 +49,6 @@
         * check my notebook
         * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
 
-        // 5.3.1 how to check for player leaving start zone? possible solutions: 
-        //             4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
-        //             1. see Box.sma (set_task) 
-        //             2. using client_prethink and touch hooks 
-        //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
         * пункт меню 6 оставить 6ым когда в спектрах
