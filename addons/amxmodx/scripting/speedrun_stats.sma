@@ -1,14 +1,15 @@
 /* 
     TODO: 
-        * использовать спидометра от нани с оттображением кнопок?
-        * show fps near "Specatotrs" in hud
+        * если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
+        * расставить зона на спидран картах
+                остановился размечать зоны на карте после speedrun_crossf (где то на 10 дальше ушел)
+        * ?? использовать спидометра от нани с оттображением кнопок?
+        * ?? show fps near "Specatotrs" in hud
         * allow map change when 2 players afk and third player says rtv
-        * пункт меню 6 оставить 6ым когда в спектрах
         * speedrun_CrazySpeed! (miss aaacredits.wad)
         * speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
         * speedrun_around сломано освещение
         * speedrun_aqua demonpesik вылетил
-        * если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
         * speedrun_4lunch разобратся (крашит клиент с ошбикой allocblock full)
                 Info (map "speedrun_4ever") (file "addons/amxmodx/logs/error_20210531.log")
                 L 05/31/2021 - 14:25:23: [AMXX] Run time error 4 (plugin "speedrun_core.amxx") - debug not enabled!
@@ -17,7 +18,6 @@
         * L 31/05/2021 - 15:01:57: (map "speedrun_action") CalcSurfaceExtents: Bad surface extents
         * L 31/05/2021 - 14:51:56: (map "speedrun_omg") TEX_InitFromWad: couldn't open srhelvis.wad
 
-        * расставить зона на спидран картах
         * ?? box_system add more precise modify-mode, such as moving in 1 unit in certain direction 
         * ?? box_system when move in sticky mode, anchor should have offset from target normal (now its only z-axis)
         * delete finish stuff from database
@@ -55,6 +55,7 @@
         //             3. use this or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * пункт меню 6 оставить 6ым когда в спектрах
         * fix timer shows for everyone (core line 649)
         * speclist & fpscchecker мерцают
         * поставить низкий приоритет картам speedrun для map manager
