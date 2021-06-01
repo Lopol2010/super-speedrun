@@ -1,10 +1,10 @@
 /* 
     TODO: 
+        * проверить скачанный пак спидран карт
         * если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
+                решение: сначало ставить старт
         * расставить зона на спидран картах
                 остановился размечать зоны на карте после speedrun_crossf (где то на 10 дальше ушел)
-        * ?? использовать спидометра от нани с оттображением кнопок?
-        * ?? show fps near "Specatotrs" in hud
         * allow map change when 2 players afk and third player says rtv
         * speedrun_CrazySpeed! (miss aaacredits.wad)
         * speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
@@ -25,6 +25,7 @@
         * ?? box_system when move in sticky mode, anchor should have offset from target normal (now its only z-axis)
         * ?? delete finish stuff from database
         * add bhop_bloody , clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
+                https://gamebanana.com/mods/cats/5524
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
         * стала слишком долгая интермиссия
                 взять тестовый сервак помощнее, проверить как он справиться со сменой карты https://www.ipserver.su/ru/page/tos
