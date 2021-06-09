@@ -1,28 +1,15 @@
 /* 
     TODO: 
-        * проверить скачанный пак спидран карт
-        * если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
-                решение: сначало ставить старт
+        Чекпоинты на спидране у тебя тоже на всех игроков?
+        после респавна у каждого обнуляет
+
+        сгенерить .res файлы
         * расставить зона на спидран картах
                 остановился размечать зоны на карте после speedrun_crossf (где то на 10 дальше ушел)
         * allow map change when 2 players afk and third player says rtv
-        * speedrun_CrazySpeed! (miss aaacredits.wad)
-        * speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
-        * speedrun_around сломано освещение
-        * speedrun_aqua demonpesik вылетил
-        * speedrun_4lunch разобратся (крашит клиент с ошбикой allocblock full)
-                Info (map "speedrun_4ever") (file "addons/amxmodx/logs/error_20210531.log")
-                L 05/31/2021 - 14:25:23: [AMXX] Run time error 4 (plugin "speedrun_core.amxx") - debug not enabled!
-                L 05/31/2021 - 14:25:23: [AMXX] To enable debug mode, add "debug" after the plugin name in plugins.ini (without quotes).
-        * L 26/05/2021 - 12:57:33: (map "speedrun_woah") Mod_LoadModel: models/player/gign/gign.mdl has been modified since starting the engine.  Consider running system diagnostics to check for faulty hardware.
-        * L 31/05/2021 - 15:01:57: (map "speedrun_action") CalcSurfaceExtents: Bad surface extents
-        * L 31/05/2021 - 14:51:56: (map "speedrun_omg") TEX_InitFromWad: couldn't open srhelvis.wad
-
         * 5.3.1 how to check for player leaving start zone? possible solutions: 
                     4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
                     3. use th //is or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
-        * ?? box_system add more precise modify-mode, such as moving in 1 unit in certain direction 
-        * ?? box_system when move in sticky mode, anchor should have offset from target normal (now its only z-axis)
         * ?? delete finish stuff from database
         * add bhop_bloody , clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
                 https://gamebanana.com/mods/cats/5524
@@ -52,6 +39,21 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
+                решение: сначало ставить старт (или переписать box_system чтобы нельзя было ставить несколько зон финиш\старт что тоже не очень круто если будет нужно несколько зон)
+        *(нужные вады не нашлись) проверить скачанный пак спидран карт
+            "C:\Users\der19\Downloads\FILES FROM RUS_SR.zip"
+        * (removed map) L 31/05/2021 - 15:01:57: (map "speedrun_action") CalcSurfaceExtents: Bad surface extents
+        * (removed map) L 31/05/2021 - 14:51:56: (map "speedrun_omg") TEX_InitFromWad: couldn't open srhelvis.wad
+        * L 26/05/2021 - 12:57:33: (map "speedrun_woah") Mod_LoadModel: models/player/gign/gign.mdl has been modified since starting the engine.  Consider running system diagnostics to check for faulty hardware.
+            Info (map "speedrun_4ever") (file "addons/amxmodx/logs/error_20210531.log")
+            L 05/31/2021 - 14:25:23: [AMXX] Run time error 4 (plugin "speedrun_core.amxx") - debug not enabled!
+            L 05/31/2021 - 14:25:23: [AMXX] To enable debug mode, add "debug" after the plugin name in plugins.ini (without quotes).
+        * (removed)speedrun_4lunch разобратся (крашит клиент с ошбикой allocblock full)
+        * (removed) speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
+        * (not checked this) speedrun_aqua demonpesik вылетил
+        * (removed)speedrun_around сломано освещение
+        * (removed map) speedrun_CrazySpeed! (miss aaacredits.wad)
         * пункт меню 6 оставить 6ым когда в спектрах
         * fix timer shows for everyone (core line 649)
         * speclist & fpscchecker мерцают

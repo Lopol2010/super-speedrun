@@ -49,8 +49,8 @@ public get_gochecks_count(id)
 
 public reset_checkpoints(id)
 {
-	arrayset(checknumbers, 0, sizeof(checknumbers));
-	arrayset(gochecknumbers, 0, sizeof(gochecknumbers));
+	checknumbers[id] = 0;
+	gochecknumbers[id] = 0;
 }
 
 public CheckPoint(id)
