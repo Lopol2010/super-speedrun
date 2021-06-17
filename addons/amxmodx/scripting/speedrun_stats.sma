@@ -1,23 +1,21 @@
 /* 
+    идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        сгенерить .res файлы
+    2k mode  в core ограничить 2000, сейчас тупо умножается на 2000, протестить на sr_enemy
+    убрать beep на финиш и на финиш-топ1
+	проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
+	сделать продажу вип\админок
+        ночное видиние так же видят спектры
+        ограничение скорости убрать? наверно только для спидран карт, щас нашел карту не проходимую на 2к скорости
+        slowmo, noWASD
         * расставить зона на спидран картах
-                остановился размечать зоны на карте после speedrun_crossf (где то на 10 дальше ушел)
+                остановился размечать зоны на карте после speedrun_enborian (где то на 10 дальше ушел)
         * allow map change when 2 players afk and third player says rtv
-        * 5.3.1 how to check for player leaving start zone? possible solutions: 
-                    4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
-                    3. use th //is or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
         * ?? delete finish stuff from database
-        * add bhop_bloody , clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
+        * add kzbr_hii_fastrun, bhop_bloody, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
+                тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много картhttps://www.google.ru/search?hl=ru&q=hb_dilo
                 https://gamebanana.com/mods/cats/5524
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
-        * стала слишком долгая интермиссия
-                взять тестовый сервак помощнее, проверить как он справиться со сменой карты https://www.ipserver.su/ru/page/tos
-                через htop видно загрузка проца на 100% возможно он не вывозит?
-                (без файла maps.ini стало 3-4 сек)
-                отключить все плагины и проверить (6 sec стало, 5 сек без pluigns.ini но с map-manager, наоборот тоже 5сек)
-                если это не помогло, отключать модули
-                возможные причины: 1. отключить все плагины и проверить 2. нехватает места на диске (сейчас 93% занято было, команда df для проверки на ubuntu)
         * multilang for remaining client_prints
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities (entity remover, or use ripent)
@@ -36,6 +34,17 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * (not important for now) 5.3.1 how to check for player leaving start zone? possible solutions: 
+                    4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
+                    3. use th //is or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
+        сгенерить .res файлы
+        * (само исправилось? вроде после освобождения места на диске стало 3сек.) стала слишком долгая интермиссия
+                взять тестовый сервак помощнее, проверить как он справиться со сменой карты https://www.ipserver.su/ru/page/tos
+                через htop видно загрузка проца на 100% возможно он не вывозит?
+                (без файла maps.ini стало 3-4 сек)
+                отключить все плагины и проверить (6 sec стало, 5 сек без pluigns.ini но с map-manager, наоборот тоже 5сек)
+                если это не помогло, отключать модули
+                возможные причины: 1. отключить все плагины и проверить 2. нехватает места на диске (сейчас 93% занято было, команда df для проверки на ubuntu)
         * если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
                 решение: сначало ставить старт (или переписать box_system чтобы нельзя было ставить несколько зон финиш\старт что тоже не очень круто если будет нужно несколько зон)
         *(нужные вады не нашлись) проверить скачанный пак спидран карт

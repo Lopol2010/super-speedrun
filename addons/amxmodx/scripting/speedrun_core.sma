@@ -62,6 +62,7 @@ new g_iCategorySign[Categories] = {100, 200, 250, 333, 500, 0, 1, 2, 3};
 // 	"[100 FPS]", "[200 FPS]", "[250 FPS]", "[333 FPS]", "[500 FPS]", "[Fastrun]", "[Crazy Speed]", "[2K]"
 // };
 
+// new g_iMaxSpeed = 320;
 new g_bStartPosition, Float:g_fStartOrigin[3], Float:g_fStartVAngles[3];
 new g_ePlayerInfo[33][PlayerData];
 new g_szMapName[32];
@@ -185,6 +186,8 @@ public plugin_cfg()
     SetGameName();
     BlockChangingTeam();
     BlockSpawnTriggerPush();
+
+    // g_iMaxSpeed = max(get_cvar_num("sv_maxvelocity"), get_cvar_num("sv_maxspeed"));
 }
 LoadStartPosition()
 {
@@ -590,8 +593,9 @@ public HC_CBasePlayer_Jump_Pre(id)
     {
         get_entvar(id, var_angles, fAngles);
 
-        fVelocity[0] += floatcos(fAngles[1], degrees) * 2000.0;
-        fVelocity[1] += floatsin(fAngles[1], degrees) * 2000.0;
+        fVelocity[0] = floatcos(fAngles[1], degrees) * 2000.0;
+        fVelocity[1] = floatsin(fAngles[1], degrees) * 2000.0;
+
     }
     if(g_ePlayerInfo[id][m_iCategory] == Cat_CrazySpeed)
     {		
