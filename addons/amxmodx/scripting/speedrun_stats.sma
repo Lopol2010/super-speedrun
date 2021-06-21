@@ -1,10 +1,11 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-    2k mode  в core ограничить 2000, сейчас тупо умножается на 2000, протестить на sr_enemy
-    убрать beep на финиш и на финиш-топ1
-	проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
-	сделать продажу вип\админок
+        сделать одним плагином два худ канала фпс+спеклист и таймер+скорость.
+        speedrun_calm баг, когда падаешь косоебит камеру и не респавнишся
+        убрать beep на финиш и на финиш-топ1
+        проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
+        сделать продажу вип\админок
         ночное видиние так же видят спектры
         ограничение скорости убрать? наверно только для спидран карт, щас нашел карту не проходимую на 2к скорости
         slowmo, noWASD
@@ -12,7 +13,7 @@
                 остановился размечать зоны на карте после speedrun_enborian (где то на 10 дальше ушел)
         * allow map change when 2 players afk and third player says rtv
         * ?? delete finish stuff from database
-        * add kzbr_hii_fastrun, bhop_bloody, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
+        * add kzbr_hii_fastrun, bhop_bloody, bkz_abstract, akzk_desertcliff, chk_neutral2, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
                 тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много картhttps://www.google.ru/search?hl=ru&q=hb_dilo
                 https://gamebanana.com/mods/cats/5524
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
@@ -34,6 +35,7 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * 2k mode  в core ограничить 2000, сейчас тупо умножается на 2000, протестить на sr_enemy
         * (not important for now) 5.3.1 how to check for player leaving start zone? possible solutions: 
                     4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
                     3. use th //is or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
