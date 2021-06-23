@@ -117,19 +117,19 @@ public RG_CBasePlayerWeapon_DefaultDeploy_Pre(const this, szViewModel[], szWeapo
 
     if(g_weaponHidden[id])
     {
-        // SetHookChainArg(2, ATYPE_STRING, "", 1)
-        set_member(id, m_flNextAttack, 99999.0)
-        set_member(this, m_Weapon_flNextPrimaryAttack, 99999.0)
-        set_member(this, m_Weapon_flNextSecondaryAttack, 99999.0)
+        SetHookChainArg(2, ATYPE_STRING, "", 1)
+        // set_member(id, m_flNextAttack, 99999.0)
+        // set_member(this, m_Weapon_flNextPrimaryAttack, 99999.0)
+        // set_member(this, m_Weapon_flNextSecondaryAttack, 99999.0)
 
         SetHookChainReturn(ATYPE_INTEGER, false)
         return HC_SUPERCEDE
     }
     else
     {
-        set_member(id, m_flNextAttack, 0.0)
-        set_member(this, m_Weapon_flNextPrimaryAttack, 0.0)
-        set_member(this, m_Weapon_flNextSecondaryAttack, 0.0)
+        // set_member(id, m_flNextAttack, 0.0)
+        // set_member(this, m_Weapon_flNextPrimaryAttack, 0.0)
+        // set_member(this, m_Weapon_flNextSecondaryAttack, 0.0)
     }
     return HC_CONTINUE
 }
@@ -297,10 +297,10 @@ public hide_weapon(id)
 
     new wpn = get_member(id, m_pClientActiveItem)
     
-    new Float:nextAttack = g_weaponHidden[id] ? 99999.0 : 0.0
-    set_member(id, m_flNextAttack, nextAttack)
-    set_member(wpn, m_Weapon_flNextPrimaryAttack, nextAttack)
-    set_member(wpn, m_Weapon_flNextSecondaryAttack, nextAttack)
+    // new Float:nextAttack = g_weaponHidden[id] ? 99999.0 : 0.0
+    // set_member(id, m_flNextAttack, nextAttack)
+    // set_member(wpn, m_Weapon_flNextPrimaryAttack, nextAttack)
+    // set_member(wpn, m_Weapon_flNextSecondaryAttack, nextAttack)
 
     set_pcvar_num(g_cvarHideCAL, g_weaponHidden[id])
     onResetHUD(id)
