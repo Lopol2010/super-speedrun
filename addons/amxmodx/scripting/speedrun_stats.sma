@@ -1,12 +1,7 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        сделать stand-up прыжки возможными (щас походу нет эффекта от них)
-        баг когда скрываешь оружие не стартануть таймер (с кнопки точно, карта bhop_bunnyjump)
-        проверить почему super-speedrun-master.sh не запускает нормально ./compile.sh (вроде бы незапускает)
-        сделать одним плагином два худ канала фпс+спеклист и таймер+скорость.
-        speedrun_calm баг, когда падаешь косоебит камеру и не респавнишся
-        убрать beep на финиш и на финиш-топ1
+        уменьшить шанс попадания ср карты в голосования за смену карты
         проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
         сделать продажу вип\админок
         ночное видиние так же видят спектры
@@ -38,6 +33,11 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * убрать beep на финиш и на финиш-топ1
+        * проверить почему super-speedrun-master.sh не запускает нормально ./compile.sh (вроде бы незапускает)
+        * баг когда скрываешь оружие не стартануть таймер (с кнопки точно, карта bhop_bunnyjump)
+        * сделать stand-up прыжки возможными (щас походу нет эффекта от них)
+            (не сделал, даже толком не поискал норм спидран где это реализовано, на найте например нету) 
         * 2k mode  в core ограничить 2000, сейчас тупо умножается на 2000, протестить на sr_enemy
         * (not important for now) 5.3.1 how to check for player leaving start zone? possible solutions: 
                     4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
@@ -950,7 +950,8 @@ Forward_PlayerFinished(id)
     }
     if(record)
     {
-        client_cmd( 0, "spk woop" );
+        // client_cmd( 0, "spk woop" );
+        client_cmd(0, "spk buttons/bell1");
     }
     else
     {
