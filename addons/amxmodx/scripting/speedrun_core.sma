@@ -27,8 +27,6 @@
 #define FASTRUN_AIRACCELERATE -55.0
 #define PUSH_DIST 300.0
 
-new const PREFIX[] = "^4[Speedrun]";
-
 enum (+=100)
 {
     TASK_SHOWSPEED = 100,
@@ -44,7 +42,8 @@ enum _:Categories
     Cat_FastRun,
     Cat_Default,
     Cat_CrazySpeed,
-    Cat_2k
+    Cat_2k,
+    Cat_LowGravity,
 };
 enum _:PlayerData
 {
@@ -56,10 +55,10 @@ enum _:PlayerData
     m_iCategory
 };
 
-new g_iCategorySign[Categories] = {100, 200, 250, 333, 500, 0, 1, 2, 3};
+new g_iCategorySign[Categories] = {100, 200, 250, 333, 500, 0, 1, 2, 3, 4};
 // new const g_szCategory[][] = 
 // {
-// 	"[100 FPS]", "[200 FPS]", "[250 FPS]", "[333 FPS]", "[500 FPS]", "[Fastrun]", "[Crazy Speed]", "[2K]"
+// 	"[100 FPS]", "[200 FPS]", "[250 FPS]", "[333 FPS]", "[500 FPS]", "[Fastrun]", "[Crazy Speed]", "[2K]", "[Low Gravity]"
 // };
 
 // new g_iMaxSpeed = 320;
@@ -105,6 +104,9 @@ public plugin_init()
     RegisterHookChain(RG_CSGameRules_DeadPlayerWeapons, "HC_CSGR_DeadPlayerWeapons_Pre", false);
 
     register_forward(FM_ClientKill, "FM_ClientKill_Pre", false);
+
+    RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
+    RegisterHam( Ham_Item_Deploy, "weapon_knife", "Ham_Item_Deploy_KNIFE_Post", 1);
 
     g_fwChangedCategory = CreateMultiForward("SR_ChangedCategory", ET_IGNORE, FP_CELL, FP_CELL);
     g_fwOnStart = CreateMultiForward("SR_PlayerOnStart", ET_IGNORE, FP_CELL);
@@ -285,7 +287,8 @@ public _rotate_user_category(id)
     {
         case Cat_Default: g_ePlayerInfo[id][m_iCategory] = Cat_CrazySpeed;
         case Cat_CrazySpeed: g_ePlayerInfo[id][m_iCategory] = Cat_2k;
-        case Cat_2k: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
+        case Cat_2k: g_ePlayerInfo[id][m_iCategory] = Cat_LowGravity;
+        case Cat_LowGravity: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
         default: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
     }
 
@@ -349,8 +352,17 @@ public Command_Start(id)
     {
         ExecuteHamB(Ham_CS_RoundRespawn, id);
     }
+
+    if(get_user_category(id) == Cat_LowGravity)
+    {
+        new wpnName[33]; rg_get_weapon_info(get_user_weapon(id), WI_NAME, wpnName, charsmax(wpnName));
+        if(equal(wpnName, "weapon_knife"))
+            set_user_gravity(id, 0.5);
+    }
     reset_checkpoints(id);
+
     ExecuteForward(g_fwOnStart, g_iReturn, id);
+
 
     return PLUGIN_HANDLED;
 }
@@ -362,6 +374,22 @@ SetPosition(id, Float:origin[3], Float:vangles[3])
     set_entvar(id, var_fixangle, 1);
     set_entvar(id, var_health, 100.0);
     engfunc(EngFunc_SetOrigin, id, origin);
+}
+public Ham_Item_Deploy_USP_Post(weapon)
+{
+	new id = get_member(weapon, m_pPlayer);
+    if(get_user_category(id) == Cat_LowGravity)
+    {
+        set_user_gravity(id, 1.0);
+    }
+}
+public Ham_Item_Deploy_KNIFE_Post(weapon)
+{
+	new id = get_member(weapon, m_pPlayer);
+    if(get_user_category(id) == Cat_LowGravity)
+    {
+        set_user_gravity(id, 0.5);
+    }
 }
 public Command_Bhop(id)
 {
@@ -424,9 +452,10 @@ public Command_CategoryMenu(id)
     len += formatex(szMenu[len], charsmax(szMenu) - len, "\r1. %sDefault^n", g_ePlayerInfo[id][m_iCategory] == Cat_Default? "\r" : "\w");
     len += formatex(szMenu[len], charsmax(szMenu) - len, "\r2. %sCrazySpeed^n", g_ePlayerInfo[id][m_iCategory] == Cat_CrazySpeed ? "\r" : "\w");
     len += formatex(szMenu[len], charsmax(szMenu) - len, "\r3. %sCrazySpeed 2K^n", g_ePlayerInfo[id][m_iCategory] == Cat_2k ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4. %sLow Gravity^n", g_ePlayerInfo[id][m_iCategory] == Cat_LowGravity ? "\r" : "\w");
     len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n^n^n\r0. \wExit");
 
-    show_menu(id, (1 << 0)|(1 << 1)|(1 << 2)|(1 << 9), szMenu, -1, "CategoryMenu");
+    show_menu(id, (1 << 0)|(1 << 1)|(1 << 2)|(1 << 3)|(1 << 9), szMenu, -1, "CategoryMenu");
     // }
     return PLUGIN_HANDLED;
 }
@@ -437,6 +466,7 @@ public CategoryMenu_Handler(id, key)
         case 0: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
         case 1: g_ePlayerInfo[id][m_iCategory] = Cat_CrazySpeed;
         case 2: g_ePlayerInfo[id][m_iCategory] = Cat_2k;
+        case 3: g_ePlayerInfo[id][m_iCategory] = Cat_LowGravity;
     }
 
     if(key <= 3)

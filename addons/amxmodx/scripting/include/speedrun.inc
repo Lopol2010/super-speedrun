@@ -3,12 +3,15 @@
 #endif
 #define _speedrun_included
 
+new const PREFIX[] = "^1[^4Speedrun^1]";
+
 native get_user_category(id);
 native set_user_category(id);
 native rotate_user_category(id);
 native sr_command_spec(id);
 native sr_command_start(id);
 forward SR_PlayerOnStart(id);
+forward SR_ChangedCategory(id, cat);
 
 native main_menu_display(id);
 

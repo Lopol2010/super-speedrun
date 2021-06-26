@@ -158,7 +158,8 @@ enum _:Categories
     Cat_FastRun,
     Cat_Default,
     Cat_CrazySpeed,
-    Cat_2k
+    Cat_2k,
+    Cat_LowGravity,
 };
 enum _:Cvars
 {
@@ -177,33 +178,10 @@ enum _:ResultsColumns
     Results_besttime,
     Results_recorddate,
 };
-enum _:RunnersColumns
-{
-    Runners_id,
-    Runners_steamid,
-    Runners_nickname,
-    Runners_ip,
-    Runners_nationality,
-};
-enum _:MapsColumns
-{
-    Maps_mid,
-    Maps_mapname,
-    Maps_finishX,
-    Maps_finishY,
-    Maps_finishZ,
-};
-enum _:SkillLevels
-{
-    PRO, 
-    NOOB
-}
-
-new const PREFIX[] = "^1[^4Speedrun^1]";
 
 new const g_szCategory[][] = 
 {
-    "100 FPS", "200 FPS", "250 FPS", "333 FPS", "500 FPS", "Fastrun", "Bhop", "Crazy Speed", "2K"
+    "100 FPS", "200 FPS", "250 FPS", "333 FPS", "500 FPS", "Fastrun", "Bhop", "Crazy Speed", "2K", "Low Gravity"
 };
 
 new g_pCvars[Cvars];
