@@ -1,7 +1,6 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        уменьшить шанс попадания ср карты в голосования за смену карты
         проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
         сделать продажу вип\админок
         ночное видиние так же видят спектры
@@ -33,6 +32,7 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * уменьшить шанс попадания ср карты в голосования за смену карты
         * убрать beep на финиш и на финиш-топ1
         * проверить почему super-speedrun-master.sh не запускает нормально ./compile.sh (вроде бы незапускает)
         * баг когда скрываешь оружие не стартануть таймер (с кнопки точно, карта bhop_bunnyjump)
@@ -314,17 +314,17 @@ public fwdUse(ent, id)
     {
         g_bStartButton = true;
 
-        static bool:antispam;
+        static bool:antispam[33];
         if(is_hook_active(id) || !is_time_after_hook_passed(id, HOOK_ANTICHEAT_TIME))
         {
-            if(!antispam)
+            if(!antispam[id])
             {
                 client_print_color(id, print_team_default, "%s^1 Wait %f seconds after using hook!", PREFIX, HOOK_ANTICHEAT_TIME);
-                antispam = true;
+                antispam[id] = true;
             }
             return HAM_IGNORED;
         }
-        antispam = false;
+        antispam[id] = false;
 
         StartTimer(id);
 
