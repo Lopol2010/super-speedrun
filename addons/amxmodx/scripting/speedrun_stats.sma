@@ -1,6 +1,11 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
+        nominate not work
+        add 100fps category
+        git pull fix https://stackoverflow.com/questions/55237191/git-pull-not-executing-through-a-webhook-in-bash-script
+        fix low gravity (when you enter category, no gravity applied)
+        add chat message on Low Gravity category selected
         проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
         сделать продажу вип\админок
         ночное видиние так же видят спектры
