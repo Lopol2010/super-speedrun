@@ -1,6 +1,8 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
+        * настроить sxGeo_informer как на найт джампе
+        * префикс в чате для игроков как на найте (пример [RU])
         nominate not work
         add 100fps category
         fix low gravity (when you enter category, no gravity applied)
@@ -35,6 +37,7 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * chat prefix unifiend for most plugins
         * добавить к спидометру показ кнопок
         * донастроить reklama (квары в configs/plugins/reklama), почему то он еще bad load  не загружается.
         * (fixed? if so... its was fucking hard) git pull fix https://stackoverflow.com/questions/55237191/git-pull-not-executing-through-a-webhook-in-bash-script
