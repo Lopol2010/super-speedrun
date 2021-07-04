@@ -1,8 +1,6 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        * настроить sxGeo_informer как на найт джампе
-        * префикс в чате для игроков как на найте (пример [RU])
         nominate not work
         add 100fps category
         fix low gravity (when you enter category, no gravity applied)
@@ -37,6 +35,8 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * префикс в чате для игроков как на найте (пример [RU])
+        * настроить sxGeo_informer как на найт джампе
         * chat prefix unifiend for most plugins
         * добавить к спидометру показ кнопок
         * донастроить reklama (квары в configs/plugins/reklama), почему то он еще bad load  не загружается.
@@ -132,6 +132,7 @@
 #include <speedrun>
 #include <hidemenu>
 #include <beams>
+#include <fpschecker>
 #pragma loadlib sqlite
 
 #if AMXX_VERSION_NUM < 183

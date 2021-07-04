@@ -4,9 +4,9 @@
 
 #define UPDATE 0.5	// Частота обновлений худа
 /*** Настройка цвета в RGB ***/
-#define RED 64		// Количество красного
-#define GREEN 64	// Количество зеленого
-#define BLUE 64		// Количество синего
+#define RED 50		// Количество красного
+#define GREEN 50	// Количество зеленого
+#define BLUE 50		// Количество синего
 /*** Конец настройки цвета ***/
 
 #define FPS_CHECK_CMD       "/fps"
@@ -59,8 +59,8 @@ public ShowFpsHud() {
             spec = pev(id, pev_iuser2);
             if(spec)
             {
-                set_hudmessage(RED, GREEN, BLUE, 0.15, 0.15, 0, _, UPDATE, UPDATE, UPDATE, .channel = 3);
-                show_hudmessage(id, "FPS: %f", fps_info[spec][fps]);
+                set_hudmessage(RED, GREEN, BLUE, 0.80, 0.13, 0, _, UPDATE, UPDATE, UPDATE, .channel = 3);
+                show_hudmessage(id, "FPS: %d", floatround(fps_info[spec][fps]));
             }
         }
     }
@@ -70,11 +70,11 @@ public plugin_natives()
     register_native("get_user_fps", "_get_user_fps");
 }
 
-public _get_user_fps(plugin, argc)
+public Float:_get_user_fps(plugin, argc)
 {
     enum { arg_id = 1 }
     new id = get_param(arg_id);
-    return floatround(fps_info[id][fps]);
+    return fps_info[id][fps];
 }
 
 public check(id)
@@ -112,10 +112,4 @@ public check(id)
         client_print_color(id, print_team_default, "[^4FPS Checker^1] Player ^4%s ^1not found", nick);
     }
     return PLUGIN_HANDLED_MAIN;
-}
-
-stock kick_user(id, szReason[])
-{
-    new iUserId = get_user_userid(id);
-    server_cmd("kick #%d ^" % s ^"", iUserId, szReason);
 }

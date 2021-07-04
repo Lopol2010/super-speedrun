@@ -4,4 +4,4 @@
 #define _fpschecker_included
 
 
-native get_user_fps(id);
+native Float:get_user_fps(id);
