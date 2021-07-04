@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <sxgeo>
 #include <speedrun>
+#include <chatmanager>
 
 #if (AMXX_VERSION_NUM < 183) || defined NO_NATIVE_COLORCHAT
 	#include <colorchat>
@@ -58,6 +59,18 @@ public client_putinserver(id)
 	{
 		// we don't know where you are :(
 		client_print_color(0, DontChange, "%s %L %L %L %s", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", LANG_SERVER, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
+	}
+
+	if (bCountryFound || bCityFound || bRegionFound)
+	{
+		new code[3]; sxgeo_code(szIP, code);
+		new prefix[10]; format(prefix, charsmax(prefix), "^4[^1%s^4]^1 ", code);
+		// client_print_color(id, print_team_blue, prefix);
+		cm_set_prefix(id, prefix);
+	}
+	else
+	{
+		cm_set_prefix(id, "^4[^1??^4]^1 ");
 	}
 
 	client_cmd(0, "spk %s", CONNECT_SOUND);
