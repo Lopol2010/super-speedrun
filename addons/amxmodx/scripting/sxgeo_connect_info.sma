@@ -11,9 +11,11 @@
 
 #pragma semicolon 1
 
+stock const STEAM_PREFIX[] = "^1[^4Steam^1]";
 new const CONNECT_SOUND[] = "buttons/blip1.wav";
 
 new g_pcvar_amx_language;
+new g_bSteamPlayer[33];
 
 public plugin_init()
 {
@@ -28,9 +30,11 @@ public client_putinserver(id)
 	new szLanguage[3];
 	get_pcvar_string(g_pcvar_amx_language, szLanguage, charsmax(szLanguage));
 
-	new szName[32], szIP[16];
+	new szName[32], szIP[16], szSteamSuffix[32];
 	get_user_name(id, szName, charsmax(szName));
 	get_user_ip(id, szIP, charsmax(szIP), /*strip port*/ 0);
+    g_bSteamPlayer[id] = is_user_steam(id);
+	if(g_bSteamPlayer[id]) szSteamSuffix = STEAM_PREFIX;
 
 	new szCountry[64], szRegion[64], szCity[64];
 
@@ -40,21 +44,31 @@ public client_putinserver(id)
 
 	if (bCountryFound && bCityFound && bRegionFound)
 	{
-		client_print_color(0, DontChange, "%s %L %L^3 %s ^4(%s, %s)", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", szCity, szRegion, szCountry);
+		client_print_color(0, DontChange, "%s %L %L^3 %s ^4(%s, %s) %s", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", szCity, szRegion, szCountry, szSteamSuffix);
 	}
 	else if (bCountryFound && bRegionFound)
 	{
-		client_print_color(0, DontChange, "%s %L %L^3 %s ^4(%s)", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", szRegion, szCountry);
+		client_print_color(0, DontChange, "%s %L %L^3 %s ^4(%s) %s", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", szRegion, szCountry, szSteamSuffix);
 	}
 	else if (bCountryFound)
 	{
-		client_print_color(0, DontChange, "%s %L %L^4 %s", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", szCountry);
+		client_print_color(0, DontChange, "%s %L %L^4 %s %s", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", szCountry, szSteamSuffix);
 	}
 	else
 	{
 		// we don't know where you are :(
-		client_print_color(0, DontChange, "%s %L^4 %L %L", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", LANG_SERVER, "CINFO_COUNTRY_UNKNOWN");
+		client_print_color(0, DontChange, "%s %L %L %L %s", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", LANG_SERVER, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
 	}
 
 	client_cmd(0, "spk %s", CONNECT_SOUND);
+}
+
+stock is_user_steam(id)
+{
+    static dp_pointer;
+    if(dp_pointer || (dp_pointer = get_cvar_pointer("dp_r_id_provider"))) {
+        server_cmd("dp_clientinfo %d", id); server_exec();
+        return (get_pcvar_num(dp_pointer) == 2) ? true : false;
+    }
+    return false;
 }
