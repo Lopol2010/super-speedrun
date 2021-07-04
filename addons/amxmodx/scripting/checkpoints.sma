@@ -3,6 +3,7 @@
 #include <fun>
 #include <fakemeta>
 #include <hamsandwich>
+#include <speedrun>
 
 #define VERSION "0.02"
 
@@ -58,25 +59,25 @@ public CheckPoint(id)
 	
 	if( !is_user_alive( id ) )
 	{
-		client_print(id, print_chat, "%L", id, "CP_NOT_ALIVE")
+		client_print_color(id, print_team_default, "%L", id, "CP_NOT_ALIVE", PREFIX)
 		return PLUGIN_HANDLED
 	}
 	
 	if(get_pcvar_num(pCvar_checkpoints) == 0)
 	{
-		client_print(id,  print_chat,"%L",  id, "CP_CHECKPOINT_OFF")
+		client_print_color(id,  print_team_default,"%L",  id, "CP_CHECKPOINT_OFF", PREFIX)
 		return PLUGIN_HANDLED
 	}
 
 	if( !( pev( id, pev_flags ) & FL_ONGROUND2 ) && !IsOnLadder(id))
 	{
-		client_print(id,  print_chat,"%L", id, "CP_CHECKPOINT_AIR")
+		client_print_color(id,  print_team_default,"%L", id, "CP_CHECKPOINT_AIR", PREFIX)
 		return PLUGIN_HANDLED
 	}
 		
 	// if( IsPaused[id] )
 	// {
-	// 	client_print(id, "%L", id, "CP_CHECKPOINT_PAUSE")
+	// 	client_print_color(id, "%L", id, "CP_CHECKPOINT_PAUSE")
 	// 	return PLUGIN_HANDLED
 	// }
 		
@@ -85,7 +86,7 @@ public CheckPoint(id)
 	checknumbers[id]++
 
 
-	client_print(id, print_chat, "%L", id, "CP_CHECKPOINT", checknumbers[id])
+	client_print_color(id, print_team_default, "%L", id, "CP_CHECKPOINT", PREFIX, checknumbers[id])
 
 	return PLUGIN_HANDLED
 }
@@ -94,27 +95,27 @@ public GoCheck(id)
 {
 	if( !is_user_alive( id ) )
 	{
-		client_print(id, print_chat, "%L",  id, "CP_NOT_ALIVE")
+		client_print_color(id, print_team_default, "%L",  id, "CP_NOT_ALIVE", PREFIX)
 		return PLUGIN_HANDLED
 	}
 
 	if( checknumbers[id] == 0  ) 
 	{
-		client_print(id,  print_chat,"%L",  id, "CP_NOT_ENOUGH_CHECKPOINTS")
+		client_print_color(id,  print_team_default,"%L",  id, "CP_NOT_ENOUGH_CHECKPOINTS", PREFIX)
 		return PLUGIN_HANDLED
 	}
 
 	// if( IsPaused[id] )
 	// {
-	// 	client_print(id,  print_chat,"%L", "CP_TELEPORT_PAUSE")	
+	// 	client_print_color(id,  print_team_default,"%L", "CP_TELEPORT_PAUSE")	
 	// 	return PLUGIN_HANDLED
 	// }
 	
 	set_pev( id, pev_velocity, Float:{0.0, 0.0, 0.0} );
-	set_pev( id, pev_view_ofs, Float:{  0.0,   0.0,  12.0 } );
+	// set_pev( id, pev_view_ofs, Float:{  0.0,   0.0,  12.0 } );
 	set_pev( id, pev_flags, pev(id, pev_flags) | FL_DUCKING );
-	set_pev( id, pev_fuser2, 0.0 );
-	engfunc( EngFunc_SetSize, id, {-16.0, -16.0, -18.0 }, { 16.0, 16.0, 32.0 } );
+	// set_pev( id, pev_fuser2, 0.0 );
+	// engfunc( EngFunc_SetSize, id, {-16.0, -16.0, -18.0 }, { 16.0, 16.0, 32.0 } );
 	set_pev(id, pev_origin, Checkpoints[ id ][ !g_bCpAlternate[id] ] )
 	gochecknumbers[id]++
 

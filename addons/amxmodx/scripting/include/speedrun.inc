@@ -3,7 +3,7 @@
 #endif
 #define _speedrun_included
 
-new const PREFIX[] = "^1[^4Speedrun^1]";
+new const PREFIX[] = "^4[^1Super Speedrun^4]^1";
 
 native get_user_category(id);
 native set_user_category(id);

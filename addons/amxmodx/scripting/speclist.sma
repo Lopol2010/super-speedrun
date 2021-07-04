@@ -1,5 +1,6 @@
 #include <amxmodx>
 #include <fakemeta>
+#include <speedrun>
 
 #if !defined MAX_PLAYERS
 	#define MAX_PLAYERS 32
@@ -56,9 +57,9 @@ public cmdSpecList(id)
 {
 	gOnOff[id] = !gOnOff[id];
 	if( !gOnOff[id] )
-		client_print(id, print_chat, "[AMXX] %L", LANG_PLAYER, "DISABLED");
+		client_print_color(id, print_chat, "%L", LANG_PLAYER, "DISABLED", PREFIX);
 	else
-		client_print(id, print_chat, "[AMXX] %L", LANG_PLAYER, "ENABLED");
+		client_print_color(id, print_chat, "%L", LANG_PLAYER, "ENABLED", PREFIX);
 	return PLUGIN_CONTINUE;
 }
 public ShowSpecList() {

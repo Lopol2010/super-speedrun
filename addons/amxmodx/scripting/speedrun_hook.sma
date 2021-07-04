@@ -3,6 +3,7 @@
 #include <fun>
 #include <fakemeta>
 #include <hamsandwich>
+#include <speedrun>
 
 #define KZ_LEVEL ADMIN_KICK 
 #define PLUGIN	"Speedrun: Hook"
@@ -15,7 +16,6 @@ new hookorigin[33][3]
 /* new Float:antihookcheat[33] */
 new hook_sound
 new hook_speed
-new prefix[33] = "[^4Speedrun]"
 new Sbeam = 0
 new Float:lastTimeHook[33] = { -1.0, ... } 
 new g_fwOnHookStart
@@ -84,7 +84,7 @@ public give_hook(id)
         {
             canusehook[i] = mode
             if(mode)
-                client_print_color(i, print_team_default,  "%s^x01, %L.", prefix, i, "KZ_HOOK")
+                client_print_color(i, print_team_default,  "%s %L.", PREFIX, i, "KZ_HOOK")
                 
         }
     }
@@ -96,7 +96,7 @@ public give_hook(id)
             canusehook[pid] = mode
             if(mode)
             {
-                client_print_color(pid, print_team_default, "%s^x01 %L.", prefix, pid, "KZ_HOOK")
+                client_print_color(pid, print_team_default, "%s %L.", PREFIX, pid, "KZ_HOOK")
                 
             }
         }

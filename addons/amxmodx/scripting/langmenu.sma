@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <fakemeta>
 #include <nvault>
+#include <speedrun>
 
 #define MAX_LANGS_NUM 9
 #define MAX_LANG_KEY_LENGTH 3
@@ -173,7 +174,7 @@ public HandleMenu(id, key) {
 
     if (0 <= key < g_LangsNum) {
         setUserLang(id, key, true);
-        client_print_color(id, print_team_default, "%L", id, "LANG_MENU_SAVED");
+        client_print_color(id, print_team_default, "%L", id, "LANG_MENU_SAVED", PREFIX);
     }
 
     new authid[24], opened_once[40];

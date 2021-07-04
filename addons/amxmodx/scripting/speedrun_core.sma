@@ -382,7 +382,7 @@ SetPosition(id, Float:origin[3], Float:vangles[3])
 }
 public Ham_Item_Deploy_USP_Post(weapon)
 {
-	new id = get_member(weapon, m_pPlayer);
+    new id = get_member(weapon, m_pPlayer);
     if(get_user_category(id) == Cat_LowGravity)
     {
         set_user_gravity(id, 1.0);
@@ -390,7 +390,7 @@ public Ham_Item_Deploy_USP_Post(weapon)
 }
 public Ham_Item_Deploy_KNIFE_Post(weapon)
 {
-	new id = get_member(weapon, m_pPlayer);
+    new id = get_member(weapon, m_pPlayer);
     if(get_user_category(id) == Cat_LowGravity)
     {
         set_user_gravity(id, 0.5);
@@ -399,17 +399,17 @@ public Ham_Item_Deploy_KNIFE_Post(weapon)
 public Command_Bhop(id)
 {
     g_ePlayerInfo[id][m_bBhop] = !g_ePlayerInfo[id][m_bBhop];
-    client_print_color(id, print_team_default, "%s^1 Bhop is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bBhop] ? "enabled" : "disabled");
+    client_print_color(id, print_team_default, "%s^1 Bhop is^3^1.", PREFIX, g_ePlayerInfo[id][m_bBhop] ? "enabled" : "disabled");
 }
 public Command_Speed(id)
 {
     g_ePlayerInfo[id][m_bSpeed] = !g_ePlayerInfo[id][m_bSpeed];
-    client_print_color(id, print_team_default, "^4%s^1 Speedometer is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bSpeed] ? "enabled" : "disabled");
+    client_print_color(id, print_team_default, "^4%s^1 Speedometer is^3^1.", PREFIX, g_ePlayerInfo[id][m_bSpeed] ? "enabled" : "disabled");
 }
 public Command_Keys(id)
 {
     g_ePlayerInfo[id][m_bKeys] = !g_ePlayerInfo[id][m_bKeys];
-    client_print_color(id, print_team_default, "^4%s^1 Show keys is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bKeys] ? "enabled" : "disabled");
+    client_print_color(id, print_team_default, "^4%s^1 Show keys is^3^1.", PREFIX, g_ePlayerInfo[id][m_bKeys] ? "enabled" : "disabled");
 }
 public Command_Spec(id)
 {
@@ -454,15 +454,15 @@ public Command_CategoryMenu(id)
 
     // if(is_finish_zone_exists())
     // {
-    // 	len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4. %sCrazySpeed 2K^n", g_ePlayerInfo[id][m_iCategory] == Cat_2k ? "\r" : "\w");
+    // 	len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4.CrazySpeed 2K^n", g_ePlayerInfo[id][m_iCategory] == Cat_2k ? "\r" : "\w");
     // 	len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n^n^n\r0. \wExit");
 
     // 	show_menu(id, (1 << 0)|(1 << 1), szMenu, -1, "CategoryMenu");
     // } else {
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r1. %sDefault^n", g_ePlayerInfo[id][m_iCategory] == Cat_Default? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r2. %sCrazySpeed^n", g_ePlayerInfo[id][m_iCategory] == Cat_CrazySpeed ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r3. %sCrazySpeed 2K^n", g_ePlayerInfo[id][m_iCategory] == Cat_2k ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4. %sLow Gravity^n", g_ePlayerInfo[id][m_iCategory] == Cat_LowGravity ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r1.Default^n", g_ePlayerInfo[id][m_iCategory] == Cat_Default? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r2.CrazySpeed^n", g_ePlayerInfo[id][m_iCategory] == Cat_CrazySpeed ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r3.CrazySpeed 2K^n", g_ePlayerInfo[id][m_iCategory] == Cat_2k ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4.Low Gravity^n", g_ePlayerInfo[id][m_iCategory] == Cat_LowGravity ? "\r" : "\w");
     len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n^n^n\r0. \wExit");
 
     show_menu(id, (1 << 0)|(1 << 1)|(1 << 2)|(1 << 3)|(1 << 9), szMenu, -1, "CategoryMenu");
@@ -496,11 +496,11 @@ public Command_SpeedrunMenu(id)
     new szMenu[128], len = 0;
 
     len = formatex(szMenu[len], charsmax(szMenu) - len, "\ySpeedrun Menu^n^n");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r1. %s100 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_100fps ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r2. %s200 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_200fps ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r3. %s250 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_250fps ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4. %s333 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_333fps ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r5. %s500 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_500fps ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r1.100 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_100fps ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r2.200 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_200fps ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r3.250 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_250fps ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4.333 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_333fps ? "\r" : "\w");
+    len += formatex(szMenu[len], charsmax(szMenu) - len, "\r5.500 FPS^n", g_ePlayerInfo[id][m_iCategory] == Cat_500fps ? "\r" : "\w");
     len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n\r0. \wExit");
 
     show_menu(id, (1 << 0)|(1 << 1)|(1 << 2)|(1 << 3)|(1 << 4)|(1 << 9), szMenu, -1, "SpeedrunMenu");

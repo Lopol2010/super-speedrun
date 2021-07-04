@@ -1,15 +1,15 @@
 [en]
-CP_NOT_ALIVE = You must be alive to use this command.
-CP_CHECKPOINT = Checkpoint #%d
-CP_CHECKPOINT_AIR = You can't make a checkpoint in air.
-CP_CHECKPOINT_PAUSE = You can't make a checkpoint in pause.
-CP_CHECKPOINT_OFF = Checkpoints are off.
-CP_NOT_ENOUGH_CHECKPOINTS = You don't have enough checkpoints.
+CP_NOT_ALIVE = %s You must be alive to use this command.
+CP_CHECKPOINT = %s Checkpoint saved ^4#%d
+CP_CHECKPOINT_AIR = %s You can't save a checkpoint in air.
+CP_CHECKPOINT_PAUSE = %s You can't save a checkpoint in pause.
+CP_CHECKPOINT_OFF = %s Checkpoints are off.
+CP_NOT_ENOUGH_CHECKPOINTS = %s You don't have enough checkpoints.
 
 [ru]
-CP_NOT_ALIVE = Вы должны быть живы чтобы использовать эту команду.
-CP_CHECKPOINT = Чекпоинт #%d
-CP_CHECKPOINT_AIR = Нельзя сохранится в воздухе.
-CP_CHECKPOINT_PAUSE = You can't make a checkpoint in pause.
-CP_CHECKPOINT_OFF = Чекпоинты выключены.
-CP_NOT_ENOUGH_CHECKPOINTS = У вас недостаточно чекпоинтов.
+CP_NOT_ALIVE = %s Вы должны быть живы чтобы использовать эту команду.
+CP_CHECKPOINT = %s Чекпоинт сохранён ^4#%d
+CP_CHECKPOINT_AIR = %s Нельзя сохранится в воздухе.
+CP_CHECKPOINT_PAUSE = %s Нельзя сохранится во время паузы.
+CP_CHECKPOINT_OFF = %s Чекпоинты выключены.
+CP_NOT_ENOUGH_CHECKPOINTS = %s У вас недостаточно чекпоинтов.
