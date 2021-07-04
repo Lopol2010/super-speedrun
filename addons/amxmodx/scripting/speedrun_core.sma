@@ -49,6 +49,7 @@ enum _:PlayerData
 {
     m_bBhop,
     m_bSpeed,
+    m_bKeys,
     m_bInSaveBox,
     m_bSavePoint,
     m_iFrames,
@@ -80,6 +81,8 @@ public plugin_init()
     register_clcmd("say /start", "Command_Start");
     register_clcmd("say /bhop", "Command_Bhop");
     register_clcmd("say /speed", "Command_Speed");
+    register_clcmd("say /keys", "Command_Keys");
+    register_clcmd("say /showkeys", "Command_Keys");
     register_clcmd("say /spec", "Command_Spec");
     register_clcmd("say /game", "Command_CategoryMenu");
     register_clcmd("say /2k", "Command_Category2k");
@@ -303,6 +306,7 @@ public client_putinserver(id)
 {
     g_ePlayerInfo[id][m_bBhop] = true;
     g_ePlayerInfo[id][m_bSpeed] = true;
+    g_ePlayerInfo[id][m_bKeys] = true;
     g_ePlayerInfo[id][m_bInSaveBox] = false;
     g_ePlayerInfo[id][m_bSavePoint] = false;
     g_ePlayerInfo[id][m_iCategory] = Cat_Default;
@@ -310,6 +314,7 @@ public client_putinserver(id)
 public client_disconnected(id)
 {
     g_ePlayerInfo[id][m_bSpeed] = false;
+    g_ePlayerInfo[id][m_bKeys] = false;
 }
 public Command_SetStart(id, flag)
 {
@@ -400,6 +405,11 @@ public Command_Speed(id)
 {
     g_ePlayerInfo[id][m_bSpeed] = !g_ePlayerInfo[id][m_bSpeed];
     client_print_color(id, print_team_default, "^4%s^1 Speedometer is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bSpeed] ? "enabled" : "disabled");
+}
+public Command_Keys(id)
+{
+    g_ePlayerInfo[id][m_bKeys] = !g_ePlayerInfo[id][m_bKeys];
+    client_print_color(id, print_team_default, "^4%s^1 Show keys is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bKeys] ? "enabled" : "disabled");
 }
 public Command_Spec(id)
 {
@@ -685,21 +695,39 @@ public Think_Hud(ent)
     new Float:rate = 0.091;
     set_entvar(ent, var_nextthink, get_gametime() + rate);
 
-    new Float:fSpeed, Float:fVelocity[3], iSpecMode, szTime[32];
+    new Float:fSpeed, Float:fVelocity[3], iSpecMode, len, button;
+    static szTime[32], szKeys[32];
+
     for(new id = 1, target; id <= MAX_PLAYERS; id++)
     {
         if(!g_ePlayerInfo[id][m_bSpeed]) continue;
-
+    
         iSpecMode = get_entvar(id, var_iuser1);
         target = (iSpecMode == 1  || iSpecMode == 2 || iSpecMode == 4) ? get_entvar(id, var_iuser2) : id;
         get_entvar(target, var_velocity, fVelocity);
 
         fSpeed = vector_length(fVelocity);
 
+        if(!is_user_alive(id) && g_ePlayerInfo[id][m_bKeys])
+        {
+            button = get_entvar(target, var_button);
+            
+            len = formatex(szKeys, charsmax(szKeys), "%s^n",          (button & IN_FORWARD) ? 	    "W" : ".");
+            len += formatex(szKeys[len], charsmax(szKeys)-len, "%s",  (button & IN_MOVELEFT) ? 	    "A" : ". ");
+            len += formatex(szKeys[len], charsmax(szKeys)-len, "%s",  (button & IN_BACK) ? 		    " S " : " . ");
+            len += formatex(szKeys[len], charsmax(szKeys)-len, "%s^n",    (button & IN_MOVERIGHT) ?   "D" : " .");
+            len += formatex(szKeys[len], charsmax(szKeys)-len, "%s^n",    (button & IN_JUMP) ? 		"JUMP" : ".");
+            len += formatex(szKeys[len], charsmax(szKeys)-len, "%s^n^n",  (button & IN_DUCK) ? 		"DUCK" : "      ");
+        }
+        else
+        {
+            formatex(szKeys, charsmax(szKeys), "^n^n^n^n^n");
+        }
+
         sr_get_timer_display_text(id, szTime, charsmax(szTime));
 
         set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, 1);
-        ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s^n%3.2f", szTime, fSpeed);
+        ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s%s^n%3.2f", szKeys, szTime, fSpeed);
         szTime[0] = '^0';
     }
 }

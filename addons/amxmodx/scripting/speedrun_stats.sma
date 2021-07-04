@@ -1,13 +1,13 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
+        * добавить к спидометру показ кнопок
+        * gocheck должен возвращать направление взгляда
         nominate not work
         add 100fps category
-        git pull fix https://stackoverflow.com/questions/55237191/git-pull-not-executing-through-a-webhook-in-bash-script
         fix low gravity (when you enter category, no gravity applied)
         add chat message on Low Gravity category selected
         проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
-        сделать продажу вип\админок
         ночное видиние так же видят спектры
         ограничение скорости убрать? наверно только для спидран карт, щас нашел карту не проходимую на 2к скорости
         slowmo, noWASD
@@ -37,6 +37,9 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * донастроить reklama (квары в configs/plugins/reklama), почему то он еще bad load  не загружается.
+        * (fixed? if so... its was fucking hard) git pull fix https://stackoverflow.com/questions/55237191/git-pull-not-executing-through-a-webhook-in-bash-script
+            problem: script on production server not pulling from repo after pushing from developer PC. (based on github's commit webhooks )
         * уменьшить шанс попадания ср карты в голосования за смену карты
         * убрать beep на финиш и на финиш-топ1
         * проверить почему super-speedrun-master.sh не запускает нормально ./compile.sh (вроде бы незапускает)
