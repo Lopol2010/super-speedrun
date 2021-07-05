@@ -1,7 +1,6 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        * geoip показывал префикс стрелку ua вместо kz
         * сделать найтвижену пояснение в чат о двух режимах
         * опять не работает ci-ninja (или работает? когда залогинился вроде работает...)
         * multilang for remaining client_prints
@@ -37,6 +36,7 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * geoip показывал префикс стрелку ua вместо kz (вроде пофиксил, забилдив новую версию sxgeo)
         * add 100fps category
         * префикс в чате для игроков как на найте (пример [RU])
         * настроить sxGeo_informer как на найт джампе
