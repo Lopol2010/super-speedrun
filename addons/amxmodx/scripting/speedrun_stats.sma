@@ -1,7 +1,9 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        * опять не работает ci-ninja 
+        * сделать найтвижену пояснение в чат о двух режимах
+        * 
+        * опять не работает ci-ninja (или работает? когда залогинился вроде работает...)
         * multilang for remaining client_prints
         * add chat message on Low Gravity category selected
         fix low gravity (when you enter category, no gravity applied)

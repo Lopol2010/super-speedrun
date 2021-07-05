@@ -1,5 +1,6 @@
 #include <amxmodx>
 #include <sxgeo>
+#include <geoip>
 #include <speedrun>
 #include <chatmanager>
 
@@ -63,9 +64,10 @@ public client_putinserver(id)
 
 	if (bCountryFound || bCityFound || bRegionFound)
 	{
-		new code[3]; sxgeo_code(szIP, code);
-		server_print(code);
-		new prefix[15]; formatex(prefix, charsmax(prefix), "^4[^1%s^4]^1 ", code);
+		// new code[3]; sxgeo_code(szIP, code);
+		new code[3]; geoip_code2_ex(szIP, code);
+		// server_print(code);
+		new prefix[11]; formatex(prefix, charsmax(prefix), "^4[^1%s^4]^1 ", code);
 		// client_print_color(id, print_team_blue, prefix);
 		cm_set_prefix(id, prefix);
 	}
