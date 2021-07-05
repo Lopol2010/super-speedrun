@@ -333,7 +333,7 @@ public client_putinserver(id)
     g_ePlayerInfo[id][m_bSavePoint] = false;
     g_ePlayerInfo[id][m_iCategory] = Cat_Default;
 
-    query_client_cvar(id, "fps_max", "cvar_fps_max_query_callback");
+    if(!is_user_bot(id)) query_client_cvar(id, "fps_max", "cvar_fps_max_query_callback");
 }
 public client_disconnected(id)
 {
