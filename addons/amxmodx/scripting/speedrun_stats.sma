@@ -1,11 +1,11 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
+        * опять не работает ci-ninja 
         * multilang for remaining client_prints
-        nominate not work
-        add 100fps category
+        * add chat message on Low Gravity category selected
         fix low gravity (when you enter category, no gravity applied)
-        add chat message on Low Gravity category selected
+        nominate not work
         проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
         ночное видиние так же видят спектры
         ограничение скорости убрать? наверно только для спидран карт, щас нашел карту не проходимую на 2к скорости
@@ -35,6 +35,7 @@
 
         // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
     DONE:
+        * add 100fps category
         * префикс в чате для игроков как на найте (пример [RU])
         * настроить sxGeo_informer как на найт джампе
         * chat prefix unifiend for most plugins

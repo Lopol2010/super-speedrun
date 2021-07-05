@@ -7,6 +7,7 @@
         5. in core: edit Command_CategoryMenu
         6. in core: edit Command_CategoryMenu KEYS variable
         7. in core: edit CategoryMenu_Handler
+        8. in core: edit CategoryMenu_Handler in if statement change number that's compared with keys variable
 
 */
 #include <amxmodx>

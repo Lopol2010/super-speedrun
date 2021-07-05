@@ -26,11 +26,6 @@ public plugin_init()
 	g_pcvar_amx_language = get_cvar_pointer("amx_language");
 }
 
-public client_disconnected(id)
-{
-	cm_reset_prefix(id);
-}
-
 public client_putinserver(id)
 {
 	new szLanguage[3];
