@@ -64,7 +64,8 @@ public client_putinserver(id)
 	if (bCountryFound || bCityFound || bRegionFound)
 	{
 		new code[3]; sxgeo_code(szIP, code);
-		new prefix[10]; format(prefix, charsmax(prefix), "^4[^1%s^4]^1 ", code);
+		server_print(code);
+		new prefix[15]; formatex(prefix, charsmax(prefix), "^4[^1%s^4]^1 ", code);
 		// client_print_color(id, print_team_blue, prefix);
 		cm_set_prefix(id, prefix);
 	}
