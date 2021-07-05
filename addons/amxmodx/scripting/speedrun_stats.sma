@@ -1,6 +1,7 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
+        * multilang for remaining client_prints
         nominate not work
         add 100fps category
         fix low gravity (when you enter category, no gravity applied)
@@ -17,7 +18,6 @@
                 тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много картhttps://www.google.ru/search?hl=ru&q=hb_dilo
                 https://gamebanana.com/mods/cats/5524
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
-        * multilang for remaining client_prints
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities (entity remover, or use ripent)
         * add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
@@ -132,7 +132,6 @@
 #include <speedrun>
 #include <hidemenu>
 #include <beams>
-#include <fpschecker>
 #pragma loadlib sqlite
 
 #if AMXX_VERSION_NUM < 183
@@ -155,7 +154,6 @@ enum _:PlayerData
     m_bTimerStarted,
     m_bFinished,
     m_iPlayerIndex,
-    // m_iSkillLevel,
     Float:m_fStartRun,
     m_bWasUseHook       // true if player used hook and until next respawn (by command or death)
 };
