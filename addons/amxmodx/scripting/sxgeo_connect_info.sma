@@ -62,10 +62,9 @@ public client_putinserver(id)
 		client_print_color(0, DontChange, "%s %L %L %L %s", PREFIX, LANG_SERVER, "CINFO_JOINED", szName, LANG_SERVER, "CINFO_FROM", LANG_SERVER, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
 	}
 
-	// if (bCountryFound || bCityFound || bRegionFound)
-	if(true)
+	if (bCountryFound || bCityFound || bRegionFound)
 	{
-		new code[3]; sxgeo_code("213.109.221.154", code, charsmax(code));
+		new code[3]; sxgeo_code(szIP, code, charsmax(code));
 		// new code[3]; geoip_code2_ex(szIP, code);
 		// server_print(code);
 		new prefix[11]; formatex(prefix, charsmax(prefix), "^4[^1%s^4]^1 ", code);
