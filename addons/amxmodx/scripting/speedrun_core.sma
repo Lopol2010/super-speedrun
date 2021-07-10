@@ -1,5 +1,8 @@
 /*
     adding new category:
+        ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
+        ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
+        ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
         1. core & stats: enum _:Categories
         2. in core: new g_iCategorySign[Categories] 
         3. in stats & main_menu: new const g_szCategory[][]"
