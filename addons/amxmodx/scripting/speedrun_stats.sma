@@ -1,6 +1,8 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
+        * заменить сообщение о продаже админок на однострочное, типа "напиш /vip для покупки"
+        * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
         *** игрок зашел как нон-стим, но перезашел и стал стим. т.е. стим не прогрузился при первом заходе, 
                     так же у меня куча записей в топ15 со STEAM_ID_LAN причем пока что только у меня, не у других админов
                     поставил в reunion.cfg ServerInfoAnswerType = 2 может поможет.
@@ -598,7 +600,8 @@ public client_connect(id)
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_iPlayerIndex] = 0;
 }
-public client_authorized(id)
+
+public client_putinserver(id)
 {
     if(!is_user_bot(id) && !is_user_hltv(id))
     {
@@ -606,6 +609,7 @@ public client_authorized(id)
         ClientAuthorization(id);
     }
 }
+
 ClientAuthorization(id)
 {
     if(!g_iMapIndex) return;
