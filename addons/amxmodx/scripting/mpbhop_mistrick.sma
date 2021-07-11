@@ -41,7 +41,7 @@ new const VERSION[] = "1.2.0-Lopol2010-edit";
 #define ClearEntBits(%1,%2)	%1[%2>>5] &= ~( 1 << (%2 & 31) )
 #define GetEntBits(%1,%2)	%1[%2>>5] &   1<<(%2 & 31)
 
-#define DEBUG 1
+// #define DEBUG
 
 const TASK_GLOW = 123;
 
