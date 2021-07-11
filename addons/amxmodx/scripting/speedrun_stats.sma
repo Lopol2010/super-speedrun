@@ -598,7 +598,7 @@ public client_connect(id)
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_iPlayerIndex] = 0;
 }
-public client_putinserver(id)
+public client_authorized(id)
 {
     if(!is_user_bot(id) && !is_user_hltv(id))
     {
