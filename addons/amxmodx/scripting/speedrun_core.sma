@@ -46,7 +46,8 @@
 enum (+=100)
 {
     TASK_SHOWSPEED = 100,
-    TASK_CHECKFRAMES
+    TASK_CHECKFRAMES,
+    TASK_QUERY_INITIAL_FPS,
 };
 enum _:Categories
 {
@@ -335,9 +336,18 @@ public client_putinserver(id)
     g_ePlayerInfo[id][m_bInSaveBox] = false;
     g_ePlayerInfo[id][m_bSavePoint] = false;
     g_ePlayerInfo[id][m_iCategory] = Cat_Default;
+    g_ePlayerInfo[id][m_iInitialFps] = 100;
 
+    new data[1]; data[0] = id;
+    set_task(1.0, "task_delayed_query_initial_fps", TASK_QUERY_INITIAL_FPS, data, sizeof data);
+}
+
+public task_delayed_query_initial_fps(arg[])
+{
+    new id = arg[0];
     if(!is_user_bot(id)) query_client_cvar(id, "fps_max", "cvar_fps_max_query_callback");
 }
+
 public client_disconnected(id)
 {
     g_ePlayerInfo[id][m_bSpeed] = false;
@@ -796,7 +806,13 @@ public cvar_fps_max_query_callback(id, const cvar[], const value[])
     // log_amx("User: '%s', cvar: '%s', value: '%s'", user_name, cvar, value);
 
 
-    if(equali(value, "bad")) return;
+    if(equali(value, "bad")) 
+    {
+        new name[33]; get_user_name(id, name, charsmax(name));
+        log_amx("Cannot read fps_max for %s, set to 100.", name);
+        g_ePlayerInfo[id][m_iInitialFps] = 100;
+        return;
+    }
 
-    g_ePlayerInfo[id][m_iInitialFps] = str_to_num(value);
+    g_ePlayerInfo[id][m_iInitialFps] = clamp(str_to_num(value), 100, 9999);
 }
