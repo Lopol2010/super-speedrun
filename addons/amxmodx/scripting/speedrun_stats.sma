@@ -1,21 +1,14 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        * заменить сообщение о продаже админок на однострочное, типа "напиш /vip для покупки"
-        * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
         *** игрок зашел как нон-стим, но перезашел и стал стим. т.е. стим не прогрузился при первом заходе, 
                     так же у меня куча записей в топ15 со STEAM_ID_LAN причем пока что только у меня, не у других админов
                     поставил в reunion.cfg ServerInfoAnswerType = 2 может поможет.
                     почему ClientAuthorization(id) вызывается дважды? разве не достаточно только authorized?
                     !!! Замена putinserver на authorized ломает игру, не открыть top15 и не работает таймер на спидран картах
-        убрать мнгновенные сообщения в чат при выборе 100фпс, когда проскакиваешь эту категорию не выбирая её, бесят эти сообщения
         speedrun_fatal
-        * проверить и переделать покупку привелегий 
-        * сделать найтвижену пояснение в чат о двух режимах (или оставить один режим)
         * multilang for remaining client_prints
-        * add chat message on Low Gravity category selected
-        fix low gravity (when you enter category, no gravity applied)
-        nominate not work
+        * bind 2k category's speed to knife alike low gravity 
         проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
         ночное видиние так же видят спектры
         ограничение скорости убрать? наверно только для спидран карт, щас нашел карту не проходимую на 2к скорости, speedrun_den вроде одна из таких
@@ -23,28 +16,34 @@
         * расставить зона на спидран картах
                 остановился размечать зоны на карте после speedrun_enborian (где то на 10 дальше ушел)
         * allow map change when 2 players afk and third player says rtv
-        * ?? delete finish stuff from database
+        * ?? delete finish zone stuff from database
         * add kzbr_hii_fastrun, bhop_bloody, bkz_abstract, akzk_desertcliff, chk_neutral2, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
                 тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много картhttps://www.google.ru/search?hl=ru&q=hb_dilo
                 https://gamebanana.com/mods/cats/5524
         * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities (entity remover, or use ripent)
-        * add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
-        * ?? allow use /save menu for maps with buttons
         * world record bot (do a research on that, https://dev-cs.ru/resources/142/)
-        * (fixed?) fix message on finish showing wrong time
         * set language automaticaly with sxGeo and:
             or ask Kushfield how to implement that. 
             Or see myself how it works on his server
                                     https://dev-cs.ru/resources/469/
                                     https://dev-cs.ru/resources/570/field?field=source
                                     (remove AutoLang - seems not work)
-        * check my notebook
         * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
-
-        // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
+        ?? * сделать найтвижену пояснение в чат о двух режимах 
+        * ?? allow use /save menu for maps with buttons
+        ?? * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
     DONE:
+        nominate not work
+        * проверить и переделать покупку привелегий 
+        убрать мнгновенные сообщения в чат при выборе 100фпс, когда проскакиваешь эту категорию не выбирая её, бесят эти сообщения
+        fix low gravity (when you enter category, no gravity applied)
+        * add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
+        * check my notebook
+        * (fixed?) fix message on finish showing wrong time
+        // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
+        * заменить сообщение о продаже админок на однострочное, типа "напиш /vip для покупки"
         * geoip показывал префикс стрелку ua вместо kz (вроде пофиксил, забилдив новую версию sxgeo)
         * add 100fps category
         * префикс в чате для игроков как на найте (пример [RU])
