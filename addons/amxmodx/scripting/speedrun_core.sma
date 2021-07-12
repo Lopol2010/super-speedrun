@@ -621,10 +621,12 @@ public SaveMenu_Handler(id, key)
 }
 public box_start_touch(box, id, const szClass[])
 {
+    if(!is_user_connected(id)) return;
     g_ePlayerInfo[id][m_bInSaveBox] = true;
 }
 public box_stop_touch(box, id, const szClass[])
 {
+    if(!is_user_connected(id)) return;
     g_ePlayerInfo[id][m_bInSaveBox] = false;
 }
 //*******************************************************************//
@@ -791,13 +793,14 @@ public Task_CheckFrames()
         if(g_ePlayerInfo[id][m_iCategory] < Cat_FastRun && get_user_fps(id) > g_iCategorySign[cat] + FPS_OFFSET
                 || g_ePlayerInfo[id][m_iCategory] >= Cat_FastRun && get_user_fps(id) > FPS_LIMIT + FPS_OFFSET)
         {
-            ExecuteHamB(Ham_CS_RoundRespawn, id);
             if(fails_till_print[id] >= FAILS_TILL_PRINT)
             {
                 fails_till_print[id] = 0;
                 client_print_color(id, print_team_red, "%s^1 Incorrect ^3%d ^1fps. Auto attempt to set ^4%d^1!", PREFIX, floatround(get_user_fps(id)), g_ePlayerInfo[id][m_iCategory] < Cat_FastRun ? g_iCategorySign[cat] : FPS_LIMIT);
             }
             fails_till_print[id]++;
+
+            ExecuteHamB(Ham_CS_RoundRespawn, id);
             client_cmd(id, "fps_max %d", g_iCategorySign[cat]);
         }
         g_fNextFpsCheck[id] = get_gametime() + 1.0;

@@ -858,15 +858,19 @@ public box_resized(box, const szClass[])
     ReDrawLine(beams[3], mins[0], mins[1], z, mins[0], maxs[1], z);
 
 }
-public box_start_touch(box, ent, const szClass[])
+public box_start_touch(box, id, const szClass[])
 {
+    if(!is_user_connected(id)) return;
+
     if(equal(szClass, "finish"))
     {
-        Engine_TouchFinish(box, ent);
+        Engine_TouchFinish(box, id);
     }
 }
 public box_stop_touch(box, id, const szClass[])
 {
+    if(!is_user_connected(id)) return;
+
     if(equal(szClass, "start"))
     {
         HC_CheckStartTimer(id);
