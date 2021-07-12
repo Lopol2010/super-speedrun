@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <amxmisc>
 #include <fakemeta>
+#include <fun>
 #include <engine>
 #include <xs>
 #include <vdf>
@@ -70,7 +71,8 @@ public plugin_init()
     register_clcmd("boxid", "cmdBoxRename", ADMIN_CFG);
     
     register_think("box", "Box_Think");
-    
+
+    register_forward( FM_CmdStart, "FwdCmdStart" );
     register_forward(FM_TraceLine, "fwTraceLine", 1);
     register_forward(FM_PlayerPreThink, "fwPlayerPreThink", 1);
     
@@ -363,6 +365,46 @@ public fwPlayerPreThink(id)
             }
         }
     }
+}
+public FwdCmdStart( client, ucHandle ) 
+{
+    if( !gbInMenu[client]
+    || !is_user_alive( client )
+    || pev( client, pev_movetype ) != MOVETYPE_NOCLIP
+    || !( pev( client, pev_button ) & IN_FORWARD ) ) {
+        return FMRES_IGNORED;
+    }
+    
+    static Float:fForward, Float:fSide;
+    get_uc( ucHandle, UC_ForwardMove, fForward );
+    get_uc( ucHandle, UC_SideMove, fSide );
+    
+    if( fForward == 0.0 && fSide == 0.0 ) {
+        return FMRES_IGNORED;
+    }
+    
+    static Float:fMaxSpeed;
+    pev( client, pev_maxspeed, fMaxSpeed );
+    
+    new Float:fWalkSpeed = fMaxSpeed * 0.52;
+    if( floatabs( fForward ) <= fWalkSpeed
+    && floatabs( fSide ) <= fWalkSpeed ) {
+        static Float:vOrigin[ 3 ];
+        pev( client, pev_origin, vOrigin );
+        
+        static Float:vAngle[ 3 ];
+        pev( client, pev_v_angle, vAngle );
+        engfunc( EngFunc_MakeVectors, vAngle );
+        global_get( glb_v_forward, vAngle );
+        
+        vOrigin[ 0 ] += ( vAngle[ 0 ] * 8.0 );
+        vOrigin[ 1 ] += ( vAngle[ 1 ] * 8.0 );
+        vOrigin[ 2 ] += ( vAngle[ 2 ] * 8.0 );
+        
+        engfunc( EngFunc_SetOrigin, client, vOrigin );
+    }
+    
+    return FMRES_IGNORED;
 }
 public fwTraceLine(const Float:v1[], const Float:v2[], fNoMonsters, pentToSkip, ptr)
 {
