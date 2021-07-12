@@ -40,6 +40,7 @@
 
 #define FPS_LIMIT 1050
 #define FPS_OFFSET 5
+#define FAILS_TILL_PRINT 3
 #define CRAZYSPEED_BOOST 250.0
 #define FASTRUN_AIRACCELERATE -55.0
 #define PUSH_DIST 300.0
@@ -141,7 +142,7 @@ public plugin_init()
 
     // set_task(0.1, "Task_ShowSpeed", TASK_SHOWSPEED, .flags = "b");
     CreateHudThink();
-    set_task(0.1, "Task_CheckFrames", TASK_CHECKFRAMES, .flags = "b");
+    set_task(3.0, "Task_CheckFrames", TASK_CHECKFRAMES, .flags = "b");
 
     set_cvar_num("mp_autoteambalance", 0);
     set_cvar_num("mp_round_infinite", 1);
@@ -172,7 +173,7 @@ public SR_ChangedCategory(id, cat)
 
     if(cat >= Cat_FastRun && g_ePlayerInfo[id][m_iPrevCategory] < Cat_FastRun)
     {
-        client_print_color(id, print_team_default, "%s^1 Resetting your fps to ^4%d^1!", PREFIX, g_ePlayerInfo[id][m_iInitialFps]);
+        // client_print_color(id, print_team_default, "%s^1 Resetting your fps to ^4%d^1!", PREFIX, g_ePlayerInfo[id][m_iInitialFps]);
         client_cmd(id, "fps_max %d", g_ePlayerInfo[id][m_iInitialFps]);
     }
 }
@@ -783,6 +784,7 @@ public Task_CheckFrames()
             continue;
         }
 
+        static fails_till_print[33];
         if (g_fNextFpsCheck[id] > get_gametime()) continue;
 
         new cat = g_ePlayerInfo[id][m_iCategory];
@@ -790,14 +792,15 @@ public Task_CheckFrames()
                 || g_ePlayerInfo[id][m_iCategory] >= Cat_FastRun && get_user_fps(id) > FPS_LIMIT + FPS_OFFSET)
         {
             ExecuteHamB(Ham_CS_RoundRespawn, id);
-            client_print_color(id, print_team_red, "%s^1 Incorrect ^3%d ^1fps. Auto attempt to set ^4%d^1!", PREFIX, floatround(get_user_fps(id)), g_ePlayerInfo[id][m_iCategory] < Cat_FastRun ? g_iCategorySign[cat] : FPS_LIMIT);
+            if(fails_till_print[id] >= FAILS_TILL_PRINT)
+            {
+                fails_till_print[id] = 0;
+                client_print_color(id, print_team_red, "%s^1 Incorrect ^3%d ^1fps. Auto attempt to set ^4%d^1!", PREFIX, floatround(get_user_fps(id)), g_ePlayerInfo[id][m_iCategory] < Cat_FastRun ? g_iCategorySign[cat] : FPS_LIMIT);
+            }
+            fails_till_print[id]++;
             client_cmd(id, "fps_max %d", g_iCategorySign[cat]);
-            g_fNextFpsCheck[id] = get_gametime() + 3.0;
         }
-        else
-        {
-            g_fNextFpsCheck[id] = get_gametime() + 1.0;
-        }
+        g_fNextFpsCheck[id] = get_gametime() + 1.0;
     }
 }
 
