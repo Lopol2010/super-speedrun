@@ -7,6 +7,7 @@
                     так же у меня куча записей в топ15 со STEAM_ID_LAN причем пока что только у меня, не у других админов
                     поставил в reunion.cfg ServerInfoAnswerType = 2 может поможет.
                     почему ClientAuthorization(id) вызывается дважды? разве не достаточно только authorized?
+                    !!! Замена putinserver на authorized ломает игру, не открыть top15 и не работает таймер на спидран картах
         убрать мнгновенные сообщения в чат при выборе 100фпс, когда проскакиваешь эту категорию не выбирая её, бесят эти сообщения
         speedrun_fatal
         * проверить и переделать покупку привелегий 
@@ -593,6 +594,7 @@ public Query_IngnoredHandle(failstate, Handle:query, error[], errnum, data[], si
         log_amx("SQL error[IngnoredHandle]: %s", error); return;
     }
 }
+
 public client_connect(id)
 {
     g_ePlayerInfo[id][m_bAuthorized] = false;

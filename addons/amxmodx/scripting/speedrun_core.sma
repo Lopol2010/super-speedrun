@@ -800,11 +800,11 @@ public Task_CheckFrames()
         }
     }
 }
+
 public cvar_fps_max_query_callback(id, const cvar[], const value[])
 {
     // Если квар не существует value будет 'Bad CVAR request'
     // log_amx("User: '%s', cvar: '%s', value: '%s'", user_name, cvar, value);
-
 
     if(equali(value, "bad")) 
     {

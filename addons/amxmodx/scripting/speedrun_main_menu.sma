@@ -50,6 +50,8 @@ public HC_CBasePlayer_Spawn_Post(id)
 }
 public Command_Menu(id)
 {
+    if(!is_user_connected(id)) return PLUGIN_CONTINUE;
+
     new szMenu[64];
 
     new menu = menu_create("\wSuper Speedrun \rv1.0-beta", "Menu_Handler")
