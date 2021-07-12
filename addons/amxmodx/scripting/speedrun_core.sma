@@ -15,6 +15,7 @@
 */
 #include <amxmodx>
 #include <engine>
+#include <cstrike>
 #include <fakemeta>
 #include <hamsandwich>
 #include <reapi>
@@ -399,8 +400,7 @@ public Command_Start(id)
 
     if(get_user_category(id) == Cat_LowGravity)
     {
-        new wpnName[33]; rg_get_weapon_info(get_user_weapon(id), WI_NAME, wpnName, charsmax(wpnName));
-        if(equal(wpnName, "weapon_knife"))
+        if(get_user_weapon(id) == CSW_KNIFE)
             set_user_gravity(id, 0.5);
     }
     reset_checkpoints(id);
