@@ -29,8 +29,6 @@ new giConfigFile;
 
 new const gszModel[] = "sprites/cnt1.spr";
 
-#define m_flNextAttack                   83 	//(float) Gametime of nextattack
-
 #define DEFAULT_MINSIZE { -32.0, -32.0, -32.0}
 #define DEFAULT_MAXSIZE { 32.0, 32.0, 32.0}
 
@@ -347,6 +345,7 @@ public cmdUndo(id, level, cid)
 
 public fwPlayerPreThink(id)
 {
+
     if(gbInMenu[id])
     {
         set_member(id, m_flNextAttack, 1.0);
@@ -1034,7 +1033,8 @@ public fwBoxTouch(box, ent)
 {
     fwTouch(box, ent);
     
-    
+    // client_print(0, print_chat, "touch!");
+
     new tid = getTaskIdFormBox(box, ent);
     
     if(task_exists(tid))
@@ -1043,6 +1043,7 @@ public fwBoxTouch(box, ent)
     }
     else
     {
+        // client_print(0, print_chat, "start touch!");
         fwStartTouch(box, ent);
     }
     
