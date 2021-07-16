@@ -7,6 +7,7 @@
 #include <vdf>
 #include <celltrie>
 #include <box_system>
+#include <reapi>
 
 new gszConfigDir[256];
 new gszConfigDirPerMap[256];
@@ -348,7 +349,7 @@ public fwPlayerPreThink(id)
 {
     if(gbInMenu[id])
     {
-        set_pdata_float(id, m_flNextAttack , 1.0, 5);
+        set_member(id, m_flNextAttack, 1.0);
                 
         if(is_valid_ent(giCatched[id]))
         {
