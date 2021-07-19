@@ -190,7 +190,8 @@ enum _:Cvars
     SQL_HOST,
     SQL_USER,
     SQL_PASSWORD,
-    SQL_DATABASE
+    SQL_DATABASE,
+    STATS_MOTD_URL,
 };
 enum _:ResultsColumns
 {
@@ -232,6 +233,7 @@ public plugin_init()
     g_pCvars[SQL_USER] = register_cvar("speedrun_user", "root");
     g_pCvars[SQL_PASSWORD] = register_cvar("speedrun_password", "root");
     g_pCvars[SQL_DATABASE] = register_cvar("speedrun_database", "speedrun_stats.db");
+    g_pCvars[STATS_MOTD_URL] = register_cvar("speedrun_stats_url", "http://127.0.0.1:1337/stats");
     
     register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
     // register_clcmd("setfinish", "Command_SetFinish", ADMIN_CFG);
@@ -397,7 +399,7 @@ public Command_Top15(id)
 {
     if(!g_ePlayerInfo[id][m_bAuthorized] || is_flooding(id)) return PLUGIN_HANDLED;
     
-    ShowTop15(id, get_user_category(id));
+    ShowTop15_Redirect(id, get_user_category(id));
     
     return PLUGIN_CONTINUE;
 }
@@ -1028,6 +1030,18 @@ public Query_LoadRankHandle(failstate, Handle:query, error[], errnum, data[], si
     client_print_color(id, print_team_default, "^4[^1%s^4]^1 Your rank is %d!", g_szCategory[category], rank);
 }
 
+ShowTop15_Redirect(id, category)
+{
+    static szURL[128];
+    get_pcvar_string(g_pCvars[STATS_MOTD_URL], szURL, charsmax(szURL));
+
+    new iLen = 0, iMax = charsmax(g_szMotd);
+
+    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta charset=utf-8>");
+    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta http-equiv = ^"refresh^" content = ^"0; url = %s?mid=%d&cat=%d^" />", szURL, g_iMapIndex, category);
+
+    show_motd(id, g_szMotd, "Top15");
+}
 ShowTop15(id, category)
 {
     formatex(g_szQuery, charsmax(g_szQuery), "SELECT nickname, besttime, checkpoints, gochecks FROM `results` JOIN `runners` ON `runners`.id=`results`.id WHERE mid=%d AND category=%d AND besttime ORDER BY besttime ASC LIMIT 15", 
