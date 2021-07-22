@@ -1,6 +1,12 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
+        * расставить зона на спидран картах
+                остановился размечать зоны на карте после speedrun_india
+        старт у кнопки, щас как респавн
+        на 2к режиме ставить 200фпс
+        проигрывается анимация перезарядки на bhop_skill когда меняешь межну ножом и усп
+        если зашел игрок с fps_max 100 и поменял например на 500, то после пролистывания категории 100 ему не вернет 500.
         /save баг, ты на стартовой зоне, но пишет ошибку "You must be in spawnbox or stop moving."
             появилось когда поставил /save находясь на самом краю старта
         сделать и протестить новый алгоритм событий box_start_touch и end, 
@@ -17,8 +23,6 @@
         ночное видиние так же видят спектры
         ограничение скорости убрать? наверно только для спидран карт, щас нашел карту не проходимую на 2к скорости, speedrun_den вроде одна из таких
         slowmo, noWASD
-        * расставить зона на спидран картах
-                остановился размечать зоны на карте после speedrun_enborian (где то на 10 дальше ушел)
         * allow map change when 2 players afk and third player says rtv
         * ?? delete finish zone stuff from database
         * add kzbr_hii_fastrun, bhop_bloody, bkz_abstract, akzk_desertcliff, chk_neutral2, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
@@ -1032,13 +1036,15 @@ public Query_LoadRankHandle(failstate, Handle:query, error[], errnum, data[], si
 
 ShowTop15_Redirect(id, category)
 {
-    static szURL[128];
+    static szURL[256];
     get_pcvar_string(g_pCvars[STATS_MOTD_URL], szURL, charsmax(szURL));
 
     new iLen = 0, iMax = charsmax(g_szMotd);
 
-    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta charset=utf-8>");
-    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta http-equiv = ^"refresh^" content = ^"0; url = %s?mid=%d&cat=%d^" />", szURL, g_iMapIndex, category);
+    // iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta charset=utf-8>");
+    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta http-equiv = ^"refresh^" content = ^"0; url = %s?pid=%d&mid=%d&cat=%d&map=%s^" />", szURL, g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category, g_szMapName);
+    iLen += formatex(g_szMotd[iLen], iMax-iLen, "<style>body { background-color: #0c0e0e; } body:after { content: ^"Loading...^"; font-size: 54px; color: grey; }</style>");
+    client_print(0, print_chat, "%d", g_ePlayerInfo[id][m_iPlayerIndex]);
 
     show_motd(id, g_szMotd, "Top15");
 }
