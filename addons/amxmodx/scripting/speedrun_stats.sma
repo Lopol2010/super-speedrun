@@ -1044,7 +1044,6 @@ ShowTop15_Redirect(id, category)
     // iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta charset=utf-8>");
     iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta http-equiv = ^"refresh^" content = ^"0; url = %s?pid=%d&mid=%d&cat=%d&map=%s^" />", szURL, g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category, g_szMapName);
     iLen += formatex(g_szMotd[iLen], iMax-iLen, "<style>body { background-color: #0c0e0e; } body:after { content: ^"Loading...^"; font-size: 54px; color: grey; }</style>");
-    client_print(0, print_chat, "%d", g_ePlayerInfo[id][m_iPlayerIndex]);
 
     show_motd(id, g_szMotd, "Top15");
 }
