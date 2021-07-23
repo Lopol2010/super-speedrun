@@ -326,8 +326,8 @@ public _sr_command_start(pid, argc)
         ExecuteHamB(Ham_CS_RoundRespawn, id);
     }
 
-    // if(get_user_weapon(id) == CSW_KNIFE && get_user_category(id) == Cat_LowGravity)
-    //     set_user_gravity(id, 0.5);
+    if(get_user_weapon(id) == CSW_KNIFE && get_user_category(id) == Cat_LowGravity)
+        set_user_gravity(id, 0.5);
 
     reset_checkpoints(id);
 
@@ -689,7 +689,8 @@ public HC_CBasePlayer_Spawn_Post(id)
 {
     if(!is_user_alive(id)) return HC_CONTINUE;
 
-    Command_Start(id);
+    if(g_bStartPosition)
+        Command_Start(id);
 
     return HC_CONTINUE;
 }
