@@ -10,6 +10,8 @@ native set_user_category(id);
 native rotate_user_category(id);
 native sr_command_spec(id);
 native sr_command_start(id);
+native sr_give_default_items(id);
+
 forward SR_PlayerOnStart(id);
 forward SR_ChangedCategory(id, cat);
 

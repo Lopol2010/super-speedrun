@@ -337,12 +337,7 @@ public fwdUse(ent, id)
 
         StartTimer(id);
 
-        static tmp[32]; new iNum = 0, iWeaponBits = get_user_weapons(id, tmp, iNum); 
-        if(~iWeaponBits & (1<<CSW_KNIFE))
-            rg_give_item(id, "weapon_knife");
-        if(~iWeaponBits & (1<<CSW_USP))
-            rg_give_item(id, "weapon_usp");
-        rg_set_user_bpammo(id, WEAPON_USP, 24);
+        sr_give_default_items(id);
 
         new wpn[32];
         get_weaponname(get_user_weapon(id), wpn, charsmax(wpn));

@@ -302,6 +302,21 @@ public plugin_natives()
     register_native("rotate_user_category", "_rotate_user_category", 1);
     register_native("sr_command_spec", "Command_Spec", 1);
     register_native("sr_command_start", "Command_Start", 1);
+    register_native("sr_give_default_items", "_sr_give_default_items");
+}
+
+public _sr_give_default_items()
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    if(!is_user_connected(id)) return;
+
+    static tmp[32]; new iNum = 0, iWeaponBits = get_user_weapons(id, tmp, iNum); 
+    if(~iWeaponBits & (1<<CSW_KNIFE))
+        rg_give_item(id, "weapon_knife");
+    if(~iWeaponBits & (1<<CSW_USP))
+        rg_give_item(id, "weapon_usp");
+    rg_set_user_bpammo(id, WEAPON_USP, 24);
 }
 
 public _get_user_category(id)
@@ -658,9 +673,7 @@ public HC_CBasePlayer_Killed_Post(id)
 }
 public HC_CBasePlayer_GiveDefaultItems(id)
 {
-    rg_remove_all_items(id, false);
-    rg_give_item(id, "weapon_knife");
-    rg_give_item(id, "weapon_usp");
+    sr_give_default_items(id);
     return HC_SUPERCEDE;
 }
 public HC_CBasePlayer_Jump_Pre(id)
