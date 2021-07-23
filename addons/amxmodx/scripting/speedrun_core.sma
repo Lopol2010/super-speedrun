@@ -168,6 +168,9 @@ public SR_ChangedCategory(id, cat)
     
     reset_checkpoints(id);
 
+    if(get_user_weapon(id) == CSW_KNIFE && get_user_category(id) == Cat_LowGravity)
+        set_user_gravity(id, 0.5);
+
     if(cat >= Cat_FastRun && g_ePlayerInfo[id][m_iPrevCategory] < Cat_FastRun)
     {
         // client_print_color(id, print_team_default, "%s^1 Resetting your fps to ^4%d^1!", PREFIX, g_ePlayerInfo[id][m_iInitialFps]);
