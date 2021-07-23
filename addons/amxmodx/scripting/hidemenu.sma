@@ -272,7 +272,7 @@ public cmdWaterInvisible(id)
     if( !gWaterFound )
     {
         // kz_chat(id, "%L", id, "KZ_INVISIBLE_NOWATER")
-        return PLUGIN_HANDLED
+        // return PLUGIN_HANDLED
     }
     
     gWaterInvisible[id] = !gWaterInvisible[id]

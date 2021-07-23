@@ -19,6 +19,8 @@
                     !!! Замена putinserver на authorized ломает игру, не открыть top15 и не работает таймер на спидран картах
         speedrun_fatal
         * multilang for remaining client_prints
+            in hidemenu and core and stats
+            also in hidemenu add message when water not found
         * bind 2k category's speed to knife alike low gravity 
         проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
         ночное видиние так же видят спектры
