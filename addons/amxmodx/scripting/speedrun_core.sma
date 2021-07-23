@@ -622,12 +622,19 @@ public SaveMenu_Handler(id, key)
 public box_start_touch(box, id, const szClass[])
 {
     if(!is_user_connected(id)) return;
-    g_ePlayerInfo[id][m_bInSaveBox] = true;
+
+    if(equal(szClass, "start"))
+    {
+        g_ePlayerInfo[id][m_bInSaveBox] = true;
+    }
 }
 public box_stop_touch(box, id, const szClass[])
 {
     if(!is_user_connected(id)) return;
-    g_ePlayerInfo[id][m_bInSaveBox] = false;
+    if(equal(szClass, "start"))
+    {
+        g_ePlayerInfo[id][m_bInSaveBox] = false;
+    }
 }
 //*******************************************************************//
 public Message_ScoreInfo(Msgid, Dest, id)
