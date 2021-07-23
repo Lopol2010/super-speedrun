@@ -430,7 +430,7 @@ public client_putinserver(id)
 public task_delayed_query_initial_fps(arg[])
 {
     new id = arg[0];
-    if(!is_user_bot(id)) query_client_cvar(id, "fps_max", "cvar_fps_max_query_callback");
+    if(!is_user_bot(id) && is_user_connected(id)) query_client_cvar(id, "fps_max", "cvar_fps_max_query_callback");
 }
 
 public client_disconnected(id)
