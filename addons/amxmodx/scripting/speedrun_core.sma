@@ -321,8 +321,6 @@ public _rotate_user_category(id)
         default: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
     }
 
-    if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
-
     ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
 }
 public _set_user_category(id, category)
@@ -527,13 +525,6 @@ public CategoryMenu_Handler(id, key)
 
     if(key <= 4)
     {
-        // if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
-
-        // strip_user_weapons(id);
-        // give_item(id,"weapon_knife");
-        // give_item(id,"weapon_usp");
-        // rg_set_user_bpammo(id, WEAPON_USP, 24);
-
         ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
     }
 }
@@ -566,8 +557,6 @@ public SpeedrunMenu_Handler(id, key)
     }
     if(key != 9)
     {
-        if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
-
         ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
     }
 }

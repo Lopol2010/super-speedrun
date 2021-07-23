@@ -337,7 +337,6 @@ public fwdUse(ent, id)
 
         StartTimer(id);
 
-        // strip_user_weapons(id);
         static tmp[32]; new iNum = 0, iWeaponBits = get_user_weapons(id, tmp, iNum); 
         if(~iWeaponBits & (1<<CSW_KNIFE))
             rg_give_item(id, "weapon_knife");
