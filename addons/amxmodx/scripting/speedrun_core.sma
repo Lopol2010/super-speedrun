@@ -382,6 +382,7 @@ SaveStartPosition(map[], Float:origin[3], Float:vangles[3])
     fwrite_blocks(file, _:vangles, sizeof(vangles), BLOCK_INT);
     fclose(file);
 }
+
 public Command_Start(id)
 {
     if(!is_user_alive(id)) return PLUGIN_HANDLED;

@@ -1,7 +1,6 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        * после смерти с гравой, при респавне она остаётся на юспе
         * у некоторых игроков нет ножа, немогут играть в low gravity
         * расставить зона на спидран картах
                 остановился размечать зоны на карте после speedrun_india
@@ -338,11 +337,17 @@ public fwdUse(ent, id)
 
         StartTimer(id);
 
-        strip_user_weapons(id);
-
-        rg_give_item(id, "weapon_knife");
-        rg_give_item(id, "weapon_usp");
+        // strip_user_weapons(id);
+        static tmp[32]; new iNum = 0, iWeaponBits = get_user_weapons(id, tmp, iNum); 
+        if(~iWeaponBits & (1<<CSW_KNIFE))
+            rg_give_item(id, "weapon_knife");
+        if(~iWeaponBits & (1<<CSW_USP))
+            rg_give_item(id, "weapon_usp");
         rg_set_user_bpammo(id, WEAPON_USP, 24);
+
+        new wpn[32];
+        get_weaponname(get_user_weapon(id), wpn, charsmax(wpn));
+        rg_give_item(id, wpn, GT_REPLACE);
     }
     
     if( TrieKeyExists( g_tStops, szTarget ) )
@@ -751,6 +756,7 @@ Create_Box(ent, Float:color[3] = {255.0,255.0,255.0})
     DrawLine(ent, mins[0], mins[1], z, mins[0], maxs[1], z, color);
 
 }
+
 ReDrawLine(beamEnt, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2) 
 {
     new Float:start[3], Float:stop[3];
@@ -775,7 +781,7 @@ DrawLine(ent, Float:x1, Float:y1, Float:z1, Float:x2, Float:y2, Float:z2, Float:
     stop[0] = x2;
     stop[1] = y2;
     stop[2] = z2;
-    
+
     new beamEnt = Beam_Create(FINISH_SPRITENAME, 10.0);
 
     new class[20];
