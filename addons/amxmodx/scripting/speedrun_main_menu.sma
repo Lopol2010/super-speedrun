@@ -28,10 +28,12 @@ public plugin_init(){
 }
 public plugin_natives()
 {
-    register_native("main_menu_display", "_main_menu_display", 1);
+    register_native("main_menu_display", "_main_menu_display");
 }
-public _main_menu_display(id)
+public _main_menu_display()
 {
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
     Command_Menu(id);
 }
 public HC_CBasePlayer_Spawn_Post(id)

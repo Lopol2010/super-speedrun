@@ -164,10 +164,7 @@ public SR_ChangedCategory(id, cat)
 {
     if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
 
-    strip_user_weapons(id);
-    rg_give_item(id,"weapon_knife");
-    rg_give_item(id,"weapon_usp");
-    rg_set_user_bpammo(id, WEAPON_USP, 24);
+    sr_give_default_items(id);
     
     reset_checkpoints(id);
 
@@ -297,12 +294,75 @@ is_on_spawn(ent, Float:fMaxDistance)
 
 public plugin_natives()
 {
-    register_native("get_user_category", "_get_user_category", 1);
-    register_native("set_user_category", "_set_user_category", 1);
-    register_native("rotate_user_category", "_rotate_user_category", 1);
-    register_native("sr_command_spec", "Command_Spec", 1);
-    register_native("sr_command_start", "Command_Start", 1);
+    register_native("get_user_category", "_get_user_category");
+    register_native("set_user_category", "_set_user_category");
+    register_native("rotate_user_category", "_rotate_user_category");
+    register_native("sr_command_spec", "_sr_command_spec");
+    register_native("sr_command_start", "_sr_command_start");
     register_native("sr_give_default_items", "_sr_give_default_items");
+    register_native("sr_regive_weapon", "_sr_regive_weapon");
+}
+
+public _sr_command_start()
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+
+    if(!is_user_alive(id)) return PLUGIN_HANDLED;
+
+    if(g_ePlayerInfo[id][m_bSavePoint])
+    {
+        SetPosition(id, g_fSavedOrigin[id], g_fSavedVAngles[id]);
+    }
+    else if(g_bStartPosition)
+    {
+        SetPosition(id, g_fStartOrigin, g_fStartVAngles);
+    }
+    else
+    {
+        ExecuteHamB(Ham_CS_RoundRespawn, id);
+    }
+
+    if(get_user_category(id) == Cat_LowGravity)
+    {
+        if(get_user_weapon(id) == CSW_KNIFE)
+            set_user_gravity(id, 0.5);
+    }
+    reset_checkpoints(id);
+
+    ExecuteForward(g_fwOnStart, g_iReturn, id);
+
+    return PLUGIN_HANDLED;
+}
+public _sr_command_spec()
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+
+    if(get_member(id, m_iTeam) != TEAM_SPECTATOR)
+    {
+        rg_join_team(id, TEAM_SPECTATOR);
+    }
+    else
+    {
+        rg_set_user_team(id, TEAM_CT);
+        ExecuteHamB(Ham_CS_RoundRespawn, id);
+        HC_CBasePlayer_GiveDefaultItems(id);
+    }
+
+    main_menu_display(id);
+}
+
+public _sr_regive_weapon()
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    if(!is_user_connected(id)) return;
+
+    new wpn[32];
+    get_weaponname(get_user_weapon(id), wpn, charsmax(wpn));
+    rg_give_item(id, wpn, GT_REPLACE);
+
 }
 
 public _sr_give_default_items()
@@ -319,14 +379,19 @@ public _sr_give_default_items()
     rg_set_user_bpammo(id, WEAPON_USP, 24);
 }
 
-public _get_user_category(id)
+public _get_user_category()
 {
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
     return g_ePlayerInfo[id][m_iCategory];
 }
-public _rotate_user_category(id)
+public _rotate_user_category()
 {
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+
     g_ePlayerInfo[id][m_iPrevCategory] = g_ePlayerInfo[id][m_iCategory];
-    switch(_get_user_category(id))
+    switch(get_user_category(id))
     {
         case Cat_Default: g_ePlayerInfo[id][m_iCategory] = Cat_100fps;
         case Cat_100fps: g_ePlayerInfo[id][m_iCategory] = Cat_CrazySpeed;
@@ -338,8 +403,12 @@ public _rotate_user_category(id)
 
     ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
 }
-public _set_user_category(id, category)
+public _set_user_category()
 {
+    enum { arg_id = 1, arg_category }
+    new id = get_param(arg_id);
+    new category = get_param(arg_category);
+
     g_ePlayerInfo[id][m_iCategory] = category;
     if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
 }
@@ -396,33 +465,15 @@ SaveStartPosition(map[], Float:origin[3], Float:vangles[3])
     fclose(file);
 }
 
+public Command_Spec(id)
+{
+    sr_command_spec(id);
+    return PLUGIN_HANDLED;
+}
+
 public Command_Start(id)
 {
-    if(!is_user_alive(id)) return PLUGIN_HANDLED;
-
-    if(g_ePlayerInfo[id][m_bSavePoint])
-    {
-        SetPosition(id, g_fSavedOrigin[id], g_fSavedVAngles[id]);
-    }
-    else if(g_bStartPosition)
-    {
-        SetPosition(id, g_fStartOrigin, g_fStartVAngles);
-    }
-    else
-    {
-        ExecuteHamB(Ham_CS_RoundRespawn, id);
-    }
-
-    if(get_user_category(id) == Cat_LowGravity)
-    {
-        if(get_user_weapon(id) == CSW_KNIFE)
-            set_user_gravity(id, 0.5);
-    }
-    reset_checkpoints(id);
-
-    ExecuteForward(g_fwOnStart, g_iReturn, id);
-
-
+    sr_command_start(id);
     return PLUGIN_HANDLED;
 }
 SetPosition(id, Float:origin[3], Float:vangles[3])
@@ -464,20 +515,6 @@ public Command_Keys(id)
 {
     g_ePlayerInfo[id][m_bKeys] = !g_ePlayerInfo[id][m_bKeys];
     client_print_color(id, print_team_default, "^4%s^1 Show keys is^3^1.", PREFIX, g_ePlayerInfo[id][m_bKeys] ? "enabled" : "disabled");
-}
-public Command_Spec(id)
-{
-    if(get_member(id, m_iTeam) != TEAM_SPECTATOR)
-    {
-        rg_join_team(id, TEAM_SPECTATOR);
-    }
-    else
-    {
-        rg_set_user_team(id, TEAM_CT);
-        ExecuteHamB(Ham_CS_RoundRespawn, id);
-        HC_CBasePlayer_GiveDefaultItems(id);
-    }
-    main_menu_display(id);
 }
 public Command_BlockJointeam(id)
 {

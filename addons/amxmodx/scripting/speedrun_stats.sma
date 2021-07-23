@@ -279,7 +279,7 @@ public plugin_init()
 }
 public plugin_natives()
 {
-    register_native("sr_show_toplist", "_sr_show_toplist", 1);
+    register_native("sr_show_toplist", "_sr_show_toplist");
     register_native("sr_get_timer_display_text", "_sr_get_timer_display_text");
 }
 public _sr_get_timer_display_text(plugin, argc)
@@ -296,8 +296,11 @@ public _sr_get_timer_display_text(plugin, argc)
         set_string(arg_text, szTime, len);
     }
 }
-public _sr_show_toplist(id)
+public _sr_show_toplist()
 {
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    if(!is_user_connected(id)) return;
     Command_Top15(id);
 }
 public fwdUse(ent, id)
@@ -338,10 +341,8 @@ public fwdUse(ent, id)
         StartTimer(id);
 
         sr_give_default_items(id);
+        sr_regive_weapon(id);
 
-        new wpn[32];
-        get_weaponname(get_user_weapon(id), wpn, charsmax(wpn));
-        rg_give_item(id, wpn, GT_REPLACE);
     }
     
     if( TrieKeyExists( g_tStops, szTarget ) )
