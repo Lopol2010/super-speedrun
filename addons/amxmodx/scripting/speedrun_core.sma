@@ -306,12 +306,12 @@ public plugin_natives()
     register_native("sr_regive_weapon", "_sr_regive_weapon");
 }
 
-public _sr_command_start()
+public _sr_command_start(pid, argc)
 {
     enum { arg_id = 1 }
     new id = get_param(arg_id);
 
-    if(!is_user_alive(id)) return PLUGIN_HANDLED;
+    if(!is_user_connected(id)) return;
 
     if(g_ePlayerInfo[id][m_bSavePoint])
     {
@@ -332,8 +332,6 @@ public _sr_command_start()
     reset_checkpoints(id);
 
     ExecuteForward(g_fwOnStart, g_iReturn, id);
-
-    return PLUGIN_HANDLED;
 }
 public _sr_command_spec()
 {
