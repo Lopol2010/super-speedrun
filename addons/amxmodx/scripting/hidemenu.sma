@@ -6,6 +6,7 @@
 #include <engine>
 #include <fakemeta>
 #include <speclist>
+#include <speedrun>
 #include <hamsandwich>
 
 #define PLUGIN "HUD Customizer 0.4" 
@@ -182,8 +183,8 @@ public BlockPickup(Entity, Client)
 
 public plugin_natives()
 {
-    register_native("is_weapon_hidden", "is_weapon_hidden")
-    register_native("show_hide_menu", "show_hide_menu")
+    register_native("is_weapon_hidden", "_is_weapon_hidden")
+    register_native("show_hide_menu", "_show_hide_menu")
     
 }
 public HideMenu(id)
@@ -201,8 +202,16 @@ public HideMenu(id)
     menu_additem( g_menu, msgwpninvis, "2" )
     menu_additem( g_menu, msgwaterinvis, "3" )
     menu_additem( g_menu, msgspeclist, "4" )
+    menu_addblank2( g_menu )
+    menu_addblank2( g_menu )
+    menu_addblank2( g_menu )
+    menu_additem( g_menu, "Main menu", "8" )
+    menu_addblank2( g_menu )
 
-    menu_display(id, g_menu)
+    menu_setprop( g_menu, MPROP_PERPAGE, 0 )
+	menu_setprop( g_menu, MPROP_EXIT, MEXIT_FORCE )
+	// menu_setprop( g_menu, MPROP_EXITNAME, "Exit" )
+    menu_display( id, g_menu )
     return PLUGIN_HANDLED
 }
 public client_disconnected(id)
@@ -236,6 +245,11 @@ public HideMenu_Handler(id, menu, key)
         case 3:
         {
             speclist_toggle(id)
+        }
+        case 7:
+        {
+            main_menu_display(id)
+            return PLUGIN_HANDLED
         }
     }
     HideMenu(id)
@@ -295,7 +309,7 @@ public hide_weapon(id)
     
     set_pev(id, pev_viewmodel2, g_weaponHidden[id] ? "" : g_viewmodel[id] )
 
-    new wpn = get_member(id, m_pClientActiveItem)
+    // new wpn = get_member(id, m_pClientActiveItem)
     
     // new Float:nextAttack = g_weaponHidden[id] ? 99999.0 : 0.0
     // set_member(id, m_flNextAttack, nextAttack)
@@ -306,7 +320,7 @@ public hide_weapon(id)
     onResetHUD(id)
 }
 
-public show_hide_menu()
+public _show_hide_menu()
 {
     enum {
         arg_id = 1
@@ -314,7 +328,7 @@ public show_hide_menu()
     HideMenu(get_param(arg_id))
 }
 
-public is_weapon_hidden()
+public _is_weapon_hidden()
 {
     enum {
         arg_id = 1
