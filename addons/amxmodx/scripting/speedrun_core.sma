@@ -236,7 +236,7 @@ LoadStartPosition()
 }
 SetGameName()
 {
-    new szGameName[32]; formatex(szGameName, charsmax(szGameName), "Speedrun v%s", VERSION);
+    new szGameName[32]; formatex(szGameName, charsmax(szGameName), "Speedrun");
     set_member_game(m_GameDesc, szGameName);
 }
 BlockChangingTeam()
