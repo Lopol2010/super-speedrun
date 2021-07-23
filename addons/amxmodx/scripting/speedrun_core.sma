@@ -326,9 +326,9 @@ public _sr_command_start()
         ExecuteHamB(Ham_CS_RoundRespawn, id);
     }
 
-    if(get_user_weapon(id) == CSW_KNIFE && get_user_category(id) == Cat_LowGravity)
-        set_user_gravity(id, 0.5);
-        
+    // if(get_user_weapon(id) == CSW_KNIFE && get_user_category(id) == Cat_LowGravity)
+    //     set_user_gravity(id, 0.5);
+
     reset_checkpoints(id);
 
     ExecuteForward(g_fwOnStart, g_iReturn, id);
