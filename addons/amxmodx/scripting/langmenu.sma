@@ -124,11 +124,12 @@ public client_authorized(id)
         new code[3]; 
         if(sxgeo_code(szIP, code, charsmax(code)))
         {
+            server_print("127 sxgeo autlang: %d : %s", id, code);
             // first find out if we defined any language for this country like in langmeny.cfg, its like association 'ru -> kz, ua, ru...'
             lang = FindLangIdByCountry(code);
             if (lang != -1) {
                 setUserLang(id, lang, true);
-                server_print("127 set lang for %d: %d", id, lang);
+                server_print("132 set lang for %d: %d", id, lang);
                 return;
             } 
 
