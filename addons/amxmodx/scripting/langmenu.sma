@@ -103,7 +103,7 @@ public print_info_task(arg[])
 
 public client_authorized(id) 
 { 
- 
+
     new authid[24], langKey[MAX_LANG_KEY_LENGTH], lang;
     get_user_authid(id, authid, charsmax(authid));
 
