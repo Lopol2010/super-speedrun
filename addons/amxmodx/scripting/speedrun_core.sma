@@ -90,7 +90,7 @@ new g_iSyncHudSpeed;
 new g_fwChangedCategory;
 new g_fwOnStart;
 new g_iReturn;
-new Float:g_fSavedOrigin[33][3], Float:g_fSavedVAngles[33][3], Float: g_fNextFpsCheck[33];
+new Float:g_fSavedOrigin[33][3], Float:g_fSavedVAngles[33][3], g_iSavedDuck[33], Float: g_fNextFpsCheck[33];
 new Trie:g_tRemoveEntities, g_iForwardSpawn;
 
 public plugin_init()
@@ -163,6 +163,7 @@ CreateHudThink()
 public SR_StartButtonPress(id)
 {
     SavePoint(id);
+    g_iSavedDuck[id] = get_entvar(id, var_flags) & FL_DUCKING;
 }
 public SR_ChangedCategory(id, cat)
 {
@@ -317,7 +318,7 @@ public _sr_command_start(pid, argc)
     if(g_ePlayerInfo[id][m_bSavePoint])
     {
         SetPosition(id, g_fSavedOrigin[id], g_fSavedVAngles[id]);
-	    set_entvar( id, var_flags, get_entvar(id, var_flags) | FL_DUCKING );
+	    set_entvar( id, var_flags, get_entvar(id, var_flags) | g_iSavedDuck[id]);
     }
     else if(g_bStartPosition)
     {
