@@ -108,7 +108,7 @@ public client_authorized(id)
     get_user_authid(id, authid, charsmax(authid));
 
     // first try to get player's language from vault
-    if (nvault_lookup(g_PlayersSettings, authid, langKey, charsmax(langKey), lang)) {
+    if (nvault_lookup(g_PlayersSettings, authid, langKey, charsmax(langKey)+1, lang)) {
         lang = findLangId(langKey);
         if (lang != -1) {
             setUserLang(id, lang, false);
