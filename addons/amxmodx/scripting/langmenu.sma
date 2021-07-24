@@ -207,6 +207,7 @@ public FindLangIdByCountry(const country[])
         {
             static c[3];
             c = g_CountryToLang[o][i]
+            server_print("210 FindLangIdByCountry: %d : %s", strlen(c), country);
             if(strlen(c) == 3) break;
             if(equali(c, country)) return o;
         }
