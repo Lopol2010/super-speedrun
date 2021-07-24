@@ -4,7 +4,10 @@
 #include <speedrun>
 #include <sxgeo>
 
+#define INFO_DELAY 1.0 //delay before print info when player joined server
+
 #define MAX_LANGS_NUM 9
+#define MAX_COUNTRY_LIST_LENGTH 20 
 #define MAX_LANG_KEY_LENGTH 3
 #define MAX_LANG_NAME_LENGTH 32
 
@@ -14,10 +17,12 @@ enum _:LANG {
 }
 
 new g_Langs[MAX_LANGS_NUM][LANG], g_LangsNum;
+new g_CountryToLang[MAX_LANGS_NUM][MAX_COUNTRY_LIST_LENGTH][MAX_LANG_KEY_LENGTH];
 
 new g_DefaultLang;
 new g_PlayersSettings;
 new g_PlayersLang[MAX_PLAYERS + 1];
+new g_PlayerInitialLang[33][3];
 
 public plugin_init() {
     register_plugin("Auto Language with Menu", "2.0", "F@nt0M remake by Lopol2010");
@@ -66,10 +71,19 @@ public plugin_end() {
     }
 }
 
+public client_disconnected(id)
+{
+    if(strlen(g_PlayerInitialLang[id]) == 3)
+    {
+        new infobuffer = engfunc(EngFunc_GetInfoKeyBuffer, id);
+        engfunc(EngFunc_SetClientKeyValue, id, infobuffer, "lang", g_PlayerInitialLang[id]);
+    }
+}
+
 public client_putinserver(id)
 {
     new arg[1]; arg[0] = id;
-    set_task(3.0, "print_info_task", _, arg, sizeof arg);
+    set_task(INFO_DELAY, "print_info_task", _, arg, sizeof arg);
 }
 
 public print_info_task(arg[])
@@ -79,11 +93,15 @@ public print_info_task(arg[])
         client_print_color(id, print_team_default, "%s Your language is set to ^4%s^1. You can change it via ^4/lang^1 menu.", PREFIX, g_Langs[g_PlayersLang[id]][LANG_NAME]);
 }
 
-public client_authorized(id) {
+public client_authorized(id) 
+{
 
-    new authid[24], langKey[MAX_LANG_KEY_LENGTH + 1], lang;
+    new authid[24], langKey[MAX_LANG_KEY_LENGTH], lang;
     get_user_authid(id, authid, charsmax(authid));
 
+    // save player's lang before changing it so that we can reset it when they disconnect
+    get_user_info(id, "lang", langKey, charsmax(langKey));
+    if(strlen(langKey) == 3) g_PlayerInitialLang[id] = langKey; 
 
     // first try to get player's language from vault
     if (nvault_lookup(g_PlayersSettings, authid, langKey, charsmax(langKey), lang)) {
@@ -100,6 +118,13 @@ public client_authorized(id) {
         new code[3]; 
         if(sxgeo_code(szIP, code, charsmax(code)))
         {
+            // first find out if we defined any language for this country like in langmeny.cfg, its like association 'ru -> kz, ua, ru...'
+            lang = FindLangIdByCountry(code);
+            if (lang != -1) {
+                setUserLang(id, lang, true);
+                return;
+            } 
+
             lang = findLangId(code);
             if (lang != -1) {
                 setUserLang(id, lang, true);
@@ -133,15 +158,49 @@ public CmdAddCmd() {
 }
 
 public CmdAddLang() {
+
     if (read_argc() < 2 || g_LangsNum >= MAX_LANGS_NUM) {
         return PLUGIN_HANDLED;
     }
 
     read_argv(1, g_Langs[g_LangsNum][LANG_KEY], MAX_LANG_KEY_LENGTH);
     read_argv(2, g_Langs[g_LangsNum][LANG_NAME], MAX_LANG_NAME_LENGTH);
+
+    const len = MAX_COUNTRY_LIST_LENGTH * 3 * 2;
+    new countries[len]; // mul by 2 because there is spaces
+    read_argv(3, countries, len);
+    
+    new args[MAX_COUNTRY_LIST_LENGTH][3], pos, i;
+    while (pos != -1) {
+        pos = argparse(countries, pos, args[i], sizeof(args[]) - 1);
+        // server_print("%d %s", sizeof(args[]), args[i]);
+        i++;
+    }
+
+    // for(i = 0; i < MAX_COUNTRY_LIST_LENGTH; i++)
+    // {
+    //     g_CountryToLang[g_LangsNum][i] = args[i];
+    //     server_print("%s %d", g_CountryToLang[g_LangsNum][i], sizeof g_CountryToLang[]);
+    // }
+
     g_LangsNum++;
 
     return PLUGIN_HANDLED;
+}
+
+public FindLangIdByCountry(const country[])
+{
+    for(new i = 0; i < MAX_COUNTRY_LIST_LENGTH; i++)
+    {
+        for(new o = 0; o < g_LangsNum; o++)
+        {
+            static c[3];
+            c = g_CountryToLang[o][i]
+            if(strlen(c) == 3) break;
+            if(equali(c, country)) return o;
+        }
+    }
+    return -1;
 }
 
 public CmdLangMenu(id) {
@@ -165,6 +224,7 @@ public CmdLangMenu(id) {
 
     return PLUGIN_HANDLED;
 }
+
 
 public HandleMenu(id, key) {
     if (key == 9) {
