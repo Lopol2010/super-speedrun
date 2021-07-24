@@ -71,6 +71,14 @@ public plugin_end() {
     }
 }
 
+public client_connect(id)
+{
+    new langKey[MAX_LANG_KEY_LENGTH];
+    // save player's lang before changing it so that we can reset it when they disconnect
+    get_user_info(id, "lang", langKey, charsmax(langKey));
+    if(strlen(langKey) == 3) g_PlayerInitialLang[id] = langKey; 
+
+}
 public client_disconnected(id)
 {
     if(strlen(g_PlayerInitialLang[id]) == 3)
@@ -98,10 +106,6 @@ public client_authorized(id)
 
     new authid[24], langKey[MAX_LANG_KEY_LENGTH], lang;
     get_user_authid(id, authid, charsmax(authid));
-
-    // save player's lang before changing it so that we can reset it when they disconnect
-    get_user_info(id, "lang", langKey, charsmax(langKey));
-    if(strlen(langKey) == 3) g_PlayerInitialLang[id] = langKey; 
 
     // first try to get player's language from vault
     if (nvault_lookup(g_PlayersSettings, authid, langKey, charsmax(langKey), lang)) {
