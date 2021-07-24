@@ -112,10 +112,10 @@ public client_authorized(id)
         lang = findLangId(langKey);
         if (lang != -1) {
             setUserLang(id, lang, false);
-            server_print("111 set lang for %d: %d %s", id, lang, langKey);
+            // server_print("111 set lang for %d: %d %s", id, lang, langKey);
         } else {
             setUserLang(id, g_DefaultLang, true);
-            server_print("114 set lang for %d: %d %s", id, lang, langKey);
+            // server_print("114 set lang for %d: %d %s", id, lang, langKey);
         }
     } else {
 
@@ -124,19 +124,19 @@ public client_authorized(id)
         new code[3]; 
         if(sxgeo_code(szIP, code, charsmax(code)))
         {
-            server_print("127 sxgeo autlang: %d : %s", id, code);
+            // server_print("127 sxgeo autlang: %d : %s", id, code);
             // first find out if we defined any language for this country like in langmeny.cfg, its like association 'ru -> kz, ua, ru...'
             lang = FindLangIdByCountry(code);
             if (lang != -1) {
                 setUserLang(id, lang, true);
-                server_print("132 set lang for %d: %d", id, lang);
+                // server_print("132 set lang for %d: %d", id, lang);
                 return;
             } 
 
             lang = findLangId(code);
             if (lang != -1) {
                 setUserLang(id, lang, true);
-                server_print("134 set lang for %d: %d", id, lang);
+                // server_print("134 set lang for %d: %d", id, lang);
                 return;
             } 
         }
@@ -146,10 +146,10 @@ public client_authorized(id)
         lang = findLangId(langKey);
         if (lang != -1) {
             setUserLang(id, lang, true);
-            server_print("148 set lang for %d: %d", id, lang);
+            // server_print("148 set lang for %d: %d", id, lang);
         } else {
             setUserLang(id, g_DefaultLang, true);
-            server_print("151 set lang for %d: %d", id, lang);
+            // server_print("151 set lang for %d: %d", id, lang);
         }
     }
 
@@ -188,11 +188,11 @@ public CmdAddLang() {
         i++;
     }
 
-    // for(i = 0; i < MAX_COUNTRY_LIST_LENGTH; i++)
-    // {
-    //     g_CountryToLang[g_LangsNum][i] = args[i];
-    //     server_print("%s %d", g_CountryToLang[g_LangsNum][i], sizeof g_CountryToLang[]);
-    // }
+    for(i = 0; i < MAX_COUNTRY_LIST_LENGTH; i++)
+    {
+        g_CountryToLang[g_LangsNum][i] = args[i];
+        // server_print("%s %d", g_CountryToLang[g_LangsNum][i], sizeof g_CountryToLang[]);
+    }
 
     g_LangsNum++;
 
@@ -207,7 +207,7 @@ public FindLangIdByCountry(const country[])
         {
             static c[3];
             c = g_CountryToLang[o][i]
-            server_print("210 FindLangIdByCountry: %d : %s", strlen(c), country);
+            // server_print("210 FindLangIdByCountry: %d : %s : %s", strlen(c), country, c);
             if(strlen(c) == 3) break;
             if(equali(c, country)) return o;
         }
