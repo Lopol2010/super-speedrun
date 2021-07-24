@@ -112,10 +112,10 @@ public client_authorized(id)
         lang = findLangId(langKey);
         if (lang != -1) {
             setUserLang(id, lang, false);
-            server_print("111 set lang for %d: %d", id, lang);
+            server_print("111 set lang for %d: %d %s", id, lang, langKey);
         } else {
             setUserLang(id, g_DefaultLang, true);
-            server_print("114 set lang for %d: %d", id, lang);
+            server_print("114 set lang for %d: %d %s", id, lang, langKey);
         }
     } else {
 
