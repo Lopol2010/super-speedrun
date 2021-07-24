@@ -2,7 +2,6 @@
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
         добавить возможность стрелять по друг другу
-        * когда переключаешь категории в motd toplist то мелькает белый экран, надо поменять это на темный с надписью loading(или без)
         * у некоторых игроков нет ножа, немогут играть в low gravity
             так же я не мог использовать нож кнопкой 3 и юсп кнопкой 2 когда взял авп на карте.
         * расставить зона на спидран картах
@@ -46,6 +45,7 @@
         * ?? allow use /save menu for maps with buttons
         ?? * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
     DONE:
+        * когда переключаешь категории в motd toplist то мелькает белый экран, надо поменять это на темный с надписью loading(или без)
         * заменить название игры сервера на Speedrun
         /save баг, ты на стартовой зоне, но пишет ошибку "You must be in spawnbox or stop moving."
         nominate not work
@@ -227,7 +227,7 @@ new g_iBestTime[33][Categories];
 new g_iFinishEnt;
 new g_szMotd[1536];
 new g_iBestTimeofMap[Categories];
-stock g_fwFinished;
+stock g_fwFinished, g_fwStartButtonPress;
 stock g_iReturn;
 
 new bool:g_bStartButton;
@@ -257,6 +257,7 @@ public plugin_init()
     RegisterHam( Ham_Use, "func_button", "fwdUse", 0);
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
+    g_fwStartButtonPress = CreateMultiForward("SR_StartButtonPress", ET_IGNORE, FP_CELL);
     
     // Timer managed by buttons on the map
     g_tStarts = TrieCreate( );
@@ -309,16 +310,10 @@ public _sr_show_toplist()
 }
 public fwdUse(ent, id)
 {
-    if( !ent || id > 32 )
-    {
-        return HAM_IGNORED;
-    }
-    
     if( !is_user_alive(id) )
     {
         return HAM_IGNORED;
     }
-
     
     new name[32];
     get_user_name(id, name, 31);
@@ -329,6 +324,8 @@ public fwdUse(ent, id)
     if( TrieKeyExists( g_tStarts, szTarget ) )
     {
         g_bStartButton = true;
+
+        ExecuteForward(g_fwStartButtonPress, g_iReturn, id);
 
         static bool:antispam[33];
         if(is_hook_active(id) || !is_time_after_hook_passed(id, HOOK_ANTICHEAT_TIME))

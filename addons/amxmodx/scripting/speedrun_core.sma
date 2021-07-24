@@ -160,6 +160,10 @@ CreateHudThink()
     set_entvar(ent, var_nextthink, get_gametime() + 1.0);	
     register_think("timer_think", "Think_Hud");
 }
+public SR_StartButtonPress(id)
+{
+    SavePoint(id);
+}
 public SR_ChangedCategory(id, cat)
 {
     if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
@@ -313,6 +317,7 @@ public _sr_command_start(pid, argc)
     if(g_ePlayerInfo[id][m_bSavePoint])
     {
         SetPosition(id, g_fSavedOrigin[id], g_fSavedVAngles[id]);
+	    set_entvar( id, var_flags, get_entvar(id, var_flags) | FL_DUCKING );
     }
     else if(g_bStartPosition)
     {
@@ -623,6 +628,15 @@ public Command_SaveMenu(id)
     show_menu(id, Keys, szMenu, -1, "SaveMenu");
     return PLUGIN_HANDLED;
 }
+
+public SavePoint(id)
+{
+    get_entvar(id, var_origin, g_fSavedOrigin[id]);
+    get_entvar(id, var_v_angle, g_fSavedVAngles[id]);
+
+    g_ePlayerInfo[id][m_bSavePoint] = true;
+}
+
 public SaveMenu_Handler(id, key)
 {
     if(!is_user_alive(id)) return PLUGIN_HANDLED;
@@ -634,10 +648,7 @@ public SaveMenu_Handler(id, key)
                 new Float:fVelocity[3]; get_entvar(id, var_velocity, fVelocity);
                 if(g_ePlayerInfo[id][m_bInSaveBox] && floatabs(fVelocity[0]) < 0.00001 && floatabs(fVelocity[1]) < 0.00001 && floatabs(fVelocity[2]) < 0.00001)
                 {
-                    get_entvar(id, var_origin, g_fSavedOrigin[id]);
-                    get_entvar(id, var_v_angle, g_fSavedVAngles[id]);
-
-                    g_ePlayerInfo[id][m_bSavePoint] = true;
+                    SavePoint(id);
                     client_print_color(id, print_team_default, "%s^1 Start point created.", PREFIX);
                 }
                 else

@@ -15,6 +15,7 @@ native sr_regive_weapon(id);
 
 forward SR_PlayerOnStart(id);
 forward SR_ChangedCategory(id, cat);
+forward SR_StartButtonPress(id);
 
 native main_menu_display(id);
 
