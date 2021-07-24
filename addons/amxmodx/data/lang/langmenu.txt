@@ -3,7 +3,6 @@ LANG_MENU_TITLE = Choose Language \y/lang
 LANG_MENU_CURRENT = Current
 LANG_MENU_CANCEL = Cancel
 LANG_MENU_SAVED = %s Your language was saved.
-LANG_MENU_ON_CONNECT = %s Your language is set to ^4%s^1. You can change it via ^4/lang^1 menu.
 
 
 [ru]

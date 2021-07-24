@@ -76,7 +76,7 @@ public print_info_task(arg[])
 {
     new id = arg[0];
     if(is_user_connected(id))
-        client_print_color(id, print_team_default, "%L", id, "LANG_MENU_ON_CONNECT", PREFIX, g_Langs[g_PlayersLang[id]][LANG_NAME]);
+        client_print_color(id, print_team_default, "%s Your language is set to ^4%s^1. You can change it via ^4/lang^1 menu.", PREFIX, g_Langs[g_PlayersLang[id]][LANG_NAME]);
 }
 
 public client_authorized(id) {
