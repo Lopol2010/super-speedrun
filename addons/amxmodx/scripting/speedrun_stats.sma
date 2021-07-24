@@ -6,11 +6,9 @@
             так же я не мог использовать нож кнопкой 3 и юсп кнопкой 2 когда взял авп на карте.
         * расставить зона на спидран картах
                 остановился размечать зоны на карте после speedrun_india
-        старт у кнопки, щас как респавн
         на 2к режиме ставить 200фпс
         если зашел игрок с fps_max 100 и поменял например на 500, то после пролистывания категории 100 ему не вернет 500.
         сделать и протестить новый алгоритм событий box_start_touch и end, 
-        на 2к скорость сохраняется после смерти\респавна
         *** игрок зашел как нон-стим, но перезашел и стал стим. т.е. стим не прогрузился при первом заходе, 
                     так же у меня куча записей в топ15 со STEAM_ID_LAN причем пока что только у меня, не у других админов
                     поставил в reunion.cfg ServerInfoAnswerType = 2 может поможет.
@@ -30,7 +28,7 @@
         * add kzbr_hii_fastrun, bhop_bloody, bkz_abstract, akzk_desertcliff, chk_neutral2, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
                 тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много картhttps://www.google.ru/search?hl=ru&q=hb_dilo
                 https://gamebanana.com/mods/cats/5524
-        * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать )
+        * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать)
         * add plugin to freeze entites, for example dooors
         * add plugin to remove entities (entity remover, or use ripent)
         * world record bot (do a research on that, https://dev-cs.ru/resources/142/)
@@ -45,6 +43,7 @@
         * ?? allow use /save menu for maps with buttons
         ?? * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
     DONE:
+        старт у кнопки, щас как респавн
         * когда переключаешь категории в motd toplist то мелькает белый экран, надо поменять это на темный с надписью loading(или без)
         * заменить название игры сервера на Speedrun
         /save баг, ты на стартовой зоне, но пишет ошибку "You must be in spawnbox or stop moving."

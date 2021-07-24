@@ -2,6 +2,7 @@
 #include <fakemeta>
 #include <nvault>
 #include <speedrun>
+#include <sxgeo>
 
 #define MAX_LANGS_NUM 9
 #define MAX_LANG_KEY_LENGTH 3
@@ -17,19 +18,15 @@ new g_Langs[MAX_LANGS_NUM][LANG], g_LangsNum;
 new g_DefaultLang;
 new g_PlayersSettings;
 new g_PlayersLang[MAX_PLAYERS + 1];
-new g_OpenedOnce[33];
 
 public plugin_init() {
-    register_plugin("Language Menu", "1.0", "F@nt0M");
+    register_plugin("Auto Language with Menu", "2.0", "F@nt0M remake by Lopol2010");
     register_dictionary("langmenu.txt");
-
-    // register_forward(FM_ClientUserInfoChanged, "ClientUserInfoChanged_Post", true);
 
     register_menucmd(register_menuid("LANGMENU"), 1023, "HandleMenu");
     register_srvcmd("langmenu_add", "CmdAddLang");
     register_srvcmd("langmenu_cmd", "CmdAddCmd");
     register_clcmd("amx_langmenu", "CmdLangMenu");
-    register_cvar("langmenu_prune_days", "30");
 
     new path[128];
     get_localinfo("amxx_configsdir", path, charsmax(path));
@@ -51,31 +48,10 @@ public plugin_cfg() {
     if (g_DefaultLang == -1) {
         g_DefaultLang = 0;
     }
-
-    new days = get_cvar_num("langmenu_prune_days");
-    if (days > 0 && g_PlayersSettings != INVALID_HANDLE) {
-        nvault_prune( g_PlayersSettings , 0 , get_systime() - (days * 86400)); 
-    }
-}
-
-public client_disconnected(id)
-{
-    g_OpenedOnce[id] = false;
-}
-public client_connect(id)
-{
-    new authid[24], opened_once[40];
-    get_user_authid(id, authid, charsmax(authid));
-    formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
-    if(nvault_get(g_PlayersSettings, opened_once))
-    {
-        g_OpenedOnce[id] = true;
-    }
 }
 
 public plugin_natives()
 {
-    register_native("is_langmenu_ever_shown", "_is_langmenu_ever_shown", 1);
     register_native("show_langmenu", "_show_langmenu", 1);
 }
 
@@ -84,40 +60,63 @@ public _show_langmenu(id)
     CmdLangMenu(id);
 }
 
-public _is_langmenu_ever_shown(id)
-{
-    new authid[24], opened_once[40], lang, langKey[3];
-    get_user_authid(id, authid, charsmax(authid));
-    formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
-    return nvault_lookup(g_PlayersSettings, opened_once, langKey, charsmax(langKey), lang)
-}
-
 public plugin_end() {
     if (g_PlayersSettings != INVALID_HANDLE) {
         nvault_close(g_PlayersSettings);
     }
 }
 
+public client_putinserver(id)
+{
+    new arg[1]; arg[0] = id;
+    set_task(3.0, "print_info_task", _, arg, sizeof arg);
+}
+
+public print_info_task(arg[])
+{
+    new id = arg[0];
+    if(is_user_connected(id))
+        client_print_color(id, print_team_default, "%L", id, "LANG_MENU_ON_CONNECT", PREFIX, g_Langs[g_PlayersLang[id]][LANG_NAME]);
+}
+
 public client_authorized(id) {
+
     new authid[24], langKey[MAX_LANG_KEY_LENGTH + 1], lang;
     get_user_authid(id, authid, charsmax(authid));
+
+
+    // first try to get player's language from vault
     if (nvault_lookup(g_PlayersSettings, authid, langKey, charsmax(langKey), lang)) {
         lang = findLangId(langKey);
         if (lang != -1) {
             setUserLang(id, lang, false);
-            nvault_touch(g_PlayersSettings, authid, -1);
         } else {
             setUserLang(id, g_DefaultLang, true);
         }
     } else {
+
+        // if no language found in vault then try to get player's language by their country code 
+        new szIP[16]; get_user_ip(id, szIP, charsmax(szIP), /*strip port*/ 0);
+        new code[3]; 
+        if(sxgeo_code(szIP, code, charsmax(code)))
+        {
+            lang = findLangId(code);
+            if (lang != -1) {
+                setUserLang(id, lang, true);
+                return;
+            } 
+        }
+
+        // if sxgeo fails or found language not supported then try to get language from user info's lang key
         get_user_info(id, "lang", langKey, charsmax(langKey))
         lang = findLangId(langKey);
         if (lang != -1) {
-            setUserLang(id, lang, false);
+            setUserLang(id, lang, true);
         } else {
             setUserLang(id, g_DefaultLang, true);
         }
     }
+
 }
 
 public CmdAddCmd() {
@@ -153,7 +152,7 @@ public CmdLangMenu(id) {
     new len = formatex(menu, charsmax(menu), "\r%L^n^n", id, "LANG_MENU_TITLE");
 
     for (new i = 0; i < g_LangsNum; i++) {
-        if (g_PlayersLang[id] == i && g_OpenedOnce[id]) {
+        if (g_PlayersLang[id] == i) {
             len += formatex(menu[len], charsmax(menu) - len, "\r[\y%i\r]\d %s \y(%L)^n", i + 1, g_Langs[i][LANG_NAME], id, "LANG_MENU_CURRENT");
         } else {
             keys |= (1 << i);
@@ -176,15 +175,6 @@ public HandleMenu(id, key) {
         setUserLang(id, key, true);
         client_print_color(id, print_team_default, "%L", id, "LANG_MENU_SAVED", PREFIX);
     }
-
-    new authid[24], opened_once[40];
-    get_user_authid(id, authid, charsmax(authid));
-    formatex(opened_once, charsmax(opened_once), "%s_opened", authid);
-    if(!nvault_get(g_PlayersSettings, opened_once))
-    {
-        nvault_set(g_PlayersSettings, opened_once, "1");
-        g_OpenedOnce[id] = true;
-    }
 }
 
 findLangId(const lang[]) {
@@ -205,6 +195,6 @@ setUserLang(const id, const lang, const bool:save = false) {
         new authid[24], langKey[MAX_LANG_KEY_LENGTH];
         get_user_authid(id, authid, charsmax(authid));
         copy(langKey, charsmax(langKey), g_Langs[lang][LANG_KEY]);
-        nvault_set(g_PlayersSettings, authid, g_Langs[lang][LANG_KEY]);
+        nvault_pset(g_PlayersSettings, authid, g_Langs[lang][LANG_KEY]);
     }
 }
