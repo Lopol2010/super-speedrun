@@ -800,8 +800,6 @@ BOX_AnchorMoveProcess(id, ent)
     new Float:fVec2[3];
     pev(ent2, pev_origin, fVec2);
     
-    // client_print(id, print_chat, "fVec %f %f %f", fVec[0], fVec[1], fVec[2]);
-    // client_print(id, print_chat, "fVec2 %f %f %f", fVec2[0], fVec2[1], fVec2[2]);
     BOX_UpdateSize(box, fVec, fVec2, num1);
 }
 
@@ -813,8 +811,6 @@ BOX_AnchorMoveProcessSticky(id, ent)
     new Float:hit[3];
     TracelineThroughAnchor(id, ent, hit);
 
-    // client_print(id, print_chat, "hit %f %f %f", hit[0], hit[1], hit[2]);
-    
     hit[2] += 2.0;
     set_pev(ent, pev_origin, hit);	
     
@@ -1033,8 +1029,6 @@ public fwBoxTouch(box, ent)
 {
     fwTouch(box, ent);
     
-    // client_print(0, print_chat, "touch!");
-
     new tid = getTaskIdFormBox(box, ent);
     
     if(task_exists(tid))
@@ -1043,7 +1037,6 @@ public fwBoxTouch(box, ent)
     }
     else
     {
-        // client_print(0, print_chat, "start touch!");
         fwStartTouch(box, ent);
     }
     
