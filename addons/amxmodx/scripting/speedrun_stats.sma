@@ -2,7 +2,6 @@
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
         если одинаковое время, то в топе первый тот кто первый по дате поставил рекорд
-        sxgeo_info стал на английском для всех
         после телепорта если жать A или D то вектор скорость не вперед, даже если смотришь вперед, пример карта fu_replayhop
         * так же я не мог использовать нож кнопкой 3 и юсп кнопкой 2 когда взял авп на карте.
         * проработать toplist, а так же теперь в таблице не выделяет игрока который её открыл
@@ -49,6 +48,7 @@
         * ?? allow use /save menu for maps with buttons
         ?? * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
     DONE:
+        sxgeo_info стал на английском для всех
         теперь на сервере компилируются только те плагины которые найдены в последнем коммите
         старт у кнопки, щас как респавн
         * когда переключаешь категории в motd toplist то мелькает белый экран, надо поменять это на темный с надписью loading(или без)
@@ -977,17 +977,20 @@ Forward_PlayerFinished(id)
     if(record)
     {
         // client_cmd( 0, "spk woop" );
-        client_cmd(0, "spk buttons/bell1");
+        // client_cmd(0, "spk buttons/bell1");
+        rg_send_audio(0, "buttons/bell1");
     }
     else
     {
         if(g_bStartButton)
         {
-            client_cmd(0, "spk buttons/bell1");
+            // client_cmd(0, "spk buttons/bell1");
+            rg_send_audio(0, "buttons/bell1");
         }
         else
         {
-            client_cmd(0, "spk buttons/bell1");
+            // client_cmd(0, "spk buttons/bell1");
+            rg_send_audio(0, "buttons/bell1");
             // client_cmd(0, "spk buttons/spark1");
         }
     }
