@@ -978,19 +978,19 @@ Forward_PlayerFinished(id)
     {
         // client_cmd( 0, "spk woop" );
         // client_cmd(0, "spk buttons/bell1");
-        rg_send_audio(0, "sound/buttons/bell1");
+        rg_send_audio(0, "sound/buttons/bell1.wav");
     }
     else
     {
         if(g_bStartButton)
         {
             // client_cmd(0, "spk buttons/bell1");
-            rg_send_audio(0, "sound/buttons/bell1");
+            rg_send_audio(0, "sound/buttons/bell1.wav");
         }
         else
         {
             // client_cmd(0, "spk buttons/bell1");
-            rg_send_audio(0, "sound/buttons/bell1");
+            rg_send_audio(0, "sound/buttons/bell1.wav");
             // client_cmd(0, "spk buttons/spark1");
         }
     }
