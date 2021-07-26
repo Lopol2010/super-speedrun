@@ -73,7 +73,7 @@ new Float:g_flJumpAngles[ PLAYERS_ARRAY_SIZE ][3];
 new Float:g_flJumpGravity[ PLAYERS_ARRAY_SIZE ];
 
 new g_bBlocks[MAX_ENTSARRAYS_SIZE], g_bBlocksByPlugin[MAX_ENTSARRAYS_SIZE];
-new g_bOnGround, g_bTeleported, g_bAdmin;
+new g_bOnGround, g_bTeleported, g_bAdmin, g_bJustPressedStart;
 
 new bool:g_bBlockEntityTouch;
 new bool:g_bActive;
@@ -84,6 +84,7 @@ new g_iAdminDoor[PLAYERS_ARRAY_SIZE];
 new szConfigFile[64];
 
 new Trie:g_iBlocksClass;
+new Trie:g_tStarts;
 
 new g_iMaxPlayers, g_iMaxEnts;
 #define IsPlayer(%1)	( 1 <= %1 <= g_iMaxPlayers )
@@ -92,6 +93,7 @@ new Trie:g_tKeyValues;
 new g_bGlow;
 new g_hCvarActionOnFail;
 new g_hCvarBhopBlockSpeed;
+
 
 public plugin_init()
 {
@@ -105,6 +107,15 @@ public plugin_init()
         TrieSetCell(g_iBlocksClass, szPossibleBlockClass[i], i);
     }
 
+    g_tStarts = TrieCreate( );
+    new const szStarts[ ][ ] =
+    {
+        "counter_start", "clockstartbutton", "firsttimerelay", "but_start", "counter_start_button",
+        "multi_start", "timer_startbutton", "start_timer_emi", "gogogo"
+    };
+    for( new i = 0; i < sizeof szStarts; i++ )
+        TrieSetCell( g_tStarts, szStarts[ i ], 1 );
+
     register_concmd("kz_mpbhop", "ConCmd_MpBhop", ADMIN_CFG, "<0/1> set blocks so they can't move when players touch them");
     register_concmd("kz_mpbhop_entitytouch", "ConCmd_EntityTouch", ADMIN_CFG, "<0/1> set blocks so they can't move when other entities than players touch them");
     register_concmd("kz_safe_inform", "ClCmd_SafeInform", ADMIN_CFG, "<0/1> Inform recorders that their demo will be safe or not safe according to plugin state");
@@ -112,12 +123,13 @@ public plugin_init()
     register_clcmd("kz_mpbhopmenu", "ClCmd_BhopMenu", ADMIN_CFG);
     // register_clcmd("kz_showblocks", "ClCmd_ShowBlocks", ADMIN_CFG);
 
-    g_hCvarActionOnFail = register_cvar("kz_action_on_fail", "1"); // 0 - nothing, 1 - drop player from block, 2 - teleport to last safe point
+    g_hCvarActionOnFail = register_cvar("kz_action_on_fail", "2"); // 0 - nothing, 1 - drop player from block, 2 - teleport to last safe point
     g_hCvarBhopBlockSpeed = register_cvar("kz_mpbhop_speed", "80.0"); // How slow can block move to be still considered as bhop block.
 
 
     // register_clcmd("fullupdate", "ClCmd_FullUpdate");
 
+    RegisterHam( Ham_Use, "func_button", "fwdUse", 0);
     g_iFhAddToFullPack = register_forward(FM_AddToFullPack, "AddToFullPack", 1);
 
     register_menucmd(register_menuid("MpBhop Menu"), KEYS ,"MpBhopMenuAction");
@@ -271,6 +283,7 @@ public client_putinserver(id)
     }
     ClearIdBits(g_bOnGround, id);
     ClearIdBits(g_bTeleported, id);
+    ClearIdBits(g_bJustPressedStart, id);
 }
 
 public client_disconnected(id)
@@ -278,6 +291,7 @@ public client_disconnected(id)
     ClearIdBits(g_bAdmin, id);
     ClearIdBits(g_bOnGround, id);
     ClearIdBits(g_bTeleported, id);
+    ClearIdBits(g_bJustPressedStart, id);
 }
 
 public ClCmd_ShowBlocks(id, level, cid)
@@ -363,6 +377,22 @@ public ClCmd_BhopMenu(id, level, cid)
         }
     }
     return PLUGIN_HANDLED;
+}
+
+public fwdUse(ent, id)
+{
+    if( !is_user_alive(id) )
+    {
+        return HAM_IGNORED;
+    }
+
+    new szTarget[ 32 ];
+    pev(ent, pev_target, szTarget, 31);
+    if( TrieKeyExists( g_tStarts, szTarget ) )
+    {
+        SetIdBits(g_bJustPressedStart, id);
+    }
+    return HAM_IGNORED;
 }
 
 public AddToFullPack(es, e, iEnt, id, hostflags, player, pSet)
@@ -473,7 +503,15 @@ public Touch_Block(iBlock, id)
                 MoveToEdge(id, iBlock);
             }
             case 2: {
-                Util_TeleportPlayerBack(id);
+                if(GetIdBits(g_bJustPressedStart, id))
+                {
+                    MoveToEdge(id, iBlock);
+                    ClearIdBits(g_bJustPressedStart, id);
+                }
+                else
+                {
+                    Util_TeleportPlayerBack(id);
+                }
             }
         }
     }
