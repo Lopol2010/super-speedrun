@@ -2,7 +2,7 @@
 CINFO_JOINED = ^3%s^1 connected
 CINFO_FROM = from
 CINFO_COUNTRY = ^4%s
-CINFO_COUNTRY_UNKNOWN = ^4Fifth Dimension
+CINFO_COUNTRY_UNKNOWN = ^4Another Dimension
 
 [ru]
 CINFO_JOINED = ^3%s^1 присоединился к нам
