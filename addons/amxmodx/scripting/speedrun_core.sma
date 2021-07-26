@@ -826,7 +826,7 @@ public Think_Hud(ent)
             formatex(szKeys, charsmax(szKeys), "^n^n^n^n^n");
         }
 
-        sr_get_timer_display_text(id, szTime, charsmax(szTime));
+        sr_get_timer_display_text(target, szTime, charsmax(szTime));
 
         set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, 1);
         ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s%s^n%3.2f", szKeys, szTime, fSpeed);
