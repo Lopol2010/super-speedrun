@@ -715,6 +715,7 @@ public HC_CBasePlayer_Killed_Post(id)
     if(TEAM_UNASSIGNED < get_member(id, m_iTeam) < TEAM_SPECTATOR)
     {
         ExecuteHamB(Ham_CS_RoundRespawn, id);
+        Command_Start(id);
     }
 }
 public HC_CBasePlayer_GiveDefaultItems(id)
@@ -784,13 +785,13 @@ public HC_CSGR_DeadPlayerWeapons_Pre(id)
     SetHookChainReturn(ATYPE_INTEGER, GR_PLR_DROP_GUN_NO);
     return HC_SUPERCEDE;
 }
-//*******************************************************************//
+// *******************************************************************//
 public FM_ClientKill_Pre(id)
 {
     Command_Start(id);
     return FMRES_SUPERCEDE;
 }
-//*******************************************************************//
+// *******************************************************************//
 public Think_Hud(ent)
 {
     new Float:rate = 0.091;
