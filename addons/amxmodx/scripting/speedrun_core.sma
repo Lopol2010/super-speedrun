@@ -506,17 +506,17 @@ public Ham_Item_Deploy_KNIFE_Post(weapon)
 public Command_Bhop(id)
 {
     g_ePlayerInfo[id][m_bBhop] = !g_ePlayerInfo[id][m_bBhop];
-    client_print_color(id, print_team_default, "%s^1 Bhop is^3^1.", PREFIX, g_ePlayerInfo[id][m_bBhop] ? "enabled" : "disabled");
+    client_print_color(id, print_team_default, "%s^1 Bhop is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bBhop] ? "enabled" : "disabled");
 }
 public Command_Speed(id)
 {
     g_ePlayerInfo[id][m_bSpeed] = !g_ePlayerInfo[id][m_bSpeed];
-    client_print_color(id, print_team_default, "^4%s^1 Speedometer is^3^1.", PREFIX, g_ePlayerInfo[id][m_bSpeed] ? "enabled" : "disabled");
+    client_print_color(id, print_team_default, "^4%s^1 Speedometer is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bSpeed] ? "enabled" : "disabled");
 }
 public Command_Keys(id)
 {
     g_ePlayerInfo[id][m_bKeys] = !g_ePlayerInfo[id][m_bKeys];
-    client_print_color(id, print_team_default, "^4%s^1 Show keys is^3^1.", PREFIX, g_ePlayerInfo[id][m_bKeys] ? "enabled" : "disabled");
+    client_print_color(id, print_team_default, "^4%s^1 Show keys is^3 %s^1.", PREFIX, g_ePlayerInfo[id][m_bKeys] ? "enabled" : "disabled");
 }
 public Command_BlockJointeam(id)
 {
