@@ -74,7 +74,7 @@ public plugin_init()
     register_touch("armoury_entity", "player", "BlockPickup");
     register_touch("weapon_shield", "player", "BlockPickup");
     register_forward(FM_AddToFullPack, "FM_client_AddToFullPack_Post", 1) 
-    RegisterHookChain(RG_CBasePlayerWeapon_DefaultDeploy, "RG_CBasePlayerWeapon_DefaultDeploy_Pre", 0)
+    // RegisterHookChain(RG_CBasePlayerWeapon_DefaultDeploy, "RG_CBasePlayerWeapon_DefaultDeploy_Pre", 0)
     // RegisterHam(Ham_Item_CanHolster, "", "Ham_Item_CanHolster_Pre")
 
     register_clcmd("say /hide", "HideMenu");
@@ -82,9 +82,9 @@ public plugin_init()
     register_clcmd("say_team /hide", "HideMenu");
     register_clcmd("say_team /invis", "HideMenu");
 
-    g_msgHideWeapon = get_user_msgid("HideWeapon")
+    // g_msgHideWeapon = get_user_msgid("HideWeapon")
     register_event("ResetHUD", "onResetHUD", "b")
-    register_message(g_msgHideWeapon, "msgHideWeapon")
+    // register_message(g_msgHideWeapon, "msgHideWeapon")
     
     g_cvarHideCAL = register_cvar("amx_hud_hide_cross_ammo_weaponlist", "0")
     g_cvarHideFlash = register_cvar("amx_hud_hide_flashlight", "1")
@@ -236,7 +236,7 @@ public HideMenu_Handler(id, menu, key)
         }
         case 1: 
         {
-            hide_weapon(id)
+            // hide_weapon(id)
         }
         case 2: 
         {
@@ -342,9 +342,9 @@ public onResetHUD(id)
     new iHideFlags = GetHudHideFlags()
     if(iHideFlags)
     {
-        message_begin(MSG_ONE, g_msgHideWeapon, _, id)
-        write_byte(iHideFlags)
-        message_end()
+        // message_begin(MSG_ONE, g_msgHideWeapon, _, id)
+        // write_byte(iHideFlags)
+        // message_end()
     }	
 }
 
