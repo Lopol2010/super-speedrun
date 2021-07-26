@@ -38,6 +38,11 @@ public plugin_natives()
 	register_native("reset_checkpoints", "reset_checkpoints", 1);
 }
 
+public client_disconnected(id)
+{
+	reset_checkpoints(id);
+}
+
 public get_checkpoints_count(id)
 {
 	return checknumbers[id];
