@@ -28,7 +28,7 @@ public plugin_init()
 
 	register_dictionary("checkpoints.txt")
 }
-
+ 
 public plugin_natives()
 {
 	register_native("checkpoint", "CheckPoint", 1);
