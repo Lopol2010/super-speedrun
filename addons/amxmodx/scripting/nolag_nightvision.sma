@@ -82,7 +82,7 @@ public _get_user_nvg_mode(pid, argc)
 }
 
 public cmd_NightVision(id){
-    if(!is_user_connected(id))
+    if(!is_user_alive(id))
         return PLUGIN_HANDLED;
     
     if(g_iNV[id]==NVG_OFF){
