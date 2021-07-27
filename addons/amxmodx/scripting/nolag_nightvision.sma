@@ -2,6 +2,8 @@
 
 #include <amxmodx>
 #include <fakemeta>
+#include <reapi>
+#include <nolag_nightvision>
 
 #pragma semicolon 1
 
@@ -11,15 +13,13 @@ new const	plugin[]    	=    "NoLag Nightvision",
 
 #define MAX_PLAYERS 		32
 
-#define OFF 			0
-#define NORMAL 			1
-#define FULLBRIGHT		2
+
 
 new fwLightStyle;
 
 new g_sDefaultLight[8];
 
-new g_iNV[MAX_PLAYERS+1]=OFF;
+new g_iNV[MAX_PLAYERS+1]=NVG_OFF;
 
 new p_cvSkyColor[3];
 
@@ -44,28 +44,40 @@ public plugin_precache(){
 }
 
 public client_disconnected(id){
-    g_iNV[id]=OFF;
+    g_iNV[id]=NVG_OFF;
+}
+
+public plugin_natives()
+{
+    register_native("get_user_nvg_mode", "_get_user_nvg_mode");
+}
+
+public _get_user_nvg_mode(pid, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+
+    return g_iNV[id];
 }
 
 public cmd_NightVision(id){
     if(!is_user_connected(id))
         return PLUGIN_HANDLED;
     
-    if(g_iNV[id]==OFF){
-        g_iNV[id]=NORMAL;
+    if(g_iNV[id]==NVG_OFF){
+        g_iNV[id]=NVG_NORMAL;
         NV(id, "z");
-        client_cmd(id, "spk items/nvg_on");
+        rg_send_audio(id, "items/nvg_on.wav");
     }
-    else if(g_iNV[id]==NORMAL){
-        g_iNV[id]=FULLBRIGHT;
+    else if(g_iNV[id]==NVG_NORMAL){
+        g_iNV[id]=NVG_FULLBRIGHT;
         NV(id, "#");
-        client_cmd(id, "spk items/nvg_on");
-        // client_cmd(id, "spk items/nvg_off");
+        rg_send_audio(id, "items/nvg_on.wav");
     }
     else{
-        g_iNV[id]=OFF;
+        g_iNV[id]=NVG_OFF;
         NV(id, g_sDefaultLight);
-        client_cmd(id, "spk items/nvg_off");
+        rg_send_audio(id, "items/nvg_off.wav");
     }
     return PLUGIN_HANDLED;
 }
