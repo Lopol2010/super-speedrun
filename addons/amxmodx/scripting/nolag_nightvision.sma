@@ -26,6 +26,7 @@ new p_cvSkyColor[3];
 public plugin_init(){
     register_plugin(plugin, version, author);
     
+	RegisterHookChain(RG_CSGameRules_PlayerSpawn, "RG_CSGameRules_PlayerSpawn_Post", true);
     unregister_forward(FM_LightStyle, fwLightStyle);
     
     register_clcmd("nightvision", "cmd_NightVision");
@@ -39,6 +40,15 @@ public plugin_init(){
     set_pcvar_num(p_cvSkyColor[2], 0);
 
     set_task(0.1, "spectators_nvg", .flags = "b");
+}
+
+public RG_CSGameRules_PlayerSpawn_Post(id)
+{
+    if(is_user_alive(id))
+    {
+        NV(id, g_sDefaultLight);
+        g_iNV[id] = NVG_OFF;
+    }
 }
 
 public spectators_nvg()
