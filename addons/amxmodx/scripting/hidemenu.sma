@@ -76,7 +76,7 @@ public plugin_init()
     register_forward(FM_AddToFullPack, "FM_client_AddToFullPack_Post", 1) 
     // RegisterHookChain(RG_CBasePlayerWeapon_DefaultDeploy, "RG_CBasePlayerWeapon_DefaultDeploy_Pre", 0)
     // RegisterHam(Ham_Item_CanHolster, "", "Ham_Item_CanHolster_Pre")
-
+ 
     register_clcmd("say /hide", "HideMenu");
     register_clcmd("say /invis", "HideMenu");
     register_clcmd("say_team /hide", "HideMenu");
