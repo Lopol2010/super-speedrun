@@ -796,7 +796,7 @@ public Think_Hud(ent)
 {
     new Float:rate = 0.091;
     set_entvar(ent, var_nextthink, get_gametime() + rate);
-
+ 
     new Float:fSpeed, Float:fVelocity[3], iSpecMode, len, button;
     static szTime[32], szKeys[32];
 

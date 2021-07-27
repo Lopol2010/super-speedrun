@@ -69,7 +69,7 @@ new g_viewmodel[33][64]
 public plugin_init() 
 { 
     register_plugin(PLUGIN, VERSION, AUTHOR) 
-
+ 
     register_touch("weaponbox", "player", "BlockPickup");
     register_touch("armoury_entity", "player", "BlockPickup");
     register_touch("weapon_shield", "player", "BlockPickup");
