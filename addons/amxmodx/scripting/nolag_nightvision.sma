@@ -37,6 +37,27 @@ public plugin_init(){
     set_pcvar_num(p_cvSkyColor[0], 0);
     set_pcvar_num(p_cvSkyColor[1], 0);
     set_pcvar_num(p_cvSkyColor[2], 0);
+
+    set_task(0.1, "spectators_nvg", .flags = "b");
+}
+
+public spectators_nvg()
+{
+    new iSpecMode;
+    for(new id = 1, target; id <= MaxClients; id ++)
+    {
+        iSpecMode = get_entvar(id, var_iuser1);
+        target = (iSpecMode == 1  || iSpecMode == 2 || iSpecMode == 4) ? get_entvar(id, var_iuser2) : id;
+        if(target == id || g_iNV[id] == g_iNV[target]) continue;
+
+        switch(g_iNV[target])
+        {
+            case NVG_OFF: NV(id, g_sDefaultLight);
+            case NVG_NORMAL: NV(id, "z");
+            case NVG_FULLBRIGHT: NV(id, "#");
+        }
+        g_iNV[id] = g_iNV[target];
+    }
 }
 
 public plugin_precache(){
