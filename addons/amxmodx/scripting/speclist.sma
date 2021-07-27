@@ -31,7 +31,7 @@ public plugin_init() {
 
 	set_task(UPDATE, "ShowSpecList", .flags="b");
 }
-  
+
 public plugin_natives()
 {
     register_native("speclist_toggle", "speclist_toggle");
