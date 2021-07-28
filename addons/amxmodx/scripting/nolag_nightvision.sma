@@ -26,7 +26,7 @@ new p_cvSkyColor[3];
 public plugin_init(){
     register_plugin(plugin, version, author);
      
-	RegisterHookChain(RG_CSGameRules_PlayerSpawn, "RG_CSGameRules_PlayerSpawn_Post", true);
+	// RegisterHookChain(RG_CSGameRules_PlayerSpawn, "RG_CSGameRules_PlayerSpawn_Post", true);
     unregister_forward(FM_LightStyle, fwLightStyle);
     
     register_clcmd("nightvision", "cmd_NightVision");
