@@ -39,7 +39,7 @@ public plugin_init(){
     set_pcvar_num(p_cvSkyColor[1], 0);
     set_pcvar_num(p_cvSkyColor[2], 0);
 
-    set_task(0.1, "spectators_nvg", .flags = "b");
+    // set_task(0.1, "spectators_nvg", .flags = "b");
 }
 
 public RG_CSGameRules_PlayerSpawn_Post(id)
