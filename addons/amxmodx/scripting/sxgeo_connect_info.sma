@@ -48,22 +48,27 @@ public client_putinserver(id)
     new bool:bRegionFound  = sxgeo_region (szIP, szRegion,  charsmax(szRegion),  /*use lang server*/ szLanguage);
     new bool:bCityFound    = sxgeo_city   (szIP, szCity,    charsmax(szCity),    /*use lang server*/ szLanguage);
 
-    if (bCountryFound && bCityFound && bRegionFound)
+    for(new i = 1; i <= MaxClients; i ++)
     {
-        client_print_color(0, DontChange, "%s %L %L^3 %s ^4(%s, %s) %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szCity, szRegion, szCountry, szSteamSuffix);
-    }
-    else if (bCountryFound && bRegionFound)
-    {
-        client_print_color(0, DontChange, "%s %L %L^3 %s ^4(%s) %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szRegion, szCountry, szSteamSuffix);
-    }
-    else if (bCountryFound)
-    {
-        client_print_color(0, DontChange, "%s %L %L^4 %s %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szCountry, szSteamSuffix);
-    }
-    else
-    {
-        // we don't know where you are :(
-        client_print_color(0, DontChange, "%s %L %L %L %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", id, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
+        if(!is_user_connected(i)) continue;
+
+        if (bCountryFound && bCityFound && bRegionFound)
+        {
+            client_print_color(i, DontChange, "%s %L %L^3 %s ^4(%s, %s) %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szCity, szRegion, szCountry, szSteamSuffix);
+        }
+        else if (bCountryFound && bRegionFound)
+        {
+            client_print_color(i, DontChange, "%s %L %L^3 %s ^4(%s) %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szRegion, szCountry, szSteamSuffix);
+        }
+        else if (bCountryFound)
+        {
+            client_print_color(i, DontChange, "%s %L %L^4 %s %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szCountry, szSteamSuffix);
+        }
+        else
+        {
+            // we don't know where you are :(
+            client_print_color(i, DontChange, "%s %L %L %L %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", id, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
+        }
     }
 
     if (bCountryFound || bCityFound || bRegionFound)
