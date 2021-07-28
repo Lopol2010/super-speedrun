@@ -31,7 +31,7 @@ public client_putinserver(id)
 {
     new szLanguage[3];
     get_user_info(id, "lang", szLanguage, charsmax(szLanguage));
-    if(strlen(szLanguage) != 3)
+    if(!equali(szLanguage, "ru") && !equali(szLanguage, "en"))
     {
         get_pcvar_string(g_pcvar_amx_language, szLanguage, charsmax(szLanguage));
     }
