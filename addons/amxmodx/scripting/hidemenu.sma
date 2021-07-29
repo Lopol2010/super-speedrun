@@ -82,9 +82,9 @@ public plugin_init()
     register_clcmd("say_team /hide", "HideMenu");
     register_clcmd("say_team /invis", "HideMenu");
 
-    // g_msgHideWeapon = get_user_msgid("HideWeapon")
+    g_msgHideWeapon = get_user_msgid("HideWeapon")
     register_event("ResetHUD", "onResetHUD", "b")
-    // register_message(g_msgHideWeapon, "msgHideWeapon")
+    register_message(g_msgHideWeapon, "msgHideWeapon")
     
     g_cvarHideCAL = register_cvar("amx_hud_hide_cross_ammo_weaponlist", "0")
     g_cvarHideFlash = register_cvar("amx_hud_hide_flashlight", "1")
