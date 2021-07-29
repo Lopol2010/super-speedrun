@@ -11,6 +11,7 @@
         6. in core: edit Command_CategoryMenu KEYS variable
         7. in core: edit CategoryMenu_Handler
         8. in core: edit CategoryMenu_Handler in if statement change number that's compared with keys variable
+        9. in toplist: add entry for list of categories (currently in stats.ts file)
 
 */
 #include <amxmodx>
@@ -129,6 +130,7 @@ public plugin_init()
 
     RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
     RegisterHam( Ham_Item_Deploy, "weapon_knife", "Ham_Item_Deploy_KNIFE_Post", 1);
+    
 
     g_fwChangedCategory = CreateMultiForward("SR_ChangedCategory", ET_IGNORE, FP_CELL, FP_CELL);
     g_fwOnStart = CreateMultiForward("SR_PlayerOnStart", ET_IGNORE, FP_CELL);
