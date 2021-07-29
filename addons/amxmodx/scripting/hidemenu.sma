@@ -342,9 +342,9 @@ public onResetHUD(id)
     new iHideFlags = GetHudHideFlags()
     if(iHideFlags)
     {
-        // message_begin(MSG_ONE, g_msgHideWeapon, _, id)
-        // write_byte(iHideFlags)
-        // message_end()
+        message_begin(MSG_ONE, g_msgHideWeapon, _, id)
+        write_byte(iHideFlags)
+        message_end()
     }	
 }
 
