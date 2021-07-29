@@ -128,7 +128,8 @@ public plugin_init()
 
     register_forward(FM_ClientKill, "FM_ClientKill_Pre", false);
 
-    RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
+    // RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
+    RegisterHam(Ham_Item_CanHolster, "weapon_knife", "Ham_Item_CanHolster_Pre");
     RegisterHam( Ham_Item_Deploy, "weapon_knife", "Ham_Item_Deploy_KNIFE_Post", 1);
     
 
@@ -489,7 +490,7 @@ SetPosition(id, Float:origin[3], Float:vangles[3])
     set_entvar(id, var_health, 100.0);
     engfunc(EngFunc_SetOrigin, id, origin);
 }
-public Ham_Item_Deploy_USP_Post(weapon)
+public Ham_Item_CanHolster_Pre(weapon)
 {
     new id = get_member(weapon, m_pPlayer);
     if(get_user_category(id) == Cat_LowGravity)
