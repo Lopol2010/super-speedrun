@@ -190,7 +190,8 @@ public plugin_natives()
 public HideMenu(id)
 {
     new g_menu = menu_create("Hide Menu", "HideMenu_Handler");
-    
+    new callback = menu_makecallback("HideMenu_ItemsCallback")
+
     new msginvis[64], msgwaterinvis[64], msgwpninvis[64], msgspeclist[64]
     
     formatex(msginvis, 63, "Players - %s",  gViewInvisible[id] ? "\yON" : "\rOFF" )
@@ -199,7 +200,7 @@ public HideMenu(id)
     formatex(msgspeclist, 63, "Spectators - %s", is_speclist_enabled(id) ? "\yON" : "\rOFF" )
     
     menu_additem( g_menu, msginvis, "1" )
-    menu_additem( g_menu, msgwpninvis, "2" )
+    menu_additem( g_menu, msgwpninvis, "2" , .callback = callback)
     menu_additem( g_menu, msgwaterinvis, "3" )
     menu_additem( g_menu, msgspeclist, "4" )
     menu_addblank2( g_menu )
@@ -220,6 +221,12 @@ public client_disconnected(id)
     gViewInvisible[id] = false
     gWaterInvisible[id] = false
     g_viewmodel[id] = ""
+}
+public HideMenu_ItemsCallback(id, menu, item)
+{
+    if(item == 1)
+        return ITEM_DISABLED
+    return ITEM_IGNORE
 }
 public HideMenu_Handler(id, menu, key)
 {
