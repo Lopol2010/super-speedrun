@@ -1,3 +1,4 @@
+#define UNLIMITED_GRAVITY_AND_AA
 
 #include <amxmodx>
 #include <amxmisc>
@@ -52,16 +53,6 @@ new g_ConfigsDir[256];
 new g_StatsFileLJ[256];
 
 new const FL_ONGROUND2 = FL_ONGROUND | FL_PARTIALGROUND | FL_INWATER | FL_CONVEYOR | FL_FLOAT;
-
-new mfwd_dd_begin;
-new mfwd_dd_end;
-new mfwd_dd_fail;
-new mfwd_dd_interrupt;
-new mfwd_jump_begin;
-new mfwd_jump_end;
-new mfwd_jump_fail;
-new mfwd_jump_illegal;
-new mfwd_jump_interrupt;
 
 new sv_airaccelerate;
 new sv_gravity;
@@ -186,16 +177,6 @@ public plugin_init( )
 	
 	sv_airaccelerate = get_cvar_pointer( "sv_airaccelerate" );
 	sv_gravity = get_cvar_pointer( "sv_gravity" );
-	
-	mfwd_dd_begin = CreateMultiForward( "q_js_ddbegin", ET_IGNORE, FP_CELL );
-	mfwd_dd_end = CreateMultiForward( "q_js_ddend", ET_IGNORE, FP_CELL );
-	mfwd_dd_fail = CreateMultiForward( "q_js_ddfail", ET_IGNORE, FP_CELL );
-	mfwd_dd_interrupt = CreateMultiForward( "q_js_ddinterrupt", ET_IGNORE, FP_CELL );
-	mfwd_jump_begin = CreateMultiForward( "q_js_jumpbegin", ET_IGNORE, FP_CELL );
-	mfwd_jump_end = CreateMultiForward( "q_js_jumpend", ET_IGNORE, FP_CELL );
-	mfwd_jump_fail = CreateMultiForward( "q_js_jumpfail", ET_IGNORE, FP_CELL );
-	mfwd_jump_illegal = CreateMultiForward( "q_js_jumpillegal", ET_IGNORE, FP_CELL );
-	mfwd_jump_interrupt = CreateMultiForward( "q_js_jumpinterrupt", ET_IGNORE, FP_CELL );
 	
 	//set_task( 0.1, "task_speed", TASKID_SPEED, _, _, "b" );
 
@@ -406,12 +387,14 @@ public forward_PlayerPreThink( id )
 			event_jump_illegal( id );
 		}
 	}
-	else if( gravity != 1.0
-	|| ( pev( id, pev_waterlevel ) != 0 )
+	// else if( gravity != 1.0 
+	// || ( pev( id, pev_waterlevel ) != 0 )
+	else if( 
+	   ( pev( id, pev_waterlevel ) != 0 )
 	|| ( ( movetype[id] != MOVETYPE_WALK ) && ( movetype[id] != MOVETYPE_FLY ) )
 	|| ( someMeasurement > 20.0 )
-	|| ( get_pcvar_num( sv_gravity ) != 800 )
-	|| ( get_pcvar_num( sv_airaccelerate ) != 10 )
+	// || ( get_pcvar_num( sv_gravity ) != 800 )
+	// || ( get_pcvar_num( sv_airaccelerate ) != 10 )
 	)
 	{
 		event_jump_illegal( id );
@@ -512,8 +495,6 @@ event_jump_begin( id )
 	jump_speed[id] = jump_prestrafe[id];
 	pev( id, pev_angles, jump_angles[id] );
 	
-	new ret;
-	ExecuteForward( mfwd_jump_begin, ret, id );
 }
 
 state_injump_firstframe( id )
@@ -543,8 +524,6 @@ state_injump_firstframe( id )
 
 		if( (flags[id] & FL_ONGROUND2) || bJumpTypeDisabled )
 		{
-			new ret;
-			ExecuteForward( mfwd_jump_interrupt, ret, id );
 			
 			player_state[id] = State_Initial;
 			state_initial( id );
@@ -569,8 +548,6 @@ state_injump_firstframe( id )
 	}
 	else
 	{
-		new ret;
-		ExecuteForward( mfwd_jump_interrupt, ret, id );
 		
 		player_state[id] = State_OnLadder;
 		state_onladder( id );
@@ -710,8 +687,6 @@ state_injump( id )
 	}
 	else
 	{
-		new ret;
-		ExecuteForward( mfwd_jump_interrupt, ret, id );
 		
 		player_state[id] = State_OnLadder;
 		state_onladder( id );
@@ -739,8 +714,6 @@ event_jump_failed( id )
 	if (jump_frames[id])
 		display_stats( id, true );
 	
-	new ret;
-	ExecuteForward( mfwd_jump_fail, ret, id );
 	
 	reset_stats( id );
 }
@@ -781,15 +754,11 @@ event_jump_end( id )
 		display_stats( id );
 	}
 	
-	new ret;
-	ExecuteForward( mfwd_jump_end, ret, id );
 	reset_stats( id );
 }
 
 event_jump_illegal( id )
 {
-	new ret;
-	ExecuteForward( mfwd_jump_illegal, ret, id );
 	reset_state( id );
 }
 
@@ -818,8 +787,6 @@ event_dd_begin( id )
 		dd_prestrafe[id][dd_count[id] - 1] = floatsqroot( velocity[id][0] * velocity[id][0] + velocity[id][1] * velocity[id][1] );
 	}
 	
-	new ret;
-	ExecuteForward( mfwd_dd_begin, ret, id );
 }
 
 state_indd_firstframe( id )
@@ -828,8 +795,6 @@ state_indd_firstframe( id )
 	{
 		if( flags[id] & FL_ONGROUND2 )
 		{
-			new ret;
-			ExecuteForward( mfwd_dd_interrupt, ret, id );
 			
 			player_state[id] = State_Initial;
 			state_initial( id );
@@ -842,8 +807,6 @@ state_indd_firstframe( id )
 	}
 	else
 	{
-		new ret;
-		ExecuteForward( mfwd_dd_interrupt, ret, id );
 		
 		player_state[id] = State_OnLadder;
 		state_onladder( id );
@@ -866,8 +829,6 @@ state_indd( id )
 		
 		if( ( origin[id][2] + 18.0 ) < dd_start_origin[id][2] )
 		{
-			new ret;
-			ExecuteForward( mfwd_dd_fail, ret, id );
 			
 			player_state[id] = State_InFall;
 			state_infall( id );
@@ -875,8 +836,6 @@ state_indd( id )
 	}
 	else
 	{
-		new ret;
-		ExecuteForward( mfwd_dd_interrupt, ret, id );
 		
 		player_state[id] = State_OnLadder;
 		state_onladder( id );
@@ -885,8 +844,6 @@ state_indd( id )
 
 event_dd_end( id )
 {
-	new ret;
-	ExecuteForward( mfwd_dd_end, ret, id );
 	
 	dd_end_origin[id] = origin[id];
 	dd_end_time[id] = get_gametime( );
