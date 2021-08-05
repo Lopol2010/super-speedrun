@@ -377,6 +377,7 @@ public _sr_give_default_items()
     if(!is_user_connected(id)) return;
 
     static tmp[32]; new iNum = 0, iWeaponBits = get_user_weapons(id, tmp, iNum); 
+
     if(~iWeaponBits & (1<<CSW_KNIFE))
         rg_give_item(id, "weapon_knife");
     if(~iWeaponBits & (1<<CSW_USP))

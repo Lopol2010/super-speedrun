@@ -70,12 +70,7 @@ public plugin_init()
 { 
     register_plugin(PLUGIN, VERSION, AUTHOR) 
  
-    register_touch("weaponbox", "player", "BlockPickup");
-    register_touch("armoury_entity", "player", "BlockPickup");
-    register_touch("weapon_shield", "player", "BlockPickup");
     register_forward(FM_AddToFullPack, "FM_client_AddToFullPack_Post", 1) 
-    // RegisterHookChain(RG_CBasePlayerWeapon_DefaultDeploy, "RG_CBasePlayerWeapon_DefaultDeploy_Pre", 0)
-    // RegisterHam(Ham_Item_CanHolster, "", "Ham_Item_CanHolster_Pre")
 
     register_clcmd("say /hide", "HideMenu");
     register_clcmd("say /invis", "HideMenu");
@@ -84,6 +79,7 @@ public plugin_init()
 
     g_msgHideWeapon = get_user_msgid("HideWeapon")
     register_event("ResetHUD", "onResetHUD", "b")
+    register_event("CurWeapon", "Event_CurWeapon", "be","1=1")
     register_message(g_msgHideWeapon, "msgHideWeapon")
     
     g_cvarHideCAL = register_cvar("amx_hud_hide_cross_ammo_weaponlist", "0")
@@ -98,43 +94,6 @@ public plugin_init()
     HudApplyCVars()
 } 
 
-public Ham_Item_CanHolster_Pre(id)
-{
-    SetHamReturnInteger(0)
-    return HAM_SUPERCEDE
-}
-
-public BlockAttack(id)
-{
-    return HAM_SUPERCEDE
-}
-
-public RG_CBasePlayerWeapon_DefaultDeploy_Pre(const this, szViewModel[], szWeaponModel[], iAnim, szAnimExt[], skiplocal)
-{
-    new id = get_member(this, m_pPlayer)
-    if(!is_user_connected(id)) return HC_CONTINUE
-
-    copy(g_viewmodel[id], 63, szViewModel)
-
-    if(g_weaponHidden[id])
-    {
-        SetHookChainArg(2, ATYPE_STRING, "", 1)
-        // set_member(id, m_flNextAttack, 99999.0)
-        // set_member(this, m_Weapon_flNextPrimaryAttack, 99999.0)
-        // set_member(this, m_Weapon_flNextSecondaryAttack, 99999.0)
-
-        SetHookChainReturn(ATYPE_INTEGER, false)
-        return HC_SUPERCEDE
-    }
-    else
-    {
-        // set_member(id, m_flNextAttack, 0.0)
-        // set_member(this, m_Weapon_flNextPrimaryAttack, 0.0)
-        // set_member(this, m_Weapon_flNextSecondaryAttack, 0.0)
-    }
-    return HC_CONTINUE
-}
-    
 public plugin_cfg()
 {
     new ent = -1;
@@ -177,9 +136,6 @@ public plugin_cfg()
     }
 
 }
-
-public BlockPickup(Entity, Client)
-    return (g_weaponHidden[Client]) ? PLUGIN_HANDLED : PLUGIN_CONTINUE; 
 
 public plugin_natives()
 {
@@ -224,8 +180,8 @@ public client_disconnected(id)
 }
 public HideMenu_ItemsCallback(id, menu, item)
 {
-    if(item == 1)
-        return ITEM_DISABLED
+    // if(item == 1)
+    //     return ITEM_DISABLED
     return ITEM_IGNORE
 }
 public HideMenu_Handler(id, menu, key)
@@ -243,7 +199,7 @@ public HideMenu_Handler(id, menu, key)
         }
         case 1: 
         {
-            // hide_weapon(id)
+            hide_weapon(id)
         }
         case 2: 
         {
@@ -316,13 +272,6 @@ public hide_weapon(id)
     
     set_pev(id, pev_viewmodel2, g_weaponHidden[id] ? "" : g_viewmodel[id] )
 
-    // new wpn = get_member(id, m_pClientActiveItem)
-    
-    // new Float:nextAttack = g_weaponHidden[id] ? 99999.0 : 0.0
-    // set_member(id, m_flNextAttack, nextAttack)
-    // set_member(wpn, m_Weapon_flNextPrimaryAttack, nextAttack)
-    // set_member(wpn, m_Weapon_flNextSecondaryAttack, nextAttack)
-
     set_pcvar_num(g_cvarHideCAL, g_weaponHidden[id])
     onResetHUD(id)
 }
@@ -342,7 +291,15 @@ public _is_weapon_hidden()
     }
     return g_weaponHidden[get_param(arg_id)]
 }
+public Event_CurWeapon(id) 
+{     
+    new ptr;
+    pev(id, pev_viewmodel2, ptr, g_viewmodel[id], charsmax(g_viewmodel[]))
 
+    if(g_weaponHidden[id])
+        set_pev(id, pev_viewmodel2, "")
+    return PLUGIN_CONTINUE 
+}
 public onResetHUD(id)
 {
     HudApplyCVars()
