@@ -356,7 +356,6 @@ public forward_PlayerPreThink( id )
     pev( id, pev_velocity, velocity[id] );
     movetype[id] = pev( id, pev_movetype );
     
-    
     static Float:absmin[3];
     static Float:absmax[3];
     pev( id, pev_absmin, absmin );
@@ -369,7 +368,7 @@ public forward_PlayerPreThink( id )
 
     if (get_player_hspeed(id) <= 450.0)
         inertia_frames[id] = 0;
-    if (old_player_state[id] > 1 && player_state[id] == State_Initial && get_player_hspeed(id) > 450.0)
+    if (old_player_state[id] > State_InJump_FirstFrame && player_state[id] == State_Initial && get_player_hspeed(id) > 450.0)
         inertia_frames[id]++;
     else if (inertia_frames[id] > 0 && old_player_state[id] == State_Initial
             && (player_state[id] == State_Initial || player_state[id] == State_InJump_FirstFrame))
