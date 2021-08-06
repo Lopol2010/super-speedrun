@@ -15,8 +15,6 @@
 #define AUTHOR "Lopol2010"
 #define PLUGIN_TAG "LJStats"
 
-#define TASKID_SPEED 489273421
-
 #define LJSTATS_MENU_ID "LJ Stats Menu"
 
 enum State
