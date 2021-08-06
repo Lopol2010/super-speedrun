@@ -561,7 +561,7 @@ public HC_CBasePlayer_Jump_Pre(id)
             jump_speed[id] = speed;
             jump_angles[id] = angles;
         }
-        client_print(id, print_chat, "str: %d", jump_strafes[id]);
+        // client_print(id, print_chat, "str: %d", jump_strafes[id]);
         return HC_CONTINUE;
     }
 
@@ -625,23 +625,28 @@ event_jump_begin( id )
 
 state_injump_firstframe( id )
 {
-    client_print(id, print_chat, "jump: %s", jump_name[jump_type[id]]);
+    // client_print(id, print_chat, "jump: %s", jump_name[jump_type[id]]);
     if( movetype[id] == MOVETYPE_WALK )
     {
         // multi bhop не добавлен в этот switch, значит он всегда включен 
         // TODO: tidy up this code -- begin
         new bool:bJumpTypeDisabled = false;
         jump_type[id] = get_jump_type( id );
-        switch (jump_type[id])
-        {
-            case JumpType_LJ: if (!g_DisplayLJStats[id]) bJumpTypeDisabled = true;
-            case JumpType_HJ: if (!g_DisplayHJStats[id]) bJumpTypeDisabled = true;
-            case JumpType_CJ, JumpType_DCJ, JumpType_MCJ, JumpType_DropCJ: if (!g_DisplayCJStats[id]) bJumpTypeDisabled = true;
-            case JumpType_WJ: if (!g_DisplayWJStats[id]) bJumpTypeDisabled = true;
-            case JumpType_BJ, JumpType_SBJ, JumpType_DropBJ: if (!g_DisplayBhStats[id]) bJumpTypeDisabled = true;
-            case JumpType_LadderBJ: if (!g_DisplayLadderStats[id]) bJumpTypeDisabled = true;
-            default: bJumpTypeDisabled = false;
-        }
+
+        // временно закоментил, позже если плагин будет дорабатываться нужно это раскоментить
+        // причина закоментаривания в том, что 1ый прыжок считается longjump'ом и не выводится на экран потому что игрок не включил
+        // соответствующий пункт в своём меню /stats
+
+        // switch (jump_type[id])
+        // {
+        //     case JumpType_LJ: if (!g_DisplayLJStats[id]) bJumpTypeDisabled = true;
+        //     case JumpType_HJ: if (!g_DisplayHJStats[id]) bJumpTypeDisabled = true;
+        //     case JumpType_CJ, JumpType_DCJ, JumpType_MCJ, JumpType_DropCJ: if (!g_DisplayCJStats[id]) bJumpTypeDisabled = true;
+        //     case JumpType_WJ: if (!g_DisplayWJStats[id]) bJumpTypeDisabled = true;
+        //     case JumpType_BJ, JumpType_SBJ, JumpType_DropBJ: if (!g_DisplayBhStats[id]) bJumpTypeDisabled = true;
+        //     case JumpType_LadderBJ: if (!g_DisplayLadderStats[id]) bJumpTypeDisabled = true;
+        //     default: bJumpTypeDisabled = false;
+        // }
 
         if (inertia_frames[id] && (get_player_hspeed(id) > 400.0 || velocity[id][2] > 400.0)
                 && (jump_type[id] == JumpType_LJ || jump_type[id] == JumpType_HJ))
@@ -890,7 +895,7 @@ event_jump_end( id )
 
 event_jump_illegal( id )
 {
-    client_print(id, print_chat, "jump illegal: %s", jump_name[jump_type[id]]);
+    // client_print(id, print_chat, "jump illegal: %s", jump_name[jump_type[id]]);
     reset_state( id );
 }
 
@@ -1009,8 +1014,8 @@ state_infall( id )
     {
         if( flags[id] & FL_ONGROUND2 )
         {
-            server_print("state infall: %f",  fall_time[id] );
-            client_print(id, print_chat, "state: %d %d", player_state[id], State_InFall);
+            // server_print("state infall: %f",  fall_time[id] );
+            // client_print(id, print_chat, "state: %d %d", player_state[id], State_InFall);
 
             fall_origin[id] = origin[id];
             fall_time[id] = get_gametime( );
@@ -1083,10 +1088,10 @@ JumpType:get_jump_type( id )
 
         if(!(flags[id] & FL_ONGROUND2))
         {
-            server_print("MBJ: %f %f %b",  jump_start_time[id] , fall_time[id] , flags[id] & FL_ONGROUND2);
+            // server_print("MBJ: %f %f %b",  jump_start_time[id] , fall_time[id] , flags[id] & FL_ONGROUND2);
             return JumpType_MultiBJ;
         }
-        server_print("WJ: %f %f %b",  jump_start_time[id] , fall_time[id] , flags[id] & FL_ONGROUND2);
+        // server_print("WJ: %f %f %b",  jump_start_time[id] , fall_time[id] , flags[id] & FL_ONGROUND2);
         return JumpType_WJ;
     }
     else if( jump_start_time[id] - drop_time[id] < 0.1 ) // z-origin check?
@@ -1097,7 +1102,7 @@ JumpType:get_jump_type( id )
     {
         if(!(flags[id] & FL_ONGROUND2))
         {
-            server_print("MBJ: %f %f %b",  jump_start_time[id] , fall_time[id] , flags[id] & FL_ONGROUND2);
+            // server_print("MBJ: %f %f %b",  jump_start_time[id] , fall_time[id] , flags[id] & FL_ONGROUND2);
             return JumpType_MultiBJ;
         }
 
@@ -1188,10 +1193,11 @@ display_stats( id, bool:failed = false )
     {
         if( player_show_stats[i] && ( ( i == id ) || ( ( ( pev( i, pev_iuser1 ) == 2 ) || ( pev( i, pev_iuser1 ) == 4 ) ) && ( pev( i, pev_iuser2 ) == id ) ) ) )
         {
-            if( failed )
-                set_hudmessage( 255, 0, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
-            else
-                set_hudmessage( 255, 128, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
+            // if( failed )
+            //     set_hudmessage( 255, 0, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
+            // else
+            //     set_hudmessage( 255, 128, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
+            set_hudmessage( 255, 128, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
             show_hudmessage( i, "%s", jump_info );
             
             /*
@@ -1207,58 +1213,58 @@ display_stats( id, bool:failed = false )
             //	console_print( i, "%s", strafes_info_console[j] );
         }
         
-        static jump_info_chat[192];
-        jump_info_chat[0] = 0;
-        if( !failed )
-        {
-            if( player_show_stats[i] && player_show_stats_chat[i] && ( !g_MuteJumpMessages[i] || id == i ) )
-            {
-                new name[32];
-                get_user_name( id, name, charsmax(name) );
+        // static jump_info_chat[192];
+        // jump_info_chat[0] = 0;
+        // if( !failed )
+        // {
+        //     if( player_show_stats[i] && player_show_stats_chat[i] && ( !g_MuteJumpMessages[i] || id == i ) )
+        //     {
+        //         new name[32];
+        //         get_user_name( id, name, charsmax(name) );
 
-                if( jump_distance[id] >= jump_level[jump_type[id]][4] )
-                {
-                    formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_GODLIKE", name, jump_shortname[jump_type[id]], jump_distance[id] );
-                }
-                else if( jump_distance[id] >= jump_level[jump_type[id]][3] )
-                {
-                    formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_PERFECT", name, jump_shortname[jump_type[id]], jump_distance[id] );
-                }
-                else if( jump_distance[id] >= jump_level[jump_type[id]][2] )
-                {
-                    formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_IMPRESSIVE", name, jump_shortname[jump_type[id]], jump_distance[id] );
-                }
-                else if( jump_distance[id] >= jump_level[jump_type[id]][1] )
-                {
-                    formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_LEET", name, jump_shortname[jump_type[id]], jump_distance[id] );
-                }
-                else if( jump_distance[id] >= jump_level[jump_type[id]][0] )
-                {
-                    formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_PRO", name, jump_shortname[jump_type[id]], jump_distance[id] );
-                }
+        //         if( jump_distance[id] >= jump_level[jump_type[id]][4] )
+        //         {
+        //             formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_GODLIKE", name, jump_shortname[jump_type[id]], jump_distance[id] );
+        //         }
+        //         else if( jump_distance[id] >= jump_level[jump_type[id]][3] )
+        //         {
+        //             formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_PERFECT", name, jump_shortname[jump_type[id]], jump_distance[id] );
+        //         }
+        //         else if( jump_distance[id] >= jump_level[jump_type[id]][2] )
+        //         {
+        //             formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_IMPRESSIVE", name, jump_shortname[jump_type[id]], jump_distance[id] );
+        //         }
+        //         else if( jump_distance[id] >= jump_level[jump_type[id]][1] )
+        //         {
+        //             formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_LEET", name, jump_shortname[jump_type[id]], jump_distance[id] );
+        //         }
+        //         else if( jump_distance[id] >= jump_level[jump_type[id]][0] )
+        //         {
+        //             formatex( jump_info_chat, charsmax(jump_info_chat), "%L", i, "Q_JS_PRO", name, jump_shortname[jump_type[id]], jump_distance[id] );
+        //         }
                 
-                if( jump_info_chat[0] )
-                {
-                    new pre[7], dist[7], maxs[7], gain[6], sync[4], strafes[3];
-                    float_to_str( jump_prestrafe[id], pre, charsmax(pre) ); // prestrafe speed
-                    float_to_str( jump_distance[id], dist, charsmax(dist) ); // distance from jump start to end point
-                    float_to_str( jump_maxspeed[id], maxs, charsmax(maxs) ); // maxspeed during jump
-                    float_to_str( jump_maxspeed[id] - jump_prestrafe[id], gain, charsmax(gain) ); // gain
-                    num_to_str( jump_sync[id], sync, charsmax(sync) ); // sync
-                    num_to_str( jump_strafes[id], strafes, charsmax(strafes) ); // strafes during jump
+        //         if( jump_info_chat[0] )
+        //         {
+        //             new pre[7], dist[7], maxs[7], gain[6], sync[4], strafes[3];
+        //             float_to_str( jump_prestrafe[id], pre, charsmax(pre) ); // prestrafe speed
+        //             float_to_str( jump_distance[id], dist, charsmax(dist) ); // distance from jump start to end point
+        //             float_to_str( jump_maxspeed[id], maxs, charsmax(maxs) ); // maxspeed during jump
+        //             float_to_str( jump_maxspeed[id] - jump_prestrafe[id], gain, charsmax(gain) ); // gain
+        //             num_to_str( jump_sync[id], sync, charsmax(sync) ); // sync
+        //             num_to_str( jump_strafes[id], strafes, charsmax(strafes) ); // strafes during jump
                     
-                    replace_all( jump_info_chat, charsmax(jump_info_chat), "!name", name );
-                    replace_all( jump_info_chat, charsmax(jump_info_chat), "!dist", dist );
-                    replace_all( jump_info_chat, charsmax(jump_info_chat), "!pre", pre );
-                    replace_all( jump_info_chat, charsmax(jump_info_chat), "!maxs", maxs );
-                    replace_all( jump_info_chat, charsmax(jump_info_chat), "!gain", gain );
-                    replace_all( jump_info_chat, charsmax(jump_info_chat), "!sync", sync );
-                    replace_all( jump_info_chat, charsmax(jump_info_chat), "!strf", strafes );
+        //             replace_all( jump_info_chat, charsmax(jump_info_chat), "!name", name );
+        //             replace_all( jump_info_chat, charsmax(jump_info_chat), "!dist", dist );
+        //             replace_all( jump_info_chat, charsmax(jump_info_chat), "!pre", pre );
+        //             replace_all( jump_info_chat, charsmax(jump_info_chat), "!maxs", maxs );
+        //             replace_all( jump_info_chat, charsmax(jump_info_chat), "!gain", gain );
+        //             replace_all( jump_info_chat, charsmax(jump_info_chat), "!sync", sync );
+        //             replace_all( jump_info_chat, charsmax(jump_info_chat), "!strf", strafes );
                     
-                    q_message_SayText( i, MSG_ONE, _, i, "%s", jump_info_chat );
-                }
-            }
-        }
+        //             q_message_SayText( i, MSG_ONE, _, i, "%s", jump_info_chat );
+        //         }
+        //     }
+        // }
     }
 }
 
