@@ -1005,16 +1005,16 @@ display_stats( id, bool:failed = false )
     //         jump_sync[id] * 100 / jump_frames[id]
     // );
     
-    static jump_info_console[128];
-    formatex( jump_info_console, charsmax(jump_info_console), "%s Distance: %f Maxspeed: %f (%.2f) Prestrafe: %f Strafes %d Sync: %d",
-        jump_shortname[jump_type[id]],
-        jump_distance[id],
-        jump_maxspeed[id],
-        jump_maxspeed[id] - jump_prestrafe[id],
-        jump_prestrafe[id],
-        jump_strafes[id],
-        jump_sync[id] * 100 / jump_frames[id]
-    );
+    // static jump_info_console[128];
+    // formatex( jump_info_console, charsmax(jump_info_console), "%s Distance: %f Maxspeed: %f (%.2f) Prestrafe: %f Strafes %d Sync: %d",
+    //     jump_shortname[jump_type[id]],
+    //     jump_distance[id],
+    //     jump_maxspeed[id],
+    //     jump_maxspeed[id] - jump_prestrafe[id],
+    //     jump_prestrafe[id],
+    //     jump_strafes[id],
+    //     jump_sync[id] * 100 / jump_frames[id]
+    // );
     
     /*
     static strafes_info[512];
@@ -1054,7 +1054,7 @@ display_stats( id, bool:failed = false )
             show_hudmessage( i, "%s", strafes_info );
             */
 
-            console_print( i, "%s", jump_info_console );
+            // console_print( i, "%s", jump_info_console );
             //for( new j = 1; j <= jump_strafes[id]; ++j )
             //	console_print( i, "%s", strafes_info_console[j] );
         }
