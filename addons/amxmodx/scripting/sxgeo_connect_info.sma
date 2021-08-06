@@ -1,6 +1,5 @@
 #include <amxmodx>
 #include <sxgeo>
-// #include <geoip>
 #include <speedrun>
 #include <chatmanager>
 
@@ -19,12 +18,27 @@ new const CONNECT_SOUND[] = "buttons/blip1.wav";
 new g_pcvar_amx_language;
 new g_bSteamPlayer[33];
 
+new g_szLogFile[128];
+
 public plugin_init()
 {
     register_plugin("[SxGeo] Connect Info", "1.0", "s1lent");
     register_dictionary("sxgeo_connect_info.txt");
 
     g_pcvar_amx_language = get_cvar_pointer("amx_language");
+}
+
+public plugin_cfg()
+{
+    new dir[] = "addons/amxmodx/logs/sxgeo_connect_info";
+    if(!dir_exists(dir)) {
+        mkdir(dir);
+    }
+    new date[16]; get_time("%Y%m%d", date, charsmax(date));
+    formatex(g_szLogFile, charsmax(g_szLogFile), "%s/%s.txt", dir, date);
+    if(!file_exists(g_szLogFile)) {
+        write_file(g_szLogFile, "Start of the connections log.");
+    }
 }
 
 public client_putinserver(id)
@@ -48,6 +62,8 @@ public client_putinserver(id)
     new bool:bRegionFound  = sxgeo_region (szIP, szRegion,  charsmax(szRegion),  /*use lang server*/ szLanguage);
     new bool:bCityFound    = sxgeo_city   (szIP, szCity,    charsmax(szCity),    /*use lang server*/ szLanguage);
 
+    static log_msg[256];
+
     for(new i = 1; i <= MaxClients; i ++)
     {
         if(!is_user_connected(i)) continue;
@@ -69,7 +85,11 @@ public client_putinserver(id)
             // we don't know where you are :(
             client_print_color(i, DontChange, "%s %L %L %L %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", id, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
         }
+
     }
+
+    formatex(log_msg, charsmax(log_msg), "%n <%s> <Country:%b City:%b Region:%b> %s %s %s", id, szIP, bCountryFound, bCityFound, bRegionFound, szCity, szRegion, szCountry);
+    write_file(g_szLogFile, log_msg);
 
     if (bCountryFound || bCityFound || bRegionFound)
     {
