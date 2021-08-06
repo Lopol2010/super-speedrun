@@ -994,7 +994,7 @@ JumpType:get_jump_type( id )
 display_stats( id, bool:failed = false )
 {
     static jump_info[256];
-    formatex( jump_info, charsmax(jump_info), "Strafes: %d, Sync: %d, Gain: %f",
+    formatex( jump_info, charsmax(jump_info), "STRAFES: %d / SYNC: %d%%^nGAIN: %.2f",
             jump_strafes[id],
             jump_sync[id] * 100 / jump_frames[id],
             jump_maxspeed[id] - jump_prestrafe[id]
@@ -1047,7 +1047,7 @@ display_stats( id, bool:failed = false )
             if( failed )
                 set_hudmessage( 255, 0, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
             else
-                set_hudmessage( 255, 128, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
+                set_hudmessage( 200, 100, 0, -1.0, 0.7, 0, 0.0, jump_type[id] == JumpType_MultiBJ ? 1.0 : 3.0, 0.0, 0.1, 1 );
             show_hudmessage( i, "%s", jump_info );
             
             /*
