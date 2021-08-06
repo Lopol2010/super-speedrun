@@ -7,7 +7,7 @@
 #include <fun>
 #include <engine>
 #include <q_jumpstats_const>
-#include <q_message>
+// #include <q_message>
 #include <speedrun>
 
 #pragma semicolon 1
