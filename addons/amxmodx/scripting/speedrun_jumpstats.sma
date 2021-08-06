@@ -8,7 +8,7 @@
 #include <engine>
 #include <q_jumpstats_const>
 #include <q_message>
-#include <reapi>
+#include <speedrun>
 
 #pragma semicolon 1
 
@@ -47,16 +47,10 @@ enum _:JUMPSTATS
     JUMPSTATS_TIMESTAMP,	// Date
 }
 
-new const configsSubDir[] = "/hl_kreedz";
-new Array:g_ArrayLJStats;
-new g_Map[64];
-new g_ConfigsDir[256];
-new g_StatsFileLJ[256];
-
 new const FL_ONGROUND2 = FL_ONGROUND | FL_PARTIALGROUND | FL_INWATER | FL_CONVEYOR | FL_FLOAT;
 
-new sv_airaccelerate;
-new sv_gravity;
+// new sv_airaccelerate;
+// new sv_gravity;
 
 new air_touch[33];
 
@@ -94,7 +88,6 @@ new injump_started_downward[33];
 new injump_frame[33];
 new inertia_frames[33];
 new obbo[33];
-new Float:pre_obbo_velocity[33][3];
 
 new Float:jump_first_origin[33][3];
 new Float:jump_first_velocity[33][3];
@@ -159,8 +152,6 @@ public plugin_init( )
     // register_touch("trigger_push", "player", "forward_PushTouch");
     register_touch("trigger_teleport", "player", "forward_TeleportTouch");
 
-    // RegisterHookChain(RG_CBasePlayer_Jump, "HC_CBasePlayer_Jump_Pre", false);
-    
     illegal_touch_entity_classes = TrieCreate( );
     TrieSetCell( illegal_touch_entity_classes, "func_train", 1 );
     TrieSetCell( illegal_touch_entity_classes, "func_door", 1 );
@@ -179,31 +170,8 @@ public plugin_init( )
 
     register_menucmd(register_menuid(LJSTATS_MENU_ID), 1023, "actions_ljstats");
     
-    sv_airaccelerate = get_cvar_pointer( "sv_airaccelerate" );
-    sv_gravity = get_cvar_pointer( "sv_gravity" );
-    
-    //set_task( 0.1, "task_speed", TASKID_SPEED, _, _, "b" );
-
-    g_ArrayLJStats = ArrayCreate(JUMPSTATS);
-
-}
-
-public plugin_cfg()
-{
-    get_mapname(g_Map, charsmax(g_Map));
-    strtolower(g_Map);
-
-    get_configsdir(g_ConfigsDir, charsmax(g_ConfigsDir));
-
-    // Dive into our custom directory
-    add(g_ConfigsDir, charsmax(g_ConfigsDir), configsSubDir);
-    if (!dir_exists(g_ConfigsDir))
-        mkdir(g_ConfigsDir);
-}
-
-public plugin_end()
-{
-    ArrayDestroy(g_ArrayLJStats);
+    // sv_airaccelerate = get_cvar_pointer( "sv_airaccelerate" );
+    // sv_gravity = get_cvar_pointer( "sv_gravity" );
 }
 
 public client_connect( id )
@@ -222,11 +190,6 @@ public client_connect( id )
     g_DisplayBhStats[id] = false;
     g_DisplayLadderStats[id] = false;
     g_MuteJumpMessages[id] = false;
-}
-
-public hlkz_cheating( id )
-{
-    event_jump_illegal( id );
 }
 
 reset_state( id )
@@ -461,128 +424,6 @@ public forward_PlayerPreThink( id )
     oldorigin[id] = origin[id];
     oldvelocity[id] = velocity[id];
 }
-
-public HC_CBasePlayer_Jump_Pre(id)
-{
-    // new flags = get_entvar(id, var_flags);
-
-    // if((flags & FL_WATERJUMP) || !(flags & FL_ONGROUND)  || get_entvar(id, var_waterlevel) >= 2) return HC_CONTINUE;
-    if((flags[id] & FL_WATERJUMP) || !(flags[id] & FL_ONGROUND)  || get_entvar(id, var_waterlevel) >= 2) 
-    {
-
-        if( movetype[id] == MOVETYPE_WALK )
-        {
-            static Float:h1;
-            static Float:h2;
-            static Float:correct_old_h2;
-            h1 = ( jump_start_ducking[id] ? jump_start_origin[id][2] + 18.0 : jump_start_origin[id][2] );
-            h2 = ( ducking[id] ? origin[id][2] + 18.0 : origin[id][2] );
-
-            if (oldDucking[id] < ducking[id])
-                correct_old_h2 = old_h2_injump[id] + 18.0;
-            else if (oldDucking[id] > ducking[id])
-                correct_old_h2 = old_h2_injump[id] - 18.0;
-            else
-                correct_old_h2 = old_h2_injump[id];
-
-            injump_frame[id]++;
-            // when jumping in hl1 it may do something weird as having the second frame of the
-            // jump in a lower Z origin than the first frame, which shouldn't happen becase
-            // if you jump you should gain Z until you reach the top of the jump, but sometimes
-            // it's just not the case somehow
-            if (correct_old_h2 > h2 && injump_frame[id] > 2)
-                injump_started_downward[id] = true;
-
-            old_h2_injump[id] = h2;
-            
-            if( h2 >= h1 )
-            {
-                jump_fail_origin[id] = origin[id];
-                jump_fail_velocity[id] = velocity[id];
-            }
-            
-            jump_last_origin[id] = origin[id];
-            jump_last_velocity[id] = velocity[id];
-            
-            static Float:speed;
-            speed = floatsqroot( velocity[id][0] * velocity[id][0] + velocity[id][1] * velocity[id][1] );
-            if( jump_maxspeed[id] < speed )
-                jump_maxspeed[id] = speed;
-            
-            if( speed > jump_speed[id] )
-            {
-                ++jump_sync[id];
-                
-                if( jump_strafes[id] < MAX_STRAFES )
-                {
-                    ++jump_strafe_sync[id][jump_strafes[id]];
-                    jump_strafe_gain[id][jump_strafes[id]] += speed - jump_speed[id];
-                }
-            }
-            else
-            {
-                if( jump_strafes[id] < MAX_STRAFES )
-                {
-                    jump_strafe_loss[id][jump_strafes[id]] += jump_speed[id] - speed;
-                }
-            }
-            
-            static Float:angles[3];
-            pev( id, pev_angles, angles );
-            if( jump_angles[id][1] > angles[1] )
-            {
-                jump_turning[id] = 1;
-            }
-            else if( jump_angles[id][1] < angles[1] )
-            {
-                jump_turning[id] = -1;
-            }
-            else
-            {
-                jump_turning[id] = 0;
-            }
-            
-            if( jump_turning[id] )
-            {
-                if( ( jump_strafing[id] != -1 ) && ( buttons[id] & ( IN_MOVELEFT | IN_FORWARD ) ) && !( buttons[id] & ( IN_MOVERIGHT | IN_BACK ) ) )
-                {
-                    jump_strafing[id] = -1;
-                    ++jump_strafes[id];
-                }
-                else if( ( jump_strafing[id] != 1 ) && ( buttons[id] & ( IN_MOVERIGHT | IN_BACK ) ) && !( buttons[id] & ( IN_MOVELEFT | IN_FORWARD ) ) )
-                {
-                    jump_strafing[id] = 1;
-                    ++jump_strafes[id];
-                }
-            }
-            
-            ++jump_frames[id];
-            if( jump_strafes[id] < MAX_STRAFES )
-            {
-                ++jump_strafe_frames[id][jump_strafes[id]];
-            }
-            
-            jump_speed[id] = speed;
-            jump_angles[id] = angles;
-        }
-        // client_print(id, print_chat, "str: %d", jump_strafes[id]);
-        return HC_CONTINUE;
-    }
-
-    event_jump_end( id );
-    
-    injump_started_downward[id] = false;
-    injump_frame[id] = 0;
-    player_state[id] = State_Initial;
-    state_initial( id );
-    reset_state( id );
-    
-    // display_stats( id );
-
-
-    return HC_CONTINUE;
-}
-            
 
 state_initial( id )
 {
@@ -858,7 +699,7 @@ event_jump_failed( id )
     jump_distance[id] = floatsqroot( distance_x * distance_x + distance_y * distance_y ) + 32.0;
     
     if (jump_frames[id])
-        display_stats( id, true );
+        display_stats( id );
     
     
     reset_stats( id );
@@ -1203,11 +1044,10 @@ display_stats( id, bool:failed = false )
     {
         if( player_show_stats[i] && ( ( i == id ) || ( ( ( pev( i, pev_iuser1 ) == 2 ) || ( pev( i, pev_iuser1 ) == 4 ) ) && ( pev( i, pev_iuser2 ) == id ) ) ) )
         {
-            // if( failed )
-            //     set_hudmessage( 255, 0, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
-            // else
-            //     set_hudmessage( 255, 128, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
-            set_hudmessage( 255, 128, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
+            if( failed )
+                set_hudmessage( 255, 0, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
+            else
+                set_hudmessage( 255, 128, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
             show_hudmessage( i, "%s", jump_info );
             
             /*
