@@ -19,6 +19,7 @@ enum JumpType
 	JumpType_HJ,
 	JumpType_BJ,
 	JumpType_SBJ,
+	JumpType_MultiBJ,
 	JumpType_DropBJ,
 	JumpType_CJ,
 	JumpType_DCJ,
@@ -36,6 +37,7 @@ stock jump_name[JumpType_TOTAL][] =
 	"HighJump",
 	"BhopJump",
 	"StandUp BhopJump",
+	"Multi BhopJump",
 	"Drop BhopJump",
 	"CountJump",
 	"Double CountJump",
@@ -51,6 +53,7 @@ stock jump_shortname[JumpType_TOTAL][] =
 	"HJ",
 	"BJ",
 	"SBJ",
+	"MBJ",
 	"Drop BJ",
 	"CJ",
 	"DCJ",
@@ -66,6 +69,7 @@ stock const Float:g_jump_minpre[JumpType_TOTAL] =
 	375.0, // HJ
 	395.0, // BJ
 	395.0, // SBJ
+	0.0, // mBJ
 	395.0, // Drop BJ
 	385.0, // CJ
 	385.0, // DCJ
@@ -81,6 +85,7 @@ stock const Float:g_jump_mindist[JumpType_TOTAL] =
 	320.0, // HJ
 	320.0, // BJ
 	320.0, // SBJ
+	0.0, // MBJ
 	330.0, // Drop BJ
 	330.0, // CJ
 	330.0, // DCJ
@@ -95,6 +100,7 @@ stock jump_level[JumpType_TOTAL][5] =
 	{ 355, 365, 375, 380, 385 },
 	{ 360, 370, 380, 385, 390 },
 	{ 345, 355, 365, 375, 380 },
+	{ 800, 1000, 1250, 1600, 2000 },
 	{ 800, 1000, 1250, 1600, 2000 },
 	{ 355, 365, 375, 385, 390 },
 	{ 365, 375, 385, 395, 400 },
