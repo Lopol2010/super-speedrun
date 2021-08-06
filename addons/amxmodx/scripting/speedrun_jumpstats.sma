@@ -136,6 +136,7 @@ new Float:fall_time[33];
 new Float:ladderdrop_origin[33][3];
 new Float:ladderdrop_time[33];
 
+new g_DisplaySimpleStats[33];
 new g_DisplayLJStats[33];
 new g_DisplayHJStats[33];
 new g_DisplayCJStats[33];
@@ -213,6 +214,7 @@ public client_connect( id )
     player_show_stats[id] = true;
     player_show_stats_chat[id] = true;
     player_show_prestrafe[id] = false;
+    g_DisplaySimpleStats[id] = false;
     g_DisplayLJStats[id] = false;
     g_DisplayHJStats[id] = false;
     g_DisplayCJStats[id] = false;
@@ -267,22 +269,25 @@ reset_stats( id )
 
 public clcmd_ljstats( id )
 {
-    new menuBody[512], len;
-    new keys = MENU_KEY_0 | MENU_KEY_1 | MENU_KEY_2 | MENU_KEY_3 | MENU_KEY_4 | MENU_KEY_5 | MENU_KEY_6 | MENU_KEY_7 | MENU_KEY_8 | MENU_KEY_9;
 
-    len = formatex(menuBody[len], charsmax(menuBody), "%s^n^n", PLUGIN_TAG);
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "1. Top 15 Longjump / Highjump^n");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "2. Top 15 Countjump^n");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "3. Display Longjump stats: %s^n", g_DisplayLJStats[id] ? "ON" : "OFF");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "4. Display Highjump stats: %s^n", g_DisplayHJStats[id] ? "ON" : "OFF");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "5. Display Countjump stats: %s^n", g_DisplayCJStats[id] ? "ON" : "OFF");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "6. Display Weirdjump stats: %s^n", g_DisplayWJStats[id] ? "ON" : "OFF");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "7. Display Bhop stats: %s^n", g_DisplayBhStats[id] ? "ON" : "OFF");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "8. Display Ladder stats: %s^n", g_DisplayLadderStats[id] ? "ON" : "OFF");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "9. Mute LJStats jump messages of others: %s^n", g_MuteJumpMessages[id] ? "ON" : "OFF");
-    len += formatex(menuBody[len], charsmax(menuBody) - len, "0. Exit");
+    g_DisplaySimpleStats[id] = !g_DisplaySimpleStats[id];
+    client_print_color(id, print_team_default, "Jump stats %s!", g_DisplaySimpleStats[id] ? "enabled" : "disabled");
+    // new menuBody[512], len;
+    // new keys = MENU_KEY_0 | MENU_KEY_1 | MENU_KEY_2 | MENU_KEY_3 | MENU_KEY_4 | MENU_KEY_5 | MENU_KEY_6 | MENU_KEY_7 | MENU_KEY_8 | MENU_KEY_9;
 
-    show_menu(id, keys, menuBody, -1, LJSTATS_MENU_ID);
+    // len = formatex(menuBody[len], charsmax(menuBody), "%s^n^n", PLUGIN_TAG);
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "1. Top 15 Longjump / Highjump^n");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "2. Top 15 Countjump^n");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "3. Display Longjump stats: %s^n", g_DisplayLJStats[id] ? "ON" : "OFF");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "4. Display Highjump stats: %s^n", g_DisplayHJStats[id] ? "ON" : "OFF");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "5. Display Countjump stats: %s^n", g_DisplayCJStats[id] ? "ON" : "OFF");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "6. Display Weirdjump stats: %s^n", g_DisplayWJStats[id] ? "ON" : "OFF");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "7. Display Bhop stats: %s^n", g_DisplayBhStats[id] ? "ON" : "OFF");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "8. Display Ladder stats: %s^n", g_DisplayLadderStats[id] ? "ON" : "OFF");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "9. Mute LJStats jump messages of others: %s^n", g_MuteJumpMessages[id] ? "ON" : "OFF");
+    // len += formatex(menuBody[len], charsmax(menuBody) - len, "0. Exit");
+
+    // show_menu(id, keys, menuBody, -1, LJSTATS_MENU_ID);
     return PLUGIN_HANDLED;
 }
 
@@ -646,6 +651,12 @@ state_injump_firstframe( id )
         //     case JumpType_LadderBJ: if (!g_DisplayLadderStats[id]) bJumpTypeDisabled = true;
         //     default: bJumpTypeDisabled = false;
         // }
+
+        if(!g_DisplaySimpleStats[id])
+        {
+            bJumpTypeDisabled = true;
+        }
+
 
         if (inertia_frames[id] && (get_player_hspeed(id) > 400.0 || velocity[id][2] > 400.0)
                 && (jump_type[id] == JumpType_LJ || jump_type[id] == JumpType_HJ))
