@@ -1,5 +1,3 @@
-#define UNLIMITED_GRAVITY_AND_AA
-
 #include <amxmodx>
 #include <amxmisc>
 #include <fakemeta>
