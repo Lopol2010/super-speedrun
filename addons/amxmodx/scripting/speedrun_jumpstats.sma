@@ -151,7 +151,7 @@ public plugin_init( )
 {
     register_plugin( PLUGIN, VERSION, AUTHOR );
     
-    register_dictionary( "q_jumpstats.txt" );
+    // register_dictionary( "q_jumpstats.txt" );
     
     register_forward( FM_PlayerPreThink, "forward_PlayerPreThink" );
     RegisterHam( Ham_Spawn, "player", "forward_PlayerSpawn" );
