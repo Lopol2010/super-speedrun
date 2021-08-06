@@ -234,7 +234,7 @@ public clcmd_ljstats( id )
 {
 
     g_DisplaySimpleStats[id] = !g_DisplaySimpleStats[id];
-    client_print_color(id, print_team_default, "Jump stats %s!", g_DisplaySimpleStats[id] ? "enabled" : "disabled");
+    client_print_color(id, print_team_default, "%s Jump stats %s!", PREFIX, g_DisplaySimpleStats[id] ? "enabled" : "disabled");
     // new menuBody[512], len;
     // new keys = MENU_KEY_0 | MENU_KEY_1 | MENU_KEY_2 | MENU_KEY_3 | MENU_KEY_4 | MENU_KEY_5 | MENU_KEY_6 | MENU_KEY_7 | MENU_KEY_8 | MENU_KEY_9;
 
@@ -278,7 +278,7 @@ public actions_ljstats(id, key)
 public clcmd_prestrafe( id, level, cid )
 {
     player_show_prestrafe[id] = !player_show_prestrafe[id];
-    client_print( id, print_chat, "Prestrafe: %s", player_show_prestrafe[id] ? "ON" : "OFF" );
+    client_print_color( id, print_team_default, "%s Prestrafe: %s", PREFIX, player_show_prestrafe[id] ? "ON" : "OFF" );
     
     return PLUGIN_HANDLED;
 }
