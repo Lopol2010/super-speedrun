@@ -1,3 +1,5 @@
+// #define LOG_CONNECTIONS
+
 #include <amxmodx>
 #include <sxgeo>
 #include <speedrun>
@@ -18,7 +20,9 @@ new const CONNECT_SOUND[] = "buttons/blip1.wav";
 new g_pcvar_amx_language;
 new g_bSteamPlayer[33];
 
+#if defined LOG_CONNECTIONS
 new g_szLogFile[128];
+#endif
 
 public plugin_init()
 {
@@ -30,6 +34,7 @@ public plugin_init()
 
 public plugin_cfg()
 {
+#if defined LOG_CONNECTIONS
     new dir[] = "addons/amxmodx/logs/sxgeo_connect_info";
     if(!dir_exists(dir)) {
         mkdir(dir);
@@ -39,6 +44,7 @@ public plugin_cfg()
     if(!file_exists(g_szLogFile)) {
         write_file(g_szLogFile, "Start of the connections log.");
     }
+#endif
 }
 
 public client_putinserver(id)
@@ -62,7 +68,9 @@ public client_putinserver(id)
     new bool:bRegionFound  = sxgeo_region (szIP, szRegion,  charsmax(szRegion),  /*use lang server*/ szLanguage);
     new bool:bCityFound    = sxgeo_city   (szIP, szCity,    charsmax(szCity),    /*use lang server*/ szLanguage);
 
+#if defined LOG_CONNECTIONS
     static log_msg[256];
+#endif
 
     for(new i = 1; i <= MaxClients; i ++)
     {
@@ -88,8 +96,10 @@ public client_putinserver(id)
 
     }
 
+#if defined LOG_CONNECTIONS
     formatex(log_msg, charsmax(log_msg), "%n <%s> <Country:%b City:%b Region:%b> %s %s %s", id, szIP, bCountryFound, bCityFound, bRegionFound, szCity, szRegion, szCountry);
     write_file(g_szLogFile, log_msg);
+#endif
 
     if (bCountryFound || bCityFound || bRegionFound)
     {
