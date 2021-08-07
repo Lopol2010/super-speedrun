@@ -76,16 +76,12 @@ public client_connect(id)
     new langKey[MAX_LANG_KEY_LENGTH];
     // save player's lang before changing it so that we can reset it when they disconnect
     get_user_info(id, "lang", langKey, charsmax(langKey));
-    if(strlen(langKey) == 3) g_PlayerInitialLang[id] = langKey; 
-
+    copy(langKey, MAX_LANG_KEY_LENGTH, g_PlayerInitialLang[id])
 }
 public client_disconnected(id)
 {
-    if(strlen(g_PlayerInitialLang[id]) == 3)
-    {
-        new infobuffer = engfunc(EngFunc_GetInfoKeyBuffer, id);
-        engfunc(EngFunc_SetClientKeyValue, id, infobuffer, "lang", g_PlayerInitialLang[id]);
-    }
+    new infobuffer = engfunc(EngFunc_GetInfoKeyBuffer, id);
+    engfunc(EngFunc_SetClientKeyValue, id, infobuffer, "lang", g_PlayerInitialLang[id]);
 }
 
 public client_putinserver(id)
