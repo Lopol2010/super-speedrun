@@ -75,6 +75,7 @@ enum _:PlayerData
 };
 
 new g_iCategorySign[Categories] = {100, 200, 250, 333, 500, 0, 1, 2, 3, 4};
+new g_iCategoryMaxFps[Categories] = {100, 200, 250, 333, 500, 0, 0, 0, 200, 0};
 // new const g_szCategory[][] = 
 // {
 // 	"[100 FPS]", "[200 FPS]", "[250 FPS]", "[333 FPS]", "[500 FPS]", "[Fastrun]", "[Crazy Speed]", "[2K]", "[Low Gravity]"
@@ -854,18 +855,18 @@ public Task_CheckFrames()
         if (g_fNextFpsCheck[id] > get_gametime()) continue;
 
         new cat = g_ePlayerInfo[id][m_iCategory];
-        if(g_ePlayerInfo[id][m_iCategory] < Cat_FastRun && get_user_fps(id) > g_iCategorySign[cat] + FPS_OFFSET
+        if(g_iCategoryMaxFps[cat] > 0 && get_user_fps(id) > g_iCategoryMaxFps[cat] + FPS_OFFSET
                 || g_ePlayerInfo[id][m_iCategory] >= Cat_FastRun && get_user_fps(id) > FPS_LIMIT + FPS_OFFSET)
         {
             if(fails_till_print[id] >= FAILS_TILL_PRINT)
             {
                 fails_till_print[id] = 0;
-                client_print_color(id, print_team_red, "%s^1 Incorrect ^3%d ^1fps. Auto attempt to set ^4%d^1!", PREFIX, floatround(get_user_fps(id)), g_ePlayerInfo[id][m_iCategory] < Cat_FastRun ? g_iCategorySign[cat] : FPS_LIMIT);
+                client_print_color(id, print_team_red, "%s^1 Incorrect ^3%d ^1fps. Auto attempt to set ^4%d^1!", PREFIX, floatround(get_user_fps(id)), g_iCategoryMaxFps[cat] > 0 ? g_iCategoryMaxFps[cat] : FPS_LIMIT);
             }
             fails_till_print[id]++;
 
             ExecuteHamB(Ham_CS_RoundRespawn, id);
-            client_cmd(id, "fps_max %d", g_iCategorySign[cat]);
+            client_cmd(id, "fps_max %d", g_iCategoryMaxFps[cat]);
         }
         g_fNextFpsCheck[id] = get_gametime() + 1.0;
     }
