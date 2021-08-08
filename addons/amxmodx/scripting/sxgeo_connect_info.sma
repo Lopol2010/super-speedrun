@@ -49,12 +49,6 @@ public plugin_cfg()
 
 public client_putinserver(id)
 {
-    new szLanguage[3];
-    get_user_info(id, "lang", szLanguage, charsmax(szLanguage));
-    if(!equali(szLanguage, "ru") && !equali(szLanguage, "en"))
-    {
-        get_pcvar_string(g_pcvar_amx_language, szLanguage, charsmax(szLanguage));
-    }
 
     new szName[32], szIP[16], szSteamSuffix[32];
     get_user_name(id, szName, charsmax(szName));
@@ -62,11 +56,15 @@ public client_putinserver(id)
     g_bSteamPlayer[id] = is_user_steam(id);
     if(g_bSteamPlayer[id]) szSteamSuffix = STEAM_PREFIX;
 
+    new szLanguage[3];
+    get_pcvar_string(g_pcvar_amx_language, szLanguage, charsmax(szLanguage));
     new szCountry[64], szRegion[64], szCity[64];
-
-    new bool:bCountryFound = sxgeo_country(szIP, szCountry, charsmax(szCountry), /*use lang server*/ szLanguage);
-    new bool:bRegionFound  = sxgeo_region (szIP, szRegion,  charsmax(szRegion),  /*use lang server*/ szLanguage);
-    new bool:bCityFound    = sxgeo_city   (szIP, szCity,    charsmax(szCity),    /*use lang server*/ szLanguage);
+    sxgeo_country(szIP, szCountry, charsmax(szCountry), szLanguage);
+    new bool:bCountryFound = 1 < strlen(szCountry); 
+    sxgeo_region (szIP, szRegion,  charsmax(szRegion),  szLanguage);
+    new bool:bRegionFound  = 1 < strlen(szRegion);
+    sxgeo_city   (szIP, szCity,    charsmax(szCity),    szLanguage);
+    new bool:bCityFound    = 1 < strlen(szCity);
 
 #if defined LOG_CONNECTIONS
     static log_msg[256];
@@ -76,22 +74,27 @@ public client_putinserver(id)
     {
         if(!is_user_connected(i)) continue;
 
+        get_player_lang(i, szLanguage, charsmax(szLanguage));
+        sxgeo_country(szIP, szCountry, charsmax(szCountry), szLanguage);
+        sxgeo_region (szIP, szRegion,  charsmax(szRegion),  szLanguage);
+        sxgeo_city   (szIP, szCity,    charsmax(szCity),    szLanguage);
+
         if (bCountryFound && bCityFound && bRegionFound)
         {
-            client_print_color(i, DontChange, "%s %L %L^3 %s ^4(%s, %s) %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szCity, szRegion, szCountry, szSteamSuffix);
+            client_print_color(i, DontChange, "%s %L %L^3 %s ^4(%s, %s) %s", PREFIX, i, "CINFO_JOINED", szName, i, "CINFO_FROM", szCity, szRegion, szCountry, szSteamSuffix);
         }
         else if (bCountryFound && bRegionFound)
         {
-            client_print_color(i, DontChange, "%s %L %L^3 %s ^4(%s) %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szRegion, szCountry, szSteamSuffix);
+            client_print_color(i, DontChange, "%s %L %L^3 %s ^4(%s) %s", PREFIX, i, "CINFO_JOINED", szName, i, "CINFO_FROM", szRegion, szCountry, szSteamSuffix);
         }
         else if (bCountryFound)
         {
-            client_print_color(i, DontChange, "%s %L %L^4 %s %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", szCountry, szSteamSuffix);
+            client_print_color(i, DontChange, "%s %L %L^4 %s %s", PREFIX, i, "CINFO_JOINED", szName, i, "CINFO_FROM", szCountry, szSteamSuffix);
         }
         else
         {
             // we don't know where you are :(
-            client_print_color(i, DontChange, "%s %L %L %L %s", PREFIX, id, "CINFO_JOINED", szName, id, "CINFO_FROM", id, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
+            client_print_color(i, DontChange, "%s %L %L %L %s", PREFIX, i, "CINFO_JOINED", szName, i, "CINFO_FROM", i, "CINFO_COUNTRY_UNKNOWN", szSteamSuffix);
         }
 
     }

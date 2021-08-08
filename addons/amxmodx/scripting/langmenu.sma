@@ -57,12 +57,20 @@ public plugin_cfg() {
 
 public plugin_natives()
 {
-    register_native("show_langmenu", "_show_langmenu", 1);
+    register_native("show_langmenu", "_show_langmenu");
+    register_native("get_player_lang", "_get_player_lang");
 }
 
-public _show_langmenu(id)
+public _show_langmenu()
 {
-    CmdLangMenu(id);
+    enum { arg_id = 1 }
+    CmdLangMenu(get_param(arg_id));
+}
+public _get_player_lang()
+{
+    enum { arg_id = 1, arg_lang, arg_len }
+    new id = get_param(arg_id);
+    set_string(arg_lang, g_Langs[g_PlayersLang[id]][LANG_KEY], get_param(arg_len));
 }
 
 public plugin_end() {

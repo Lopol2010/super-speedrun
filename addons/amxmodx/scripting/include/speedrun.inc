@@ -30,3 +30,4 @@ native bool:is_time_after_hook_passed(id, Float:time);
 forward OnHookStart(id);
 
 native show_langmenu(id);
+native get_player_lang(id, lang[], len);
