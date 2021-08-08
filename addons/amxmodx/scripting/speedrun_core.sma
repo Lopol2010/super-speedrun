@@ -37,8 +37,6 @@
 
 #pragma semicolon 1
 
-#define MAX_PLAYERS 32
-
 #define FPS_LIMIT 1050
 #define FPS_OFFSET 5
 #define FAILS_TILL_PRINT 3
@@ -48,8 +46,7 @@
 
 enum (+=100)
 {
-    TASK_SHOWSPEED = 100,
-    TASK_CHECKFRAMES,
+    TASK_CHECKFRAMES = 100,
     TASK_QUERY_INITIAL_FPS,
 };
 enum _:Categories
@@ -143,7 +140,6 @@ public plugin_init()
 
     g_iSyncHudSpeed = CreateHudSyncObj();
 
-    // set_task(0.1, "Task_ShowSpeed", TASK_SHOWSPEED, .flags = "b");
     CreateHudThink();
     set_task(3.0, "Task_CheckFrames", TASK_CHECKFRAMES, .flags = "b");
     
@@ -804,7 +800,7 @@ public Think_Hud(ent)
     new Float:fSpeed, Float:fVelocity[3], iSpecMode, len, button;
     static szTime[32], szKeys[32];
 
-    for(new id = 1, target; id <= MAX_PLAYERS; id++)
+    for(new id = 1, target; id <= MaxClients; id++)
     {
         if(!g_ePlayerInfo[id][m_bSpeed]) continue;
     
@@ -840,7 +836,7 @@ public Think_Hud(ent)
 public Task_CheckFrames()
 {
 
-    for(new id = 1; id <= MAX_PLAYERS; id++)
+    for(new id = 1; id <= MaxClients; id++)
     {
         if(!is_user_alive(id))
         {
