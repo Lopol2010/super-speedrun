@@ -205,6 +205,7 @@ public task_hud()
     for( new id = 1; id <= MaxClients; ++id )
     {
         if((get_gametime() - hud[id][hud_last_time_displayed] > 3.0)) continue;
+        if(!is_user_connected(id)) continue;
         // if(!hud[id][hud_can_update]) continue;
 
         for( new i = 1; i <= MaxClients; ++i )
