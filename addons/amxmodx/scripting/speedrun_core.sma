@@ -832,7 +832,7 @@ public Think_Hud(ent)
 
         sr_get_timer_display_text(target, szTime, charsmax(szTime));
 
-        set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, 1);
+        set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, _); //channel selected automaticly by ShowSyncHudMsg
         ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s%s^n%3.2f", szKeys, szTime, fSpeed);
         szTime[0] = '^0';
     }

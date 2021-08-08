@@ -17,6 +17,11 @@
 
 #define LJSTATS_MENU_ID "LJ Stats Menu"
 
+enum (+=100)
+{
+    TASK_HUD,
+};
+
 enum State
 {
     State_Initial,
@@ -109,6 +114,9 @@ new jump_strafe_frames[33][MAX_STRAFES];
 new Float:jump_strafe_gain[33][MAX_STRAFES];
 new Float:jump_strafe_loss[33][MAX_STRAFES];
 
+enum HUD_DATA { hud_jump_strafes, hud_jump_sync, hud_jump_frames, Float:hud_jump_prestrafe, Float:hud_jump_maxspeed, bool:hud_can_update, Float:hud_last_time_displayed }
+new hud[33][HUD_DATA];
+
 new dd_count[33];
 new Float:dd_prestrafe[33][3]; // last three dds, not a vector
 new Float:dd_start_origin[33][3];
@@ -168,6 +176,8 @@ public plugin_init( )
     
     // sv_airaccelerate = get_cvar_pointer( "sv_airaccelerate" );
     // sv_gravity = get_cvar_pointer( "sv_gravity" );
+
+    set_task(0.1, "task_hud", TASK_HUD, .flags = "b");
 }
 
 public client_connect( id )
@@ -186,6 +196,32 @@ public client_connect( id )
     g_DisplayBhStats[id] = false;
     g_DisplayLadderStats[id] = false;
     g_MuteJumpMessages[id] = false;
+}
+
+public task_hud()
+{
+    static jump_info[256];
+
+    for( new id = 1; id <= MaxClients; ++id )
+    {
+        if((get_gametime() - hud[id][hud_last_time_displayed] > 3.0)) continue;
+        // if(!hud[id][hud_can_update]) continue;
+
+        for( new i = 1; i <= MaxClients; ++i )
+        {
+            if( player_show_stats[i] && ( ( i == id ) || ( ( ( pev( i, pev_iuser1 ) == 2 ) || ( pev( i, pev_iuser1 ) == 4 ) ) && ( pev( i, pev_iuser2 ) == id ) ) ) )
+            {
+                formatex( jump_info, charsmax(jump_info), "STRAFES: %d / SYNC: %d%%^nGAIN: %.2f",
+                        hud[id][hud_jump_strafes],
+                        hud[id][hud_jump_sync] * 100 / hud[id][hud_jump_frames],
+                        hud[id][hud_jump_maxspeed] - hud[id][hud_jump_prestrafe]
+                );
+
+                set_hudmessage( 0, 55, 255, -1.0, 0.75, 0, 0.0, 0.1, _, _, 1 );
+                show_hudmessage( i, "%s", jump_info );
+            }
+        }
+    }
 }
 
 reset_state( id )
@@ -989,12 +1025,19 @@ JumpType:get_jump_type( id )
 
 display_stats( id, bool:failed = false )
 {
-    static jump_info[256];
-    formatex( jump_info, charsmax(jump_info), "STRAFES: %d / SYNC: %d%%^nGAIN: %.2f",
-            jump_strafes[id],
-            jump_sync[id] * 100 / jump_frames[id],
-            jump_maxspeed[id] - jump_prestrafe[id]
-    );
+    hud[id][hud_jump_strafes] = jump_strafes[id];
+    hud[id][hud_jump_sync] = jump_sync[id];
+    hud[id][hud_jump_frames] = jump_frames[id];
+    hud[id][hud_jump_maxspeed] = jump_maxspeed[id];
+    hud[id][hud_jump_prestrafe] = jump_prestrafe[id];
+    // hud[id][hud_can_update] = true;
+    hud[id][hud_last_time_displayed] = get_gametime();
+    // static jump_info[256];
+    // formatex( jump_info, charsmax(jump_info), "STRAFES: %d / SYNC: %d%%^nGAIN: %.2f",
+    //         jump_strafes[id],
+    //         jump_sync[id] * 100 / jump_frames[id],
+    //         jump_maxspeed[id] - jump_prestrafe[id]
+    // );
     // formatex( jump_info, charsmax(jump_info), "%s: %.2f^nMaxspeed: %.2f (%.2f)^nPrestrafe: %.2f^nStrafes: %d^nSync: %d",
     //         jump_name[jump_type[id]],
     //         jump_distance[id],
@@ -1036,15 +1079,15 @@ display_stats( id, bool:failed = false )
     }
     */
     
-    for( new i = 1, players = get_maxplayers( ); i <= players; ++i )
-    {
-        if( player_show_stats[i] && ( ( i == id ) || ( ( ( pev( i, pev_iuser1 ) == 2 ) || ( pev( i, pev_iuser1 ) == 4 ) ) && ( pev( i, pev_iuser2 ) == id ) ) ) )
-        {
-            if( failed )
-                set_hudmessage( 255, 0, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
-            else
-                set_hudmessage( 200, 100, 0, -1.0, 0.7, 0, 0.0, jump_type[id] == JumpType_MultiBJ ? 1.0 : 3.0, 0.0, 0.1, 1 );
-            show_hudmessage( i, "%s", jump_info );
+    // for( new i = 1, players = get_maxplayers( ); i <= players; ++i )
+    // {
+    //     if( player_show_stats[i] && ( ( i == id ) || ( ( ( pev( i, pev_iuser1 ) == 2 ) || ( pev( i, pev_iuser1 ) == 4 ) ) && ( pev( i, pev_iuser2 ) == id ) ) ) )
+    //     {
+            // if( failed )
+            //     set_hudmessage( 255, 0, 0, -1.0, 0.7, 0, 0.0, 3.0, 0.0, 0.1, 1 );
+            // else
+            //     set_hudmessage( 25, 100, 255, -1.0, 0.7, 0, 0.0, jump_type[id] == JumpType_MultiBJ ? 1.0 : 3.0, 0.0, 0.1, 1 );
+            // show_hudmessage( i, "%s", jump_info );
             
             /*
             if( failed )
@@ -1057,7 +1100,7 @@ display_stats( id, bool:failed = false )
             // console_print( i, "%s", jump_info_console );
             //for( new j = 1; j <= jump_strafes[id]; ++j )
             //	console_print( i, "%s", strafes_info_console[j] );
-        }
+        // }
         
         // static jump_info_chat[192];
         // jump_info_chat[0] = 0;
@@ -1111,7 +1154,7 @@ display_stats( id, bool:failed = false )
         //         }
         //     }
         // }
-    }
+    // }
 }
 
 
