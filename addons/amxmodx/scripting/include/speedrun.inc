@@ -6,7 +6,7 @@
 stock const PREFIX[] = "^4[^1Super Speedrun^4]^1";
 
 native get_user_category(id);
-native set_user_category(id);
+native set_user_category(id, category);
 native rotate_user_category(id);
 native sr_command_spec(id);
 native sr_command_start(id);

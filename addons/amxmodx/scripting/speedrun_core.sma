@@ -104,12 +104,12 @@ public plugin_init()
     register_clcmd("say /spec", "Command_Spec");
     register_clcmd("say /game", "Command_CategoryMenu");
 
-    // register_clcmd("say /b", "Command_CategoryBhop");
-    // register_clcmd("say /bh", "Command_CategoryBhop");
-    // register_clcmd("say /100", "Command_Category100");
-    // register_clcmd("say /cs", "Command_CategoryCrazySpeed");
+    register_clcmd("say /bh", "Command_CategoryBhop");
+    register_clcmd("say /bhop", "Command_CategoryBhop");
+    register_clcmd("say /100", "Command_Category100");
+    register_clcmd("say /cs", "Command_CategoryCrazySpeed");
     register_clcmd("say /2k", "Command_Category2k");
-    // register_clcmd("say /lg", "Command_CategoryCrazySpeed");
+    register_clcmd("say /lg", "Command_CategoryLowGravity");
 
     // register_clcmd("say /fps", "Command_SpeedrunMenu");
     register_clcmd("say /save", "Command_SaveMenu");
@@ -418,8 +418,9 @@ public _set_user_category()
     new id = get_param(arg_id);
     new category = get_param(arg_category);
 
+    g_ePlayerInfo[id][m_iPrevCategory] = g_ePlayerInfo[id][m_iCategory];
     g_ePlayerInfo[id][m_iCategory] = category;
-    if(is_user_alive(id)) ExecuteHamB(Ham_CS_RoundRespawn, id);
+    ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
 }
 public client_putinserver(id)
 {
@@ -534,14 +535,13 @@ public Command_Chooseteam(id)
     main_menu_display(id);
     return PLUGIN_HANDLED;
 }
-public Command_Category2k(id)
-{
-    g_ePlayerInfo[id][m_iPrevCategory] = g_ePlayerInfo[id][m_iCategory];
-    g_ePlayerInfo[id][m_iCategory] = Cat_2k;
 
-    ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
-    return PLUGIN_CONTINUE;
-}
+public Command_CategoryBhop(id) set_user_category(id, Cat_Default);
+public Command_Category100(id) set_user_category(id, Cat_100fps);
+public Command_CategoryCrazySpeed(id) set_user_category(id, Cat_CrazySpeed);
+public Command_Category2k(id) set_user_category(id, Cat_2k);
+public Command_CategoryLowGravity(id) set_user_category(id, Cat_LowGravity);
+
 public is_finish_zone_exists()
 {
 
