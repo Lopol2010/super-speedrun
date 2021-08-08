@@ -146,7 +146,8 @@ public plugin_init()
     // set_task(0.1, "Task_ShowSpeed", TASK_SHOWSPEED, .flags = "b");
     CreateHudThink();
     set_task(3.0, "Task_CheckFrames", TASK_CHECKFRAMES, .flags = "b");
-
+    
+    set_cvar_num("sv_maxvelocity", 99999);
     set_cvar_num("mp_autoteambalance", 0);
     set_cvar_num("mp_round_infinite", 1);
     set_cvar_num("mp_freezetime", 0);
