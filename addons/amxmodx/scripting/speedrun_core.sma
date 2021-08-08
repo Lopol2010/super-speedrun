@@ -5,6 +5,7 @@
         ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
         1. core & stats: enum _:Categories
         2. in core: new g_iCategorySign[Categories] 
+        2. in core: new g_iCategoryMaxFps[Categories] 
         3. in stats & main_menu: new const g_szCategory[][]"
         4. in core: edit native rotate_user_category
         5. in core: edit Command_CategoryMenu
@@ -180,10 +181,14 @@ public SR_ChangedCategory(id, cat)
     
     reset_checkpoints(id);
 
-    if(cat >= Cat_FastRun && g_ePlayerInfo[id][m_iPrevCategory] < Cat_FastRun)
+    if(g_iCategoryMaxFps[cat] == 0)
     {
         // client_print_color(id, print_team_default, "%s^1 Resetting your fps to ^4%d^1!", PREFIX, g_ePlayerInfo[id][m_iInitialFps]);
         client_cmd(id, "fps_max %d", g_ePlayerInfo[id][m_iInitialFps]);
+    } 
+    else if (g_iCategoryMaxFps[cat] > 0)
+    {
+        client_cmd(id, "fps_max %d", g_iCategoryMaxFps[cat]);
     }
 }
 
