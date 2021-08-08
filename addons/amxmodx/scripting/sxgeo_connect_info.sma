@@ -75,6 +75,8 @@ public client_putinserver(id)
         if(!is_user_connected(i)) continue;
 
         get_player_lang(i, szLanguage, charsmax(szLanguage));
+        if(!(equali(szLanguage, "en") || equali(szLanguage, "ru")))
+            szLanguage = "en";
         sxgeo_country(szIP, szCountry, charsmax(szCountry), szLanguage);
         sxgeo_region (szIP, szRegion,  charsmax(szRegion),  szLanguage);
         sxgeo_city   (szIP, szCity,    charsmax(szCity),    szLanguage);

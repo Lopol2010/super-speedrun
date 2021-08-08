@@ -103,7 +103,14 @@ public plugin_init()
     register_clcmd("say /showkeys", "Command_Keys");
     register_clcmd("say /spec", "Command_Spec");
     register_clcmd("say /game", "Command_CategoryMenu");
+
+    // register_clcmd("say /b", "Command_CategoryBhop");
+    // register_clcmd("say /bh", "Command_CategoryBhop");
+    // register_clcmd("say /100", "Command_Category100");
+    // register_clcmd("say /cs", "Command_CategoryCrazySpeed");
     register_clcmd("say /2k", "Command_Category2k");
+    // register_clcmd("say /lg", "Command_CategoryCrazySpeed");
+
     // register_clcmd("say /fps", "Command_SpeedrunMenu");
     register_clcmd("say /save", "Command_SaveMenu");
     register_clcmd("drop", "Command_CategoryMenu");
@@ -533,7 +540,7 @@ public Command_Category2k(id)
     g_ePlayerInfo[id][m_iCategory] = Cat_2k;
 
     ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
-    
+    return PLUGIN_CONTINUE;
 }
 public is_finish_zone_exists()
 {
