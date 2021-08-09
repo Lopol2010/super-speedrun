@@ -171,6 +171,7 @@ public HideMenu(id)
     menu_display( id, g_menu )
     return PLUGIN_HANDLED
 }
+
 public client_disconnected(id)
 {
     g_weaponHidden[id] = false
@@ -267,12 +268,8 @@ public FM_client_AddToFullPack_Post(es, e, ent, host, hostflags, player, pSet)
 
 public hide_weapon(id)
 {
-
     g_weaponHidden[id] = !g_weaponHidden[id]
-    
     set_pev(id, pev_viewmodel2, g_weaponHidden[id] ? "" : g_viewmodel[id] )
-
-    set_pcvar_num(g_cvarHideCAL, g_weaponHidden[id])
     onResetHUD(id)
 }
 
@@ -291,6 +288,7 @@ public _is_weapon_hidden()
     }
     return g_weaponHidden[get_param(arg_id)]
 }
+
 public Event_CurWeapon(id) 
 {     
     new ptr;
@@ -298,12 +296,18 @@ public Event_CurWeapon(id)
 
     if(g_weaponHidden[id])
         set_pev(id, pev_viewmodel2, "")
-    return PLUGIN_CONTINUE 
 }
+
 public onResetHUD(id)
 {
     HudApplyCVars()
     new iHideFlags = GetHudHideFlags()
+
+    if(g_weaponHidden[id])
+        iHideFlags |= HUD_HIDE_CAL
+    else
+        iHideFlags &= ~HUD_HIDE_CAL
+
     if(iHideFlags)
     {
         message_begin(MSG_ONE, g_msgHideWeapon, _, id)
@@ -312,9 +316,15 @@ public onResetHUD(id)
     }	
 }
 
-public msgHideWeapon()
+public msgHideWeapon(msg_id, msg_dest, msg_entity)
 {
     new iHideFlags = GetHudHideFlags()
+
+    if(g_weaponHidden[msg_entity])
+        iHideFlags |= HUD_HIDE_CAL
+    else
+        iHideFlags &= ~HUD_HIDE_CAL
+
     if(iHideFlags)
         set_msg_arg_int(1, ARG_BYTE, get_msg_arg_int(1) | iHideFlags)
 }
