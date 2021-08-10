@@ -535,34 +535,29 @@ public is_finish_zone_exists()
 }
 public Command_CategoryMenu(id)
 {
-    new szMenu[128], len = 0;
+    new szMenu[128], len = 0, keys;
     len = formatex(szMenu[len], charsmax(szMenu) - len, "\yCategory Menu^n^n");
 
     for(new i = 0, category; i < sizeof g_iCategoryRotateOrder; i++)
     {
         category = g_iCategoryRotateOrder[i];
         len += formatex(szMenu[len], charsmax(szMenu) - len, "%s%d. %s^n", g_ePlayerInfo[id][m_iCategory] == category? "\r" : "\w", i+1, g_szCategory[category]);
+        keys |= 1 << i;
     }
     len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n^n^n\r0. \wExit");
 
-    show_menu(id, MENU_KEY_ALL, szMenu, -1, "CategoryMenu");
+    keys |= MENU_KEY_0; 
+
+    show_menu(id, keys, szMenu, -1, "CategoryMenu");
     return PLUGIN_HANDLED;
 }
 public CategoryMenu_Handler(id, key)
 {
     g_ePlayerInfo[id][m_iPrevCategory] = g_ePlayerInfo[id][m_iCategory];
 
-    switch(key)
+    if(0 <= key < sizeof g_iCategoryRotateOrder)
     {
-        case 0: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
-        case 1: g_ePlayerInfo[id][m_iCategory] = Cat_100fps;
-        case 2: g_ePlayerInfo[id][m_iCategory] = Cat_CrazySpeed;
-        case 3: g_ePlayerInfo[id][m_iCategory] = Cat_2k;
-        case 4: g_ePlayerInfo[id][m_iCategory] = Cat_LowGravity;
-    }
-
-    if(key <= 4)
-    {
+        g_ePlayerInfo[id][m_iCategory] = g_iCategoryRotateOrder[key];
         ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
     }
 }
