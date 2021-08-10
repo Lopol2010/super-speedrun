@@ -7,16 +7,11 @@
 #include <hamsandwich>
 #include <speedrun>
 
-#define PLUGIN "Super Speedrun Main Menu"
+#define PLUGIN "Super Speedrun: Main Menu"
 #define VERSION "1.1"
 #define AUTHOR "Lopol2010"
 
 #define ADMIN_TELEGRAM "@flowershy"
-
-new const g_szCategory[][] = 
-{
-    "100 FPS", "200 FPS", "250 FPS", "333 FPS", "500 FPS", "Fastrun", "Bhop", "Crazy Speed", "2K", "Low Gravity"
-};
 
 public plugin_init(){
     register_plugin(PLUGIN,VERSION,AUTHOR);

@@ -3,16 +3,19 @@
         ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
         ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
         ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
-        1. core & stats: enum _:Categories
-        2. in core: new g_iCategorySign[Categories] 
-        2. in core: new g_iCategoryMaxFps[Categories] 
-        3. in stats & main_menu: new const g_szCategory[][]"
-        4. in core: edit native rotate_user_category
-        5. in core: edit Command_CategoryMenu
-        6. in core: edit Command_CategoryMenu KEYS variable
-        7. in core: edit CategoryMenu_Handler
-        8. in core: edit CategoryMenu_Handler in if statement change number that's compared with keys variable
-        9. in toplist: add entry for list of categories (currently in stats.ts file)
+        1. speedrun_const.inc: 
+            _:Categories
+            g_iCategorySign[Categories] 
+            g_iCategoryMaxFps[Categories] 
+            g_szCategory[][]
+            g_iCategoryRotateOrder[]
+        2. speedrun_core: 
+            edit Command_CategoryMenu
+            edit Command_CategoryMenu KEYS variable
+            edit CategoryMenu_Handler
+            edit CategoryMenu_Handler in if statement change number that's compared with keys variable
+        3. toplist(nodejs): 
+            add entry for list of categories (currently in stats.ts file)
 
 */
 #include <amxmodx>
@@ -50,19 +53,6 @@ enum (+=100)
     TASK_CHECKFRAMES = 100,
     TASK_QUERY_INITIAL_FPS,
 };
-enum _:Categories
-{
-    Cat_100fps,
-    Cat_200fps,
-    Cat_250fps,
-    Cat_333fps,
-    Cat_500fps,
-    Cat_FastRun,
-    Cat_Default,
-    Cat_CrazySpeed,
-    Cat_2k,
-    Cat_LowGravity,
-};
 enum _:PlayerData
 {
     m_bBhop,
@@ -75,14 +65,6 @@ enum _:PlayerData
     m_iPrevCategory,
 };
 
-new g_iCategorySign[Categories] = {100, 200, 250, 333, 500, 0, 1, 2, 3, 4};
-new g_iCategoryMaxFps[Categories] = {100, 200, 250, 333, 500, 0, 0, 0, 200, 0};
-// new const g_szCategory[][] = 
-// {
-// 	"[100 FPS]", "[200 FPS]", "[250 FPS]", "[333 FPS]", "[500 FPS]", "[Fastrun]", "[Crazy Speed]", "[2K]", "[Low Gravity]"
-// };
-
-// new g_iMaxSpeed = 320;
 new g_bStartPosition, Float:g_fStartOrigin[3], Float:g_fStartVAngles[3];
 new g_ePlayerInfo[33][PlayerData];
 new g_szMapName[32];
@@ -406,16 +388,17 @@ public _rotate_user_category()
     new id = get_param(arg_id);
 
     g_ePlayerInfo[id][m_iPrevCategory] = g_ePlayerInfo[id][m_iCategory];
-    switch(get_user_category(id))
-    {
-        case Cat_Default: g_ePlayerInfo[id][m_iCategory] = Cat_100fps;
-        case Cat_100fps: g_ePlayerInfo[id][m_iCategory] = Cat_CrazySpeed;
-        case Cat_CrazySpeed: g_ePlayerInfo[id][m_iCategory] = Cat_2k;
-        case Cat_2k: g_ePlayerInfo[id][m_iCategory] = Cat_LowGravity;
-        case Cat_LowGravity: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
-        default: g_ePlayerInfo[id][m_iCategory] = Cat_Default;
-    }
 
+    new size = sizeof g_iCategoryRotateOrder;
+    for(new i = 0, next; i < size; i ++)
+    {
+        if(g_iCategoryRotateOrder[i] == g_ePlayerInfo[id][m_iCategory])
+        {
+            next = size-1 >= i+1 ? g_iCategoryRotateOrder[i+1] : g_iCategoryRotateOrder[0];
+            g_ePlayerInfo[id][m_iCategory] = next;
+            break;
+        }
+    }
     ExecuteForward(g_fwChangedCategory, g_iReturn, id, g_ePlayerInfo[id][m_iCategory]);
 }
 public _set_user_category()
@@ -558,14 +541,6 @@ public Command_CategoryMenu(id)
     new szMenu[128], len = 0;
     len = formatex(szMenu[len], charsmax(szMenu) - len, "\yCategory Menu^n^n");
 
-
-    // if(is_finish_zone_exists())
-    // {
-    // 	len += formatex(szMenu[len], charsmax(szMenu) - len, "\r4.CrazySpeed 2K^n", g_ePlayerInfo[id][m_iCategory] == Cat_2k ? "\r" : "\w");
-    // 	len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n^n^n\r0. \wExit");
-
-    // 	show_menu(id, (1 << 0)|(1 << 1), szMenu, -1, "CategoryMenu");
-    // } else {
     len += formatex(szMenu[len], charsmax(szMenu) - len, "%s1. Default^n", g_ePlayerInfo[id][m_iCategory] == Cat_Default? "\r" : "\w");
     len += formatex(szMenu[len], charsmax(szMenu) - len, "%s2. 100 fps^n", g_ePlayerInfo[id][m_iCategory] == Cat_100fps? "\r" : "\w");
     len += formatex(szMenu[len], charsmax(szMenu) - len, "%s3. CrazySpeed^n", g_ePlayerInfo[id][m_iCategory] == Cat_CrazySpeed ? "\r" : "\w");
@@ -574,7 +549,6 @@ public Command_CategoryMenu(id)
     len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n^n^n\r0. \wExit");
 
     show_menu(id, (1 << 0)|(1 << 1)|(1 << 2)|(1 << 3)|(1 << 4)|(1 << 9), szMenu, -1, "CategoryMenu");
-    // }
     return PLUGIN_HANDLED;
 }
 public CategoryMenu_Handler(id, key)

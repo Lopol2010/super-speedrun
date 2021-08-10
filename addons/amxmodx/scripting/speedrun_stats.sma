@@ -2,7 +2,6 @@
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
         когда сидиш в спеках то стата стрейфов должна показыватся всегда, и еще щас она перекрывает keys
-        прицел то есть то нет
         античит?
         город некоторых игроков не показывает, например (, Украина)
         заменить /tg на @ или / или ! для связи с админом, репорт читоров и багов
@@ -60,6 +59,7 @@
         * ?? allow use /save menu for maps with buttons
         ?? * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
     DONE:
+        прицел то есть то нет
         на 2к режиме ставить 200фпс
         добавить поддержку "кем"
         добавить плагин /stats для стрейфов
@@ -207,19 +207,6 @@ enum _:PlayerData
     Float:m_fStartRun,
     m_bWasUseHook       // true if player used hook and until next respawn (by command or death)
 };
-enum _:Categories
-{
-    Cat_100fps,
-    Cat_200fps,
-    Cat_250fps,
-    Cat_333fps,
-    Cat_500fps,
-    Cat_FastRun,
-    Cat_Default,
-    Cat_CrazySpeed,
-    Cat_2k,
-    Cat_LowGravity,
-};
 enum _:Cvars
 {
     SQL_HOST,
@@ -227,21 +214,6 @@ enum _:Cvars
     SQL_PASSWORD,
     SQL_DATABASE,
     STATS_MOTD_URL,
-};
-enum _:ResultsColumns
-{
-    Results_id,
-    Results_mid,
-    Results_category,
-    Results_checkpoints,
-    Results_gochecks,
-    Results_besttime,
-    Results_recorddate,
-};
-
-new const g_szCategory[][] = 
-{
-    "100 FPS", "200 FPS", "250 FPS", "333 FPS", "500 FPS", "Fastrun", "Bhop", "Crazy Speed", "2K", "Low Gravity"
 };
 
 new g_pCvars[Cvars];
@@ -741,8 +713,8 @@ public Query_LoadDataHandle(failstate, Handle:query, error[], errnum, data[], si
     
     while(SQL_MoreResults(query))
     {
-        new category = SQL_ReadResult(query, Results_category);
-        g_iBestTime[id][category] = SQL_ReadResult(query, Results_besttime);
+        new category = SQL_ReadResult(query, 2);
+        g_iBestTime[id][category] = SQL_ReadResult(query, 5);
         
         SQL_NextRow(query);
     }
@@ -1064,7 +1036,7 @@ public Query_LoadRankHandle(failstate, Handle:query, error[], errnum, data[], si
     
     if(!is_user_connected(id) || !SQL_MoreResults(query)) return;
     
-    new rank = SQL_ReadResult(query, Results_id) + 1;
+    new rank = SQL_ReadResult(query, 0) + 1;
     client_print_color(id, print_team_default, "^4[^1%s^4]^1 Your rank is %d!", g_szCategory[category], rank);
 }
 
