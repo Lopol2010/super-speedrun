@@ -10,8 +10,6 @@
             g_szCategory[][]
             g_iCategoryRotateOrder[]
         2. speedrun_core: 
-            edit Command_CategoryMenu
-            edit Command_CategoryMenu KEYS variable
             edit CategoryMenu_Handler
             edit CategoryMenu_Handler in if statement change number that's compared with keys variable
         3. toplist(nodejs): 
@@ -40,7 +38,7 @@
 #define AUTHOR "Mistrick & Lopol2010"
 
 #pragma semicolon 1
-
+#define MENU_KEY_ALL ~(0<<11)
 #define FPS_LIMIT 1050
 #define FPS_OFFSET 5
 #define FAILS_TILL_PRINT 3
@@ -533,7 +531,6 @@ public Command_CategoryLowGravity(id) set_user_category(id, Cat_LowGravity);
 
 public is_finish_zone_exists()
 {
-
     return 0 != rg_find_ent_by_class(-1, "SR_FINISH");
 }
 public Command_CategoryMenu(id)
@@ -541,14 +538,14 @@ public Command_CategoryMenu(id)
     new szMenu[128], len = 0;
     len = formatex(szMenu[len], charsmax(szMenu) - len, "\yCategory Menu^n^n");
 
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "%s1. Default^n", g_ePlayerInfo[id][m_iCategory] == Cat_Default? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "%s2. 100 fps^n", g_ePlayerInfo[id][m_iCategory] == Cat_100fps? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "%s3. CrazySpeed^n", g_ePlayerInfo[id][m_iCategory] == Cat_CrazySpeed ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "%s4. CrazySpeed 2K^n", g_ePlayerInfo[id][m_iCategory] == Cat_2k ? "\r" : "\w");
-    len += formatex(szMenu[len], charsmax(szMenu) - len, "%s5. Low Gravity^n", g_ePlayerInfo[id][m_iCategory] == Cat_LowGravity ? "\r" : "\w");
+    for(new i = 0, category; i < sizeof g_iCategoryRotateOrder; i++)
+    {
+        category = g_iCategoryRotateOrder[i];
+        len += formatex(szMenu[len], charsmax(szMenu) - len, "%s%d. %s^n", g_ePlayerInfo[id][m_iCategory] == category? "\r" : "\w", i+1, g_szCategory[category]);
+    }
     len += formatex(szMenu[len], charsmax(szMenu) - len, "^n^n^n^n^n^n\r0. \wExit");
 
-    show_menu(id, (1 << 0)|(1 << 1)|(1 << 2)|(1 << 3)|(1 << 4)|(1 << 9), szMenu, -1, "CategoryMenu");
+    show_menu(id, MENU_KEY_ALL, szMenu, -1, "CategoryMenu");
     return PLUGIN_HANDLED;
 }
 public CategoryMenu_Handler(id, key)
