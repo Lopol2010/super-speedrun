@@ -1,20 +1,14 @@
 /*
     adding new category:
         ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
-        ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
-        ALWAYS ADD NEW CATEGORY AS THE LAST ELEMENT OF ENUM!!! OTHERWISE DATABASE WILL BE BROKEN!
         1. speedrun_const.inc: 
             _:Categories
             g_iCategorySign[Categories] 
             g_iCategoryMaxFps[Categories] 
             g_szCategory[][]
             g_iCategoryRotateOrder[]
-        2. speedrun_core: 
-            edit CategoryMenu_Handler
-            edit CategoryMenu_Handler in if statement change number that's compared with keys variable
-        3. toplist(nodejs): 
+        2. toplist(nodejs): 
             add entry for list of categories (currently in stats.ts file)
-
 */
 #include <amxmodx>
 #include <engine>
