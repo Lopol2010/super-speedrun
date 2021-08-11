@@ -1,12 +1,10 @@
 /* 
     идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
     TODO: 
-        когда сидиш в спеках то стата стрейфов должна показыватся всегда, и еще щас она перекрывает keys
-        античит?
-        город некоторых игроков не показывает, например (, Украина)
-        заменить /tg на @ или / или ! для связи с админом, репорт читоров и багов
-        сделать чтобы при заходе в спектаторы было только два режима, первое лицо, третье лицо, свободный
         после смерти спеклист с нуля возникает, чем отвлекает
+        сделать чтобы при заходе в спектаторы было только два режима, первое лицо, третье лицо, свободный
+        когда сидиш в спеках то стата стрейфов должна показыватся всегда, и еще щас она перекрывает keys
+        заменить /tg на @ или / или ! для связи с админом, репорт читоров и багов
         для многих карт нету .res файла, а так же вадов или картинок неба
             возоможно придется скриптов выкачивать карты с сайтов или искать\просить готовые мап-паки
         -=========-
@@ -59,6 +57,7 @@
         * ?? allow use /save menu for maps with buttons
         ?? * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
     DONE:
+        город некоторых игроков не показывает, например (, Украина)
         прицел то есть то нет
         на 2к режиме ставить 200фпс
         добавить поддержку "кем"
@@ -369,7 +368,6 @@ public plugin_cfg()
 }
 public plugin_precache()
 {
-    // g_iSprite = precache_model("sprites/white.spr");
 }
 public Command_ClearTop(id, level, cid)
 {
@@ -739,7 +737,6 @@ Create_Box(ent, Float:color[3] = {255.0,255.0,255.0})
     
     new Float:z;
 
-    // z = zIsMin ? mins[2] : fOrigin[2];
     z = mins[2];
     DrawLine(ent, maxs[0], maxs[1], z, mins[0], maxs[1], z, color);
     DrawLine(ent, maxs[0], maxs[1], z, maxs[0], mins[1], z, color);
@@ -801,8 +798,6 @@ public HC_CBasePlayer_Spawn_Post(id)
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_bWasUseHook] = false;
     user_hook_enable(id, true);
-
-    // hide_timer(id);
 }
 public HC_CheckStartTimer(id)
 {
@@ -820,14 +815,10 @@ public box_created(box, const szClass[])
     if(equal("start", szClass))
     {
         Create_Box(box, color_start);
-        g_bStartButton = false;
-        // g_ePlayerInfo[id][m_bFinished] = true;
     }
     if(equal("finish", szClass))
     {
         Create_Box(box, color_finish);
-        g_bStartButton = false;
-        // g_ePlayerInfo[id][m_bFinished] = true;
         g_iFinishEnt = box;
     }
 }
@@ -858,7 +849,6 @@ public box_resized(box, const szClass[])
     new Float:maxs[3]; get_entvar(box, var_absmax, maxs);
     new Float:mins[3]; get_entvar(box, var_absmin, mins);
     
-    // maxs[2] = mins[2];
     new Float:z = mins[2];
 
     ReDrawLine(beams[0], maxs[0], maxs[1], z, mins[0], maxs[1], z);
@@ -907,35 +897,17 @@ Forward_PlayerFinished(id)
     
     new szName[32]; get_user_name(id, szName, charsmax(szName));
 
-    // console_print(id, "^4[^1%s^4]^1 Time: %s!", g_szCategory[category], szTime);
-    // client_print_color(0, print_team_blue, "^4[^1%s^4] ^3%s^1 %L ^3%s", 
-        // g_szCategory[category], szName, LANG_PLAYER, "SR_TIME_FINISH", szTime);
-    
     if(g_iBestTime[id][category] == 0)
     {
-        // client_print_color(id, print_team_default, "%s^1 First finish.", g_szCategory[category]);
         SaveRunnerData(id, category, iTime);
     }
     else if(g_iBestTime[id][category] > iTime)
     {
-        // get_formated_time(g_iBestTime[id][category] - iTime, szTime, charsmax(szTime));
-        // console_print(id, "%s Own record: -%s!", g_szCategory[category], szTime);
-        // client_print_color(id, print_team_default, "%s Own record: -%s!", g_szCategory[category], szTime);
         SaveRunnerData(id, category, iTime);
-    }
-    else if(g_iBestTime[id][category] < iTime)
-    {
-        // get_formated_time(iTime - g_iBestTime[id][category], szTime, charsmax(szTime));
-        // console_print(id, "%s Own record: +%s!", g_szCategory[category], szTime);
-    }
-    else
-    {
-        // client_print_color(id, print_team_default, "%s%s^1 Own record equal!", PREFIX, g_szCategory[category]);
     }
     
     if(g_iBestTimeofMap[category] == 0 || g_iBestTimeofMap[category] > iTime)
     {
-        // get_formated_time_smart(iTime, szTime, charsmax(szTime));
         if(g_iBestTimeofMap[category] > 0)
         {
             client_print_color(0, print_team_blue, "^4[^1%s^4] %L", 
@@ -954,17 +926,12 @@ Forward_PlayerFinished(id)
     }
     if(g_iBestTimeofMap[category] != 0 && g_iBestTimeofMap[category] < iTime)
     {
-        // new szTimeDelta[32];
-        // get_formated_time_smart(g_iBestTimeofMap[category] - iTime, szTimeDelta, charsmax(szTimeDelta));
-        // get_formated_time(iTime - g_iBestTimeofMap[category], szTime, charsmax(szTime));
-        // console_print(id, "%s Map record: +%s!", g_szCategory[category], szTime);
         client_print_color(0, print_team_blue, "^4[^1%s^4] %L", 
             g_szCategory[category], LANG_PLAYER, "SR_TIME_FINISH", szName, szTime);
     }
+
     if(record)
     {
-        // client_cmd( 0, "spk woop" );
-        // client_cmd(0, "spk buttons/bell1");
         rg_send_audio(0, "sound/buttons/bell1.wav");
     }
     else
@@ -973,8 +940,6 @@ Forward_PlayerFinished(id)
     }
     
     // ExecuteForward(g_fwFinished, g_iReturn, id, iTime, record);
-    
-    // hide_timer(id);
 }
 public SaveRunnerData(id, category, iTime)
 {
@@ -1032,7 +997,6 @@ ShowTop15_Redirect(id, category)
 
     new iLen = 0, iMax = charsmax(g_szMotd);
 
-    // iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta charset=utf-8>");
     iLen += formatex(g_szMotd[iLen], iMax-iLen, "<meta http-equiv = ^"refresh^" content = ^"0; url = %s?pid=%d&mid=%d&cat=%d&map=%s^" />", szURL, g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category, g_szMapName);
     iLen += formatex(g_szMotd[iLen], iMax-iLen, "<style>body { background-color: #0c0e0e; } body:after { content: ^"Loading...^"; font-size: 54px; color: grey; }</style>");
 
@@ -1082,15 +1046,11 @@ public Query_LoadTop15Handle(failstate, Handle:query, error[], errnum, data[], s
         {
             g_iBestTimeofMap[category] = iTime;
             iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>%s</td>",  szTime);
-            // iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>%s</td><td></td>",  szTime);
             if(id == 0) return;
         }
         else
         {
             iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>%s</td>", szTime);
-            
-            // get_formated_time(iTime-g_iBestTimeofMap[category] , szTime, 31);
-            // iLen += formatex(g_szMotd[iLen], iMax-iLen, "<td>+%s</td>", szTime);
         }
         iLen += formatex(g_szMotd[iLen], iMax-iLen, "</tr>");
         
@@ -1100,26 +1060,6 @@ public Query_LoadTop15Handle(failstate, Handle:query, error[], errnum, data[], s
     iLen += formatex(g_szMotd[iLen], iMax-iLen, "</pre>");
     show_motd(id, g_szMotd, "Top15");
 }
-
-
-// hide_timer(id)
-// {
-//     // show_status(id, "");
-// }
-// display_time(id, iTime)
-// {
-//     show_status(id, "Time: %d:%02d.%03ds", iTime / 60000, (iTime / 1000) % 60, iTime % 1000);
-// }
-// show_status(id, const szMsg[], any:...)
-// {
-//     static szStatus[128]; vformat(szStatus, charsmax(szStatus), szMsg, 3);
-//     static StatusText; if(!StatusText) StatusText = get_user_msgid("StatusText");
-    
-//     message_begin(MSG_ONE_UNRELIABLE, StatusText, _, id);
-//     write_byte(0);
-//     write_string(szStatus);
-//     message_end();
-// }
 get_running_time(id)
 {
     return floatround((get_gametime() - g_ePlayerInfo[id][m_fStartRun]) * 1000, floatround_ceil);
