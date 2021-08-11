@@ -228,7 +228,6 @@ new g_iBestTimeofMap[Categories];
 stock g_fwFinished, g_fwStartButtonPress;
 stock g_iReturn;
 
-new bool:g_bStartButton;
 new Trie:g_tStarts;
 new Trie:g_tStops;
 
@@ -321,8 +320,6 @@ public fwdUse(ent, id)
     
     if( TrieKeyExists( g_tStarts, szTarget ) )
     {
-        g_bStartButton = true;
-
         ExecuteForward(g_fwStartButtonPress, g_iReturn, id);
 
         static bool:antispam[33];
@@ -809,8 +806,8 @@ public HC_CBasePlayer_Spawn_Post(id)
 }
 public HC_CheckStartTimer(id)
 {
-    if(g_bStartButton) return;
-    
+    if(!g_iFinishEnt) return;
+
     if(g_ePlayerInfo[id][m_bAuthorized] && !g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bWasUseHook])
     {
         StartTimer(id);
@@ -890,8 +887,6 @@ public box_stop_touch(box, id, const szClass[])
 }
 StartTimer(id)
 {
-    if(!g_iFinishEnt && !g_bStartButton) return;
-    
     user_hook_enable(id, false);
     reset_checkpoints(id);
     
@@ -974,17 +969,7 @@ Forward_PlayerFinished(id)
     }
     else
     {
-        if(g_bStartButton)
-        {
-            // client_cmd(0, "spk buttons/bell1");
-            rg_send_audio(0, "sound/buttons/bell1.wav");
-        }
-        else
-        {
-            // client_cmd(0, "spk buttons/bell1");
-            rg_send_audio(0, "sound/buttons/bell1.wav");
-            // client_cmd(0, "spk buttons/spark1");
-        }
+        rg_send_audio(0, "sound/buttons/bell1.wav");
     }
     
     // ExecuteForward(g_fwFinished, g_iReturn, id, iTime, record);
