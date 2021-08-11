@@ -13,7 +13,7 @@ public nm(id, level)
 
 	new map[33]
 	get_cvar_string("amx_nextmap", map, 32)
-	server_cmd("amx_map %s", map)
+	server_cmd("changelevel %s", map)
 	
 	return PLUGIN_CONTINUE
 }
