@@ -109,6 +109,7 @@ public plugin_init()
     register_forward(FM_ClientKill, "FM_ClientKill_Pre", false);
 
     // RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
+    RegisterHam(Ham_Touch, "trigger_hurt", "Ham_Touch_Pre");
     RegisterHam(Ham_Item_CanHolster, "weapon_knife", "Ham_Item_CanHolster_Pre");
     RegisterHam( Ham_Item_Deploy, "weapon_knife", "Ham_Item_Deploy_KNIFE_Post", 1);
     
@@ -476,6 +477,21 @@ SetPosition(id, Float:origin[3], Float:vangles[3])
     set_entvar(id, var_health, 100.0);
     engfunc(EngFunc_SetOrigin, id, origin);
 }
+public Ham_Touch_Pre(ent, id)
+{
+    if(!is_user_connected(id)) return HAM_IGNORED;
+
+    new dmg = get_entvar(ent, var_dmg);
+    dmg *= 0.5; // from triggers.cpp
+    new hp = get_entvar(id, var_health);
+
+    if(dmg >= hp)
+    {
+        Command_Start(id);
+        return HAM_SUPERCEDE; 
+    }
+    return HAM_IGNORED;
+}
 public Ham_Item_CanHolster_Pre(weapon)
 {
     new id = get_member(weapon, m_pPlayer);
@@ -679,7 +695,7 @@ public HC_CBasePlayer_Spawn_Post(id)
 
     return HC_CONTINUE;
 }
-public HC_CBasePlayer_Killed_Pre()
+public HC_CBasePlayer_Killed_Pre(id)
 {
     SetHookChainArg(3, ATYPE_INTEGER, 1);
 }
