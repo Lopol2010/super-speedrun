@@ -21,6 +21,7 @@
 #include <hidemenu>
 #include <checkpoints>
 #include <speedrun>
+#include <orpheu>
 #include <fpschecker>
 
 #if AMXX_VERSION_NUM < 183
@@ -45,6 +46,7 @@ enum (+=100)
     TASK_CHECKFRAMES = 100,
     TASK_QUERY_INITIAL_FPS,
 };
+
 enum _:PlayerData
 {
     m_bBhop,
@@ -113,6 +115,8 @@ public plugin_init()
     RegisterHam(Ham_Item_CanHolster, "weapon_knife", "Ham_Item_CanHolster_Pre");
     RegisterHam( Ham_Item_Deploy, "weapon_knife", "Ham_Item_Deploy_KNIFE_Post", 1);
     
+    new OrpheuFunction:HandleObserver_SetModeFunc = OrpheuGetFunction("Observer_SetMode", "CBasePlayer");
+    OrpheuRegisterHook(HandleObserver_SetModeFunc , "OnObserver_SetMode", OrpheuHookPre);
 
     g_fwChangedCategory = CreateMultiForward("SR_ChangedCategory", ET_IGNORE, FP_CELL, FP_CELL);
     g_fwOnStart = CreateMultiForward("SR_PlayerOnStart", ET_IGNORE, FP_CELL);
@@ -305,7 +309,7 @@ public _sr_command_start(pid, argc)
     if(g_ePlayerInfo[id][m_bSavePoint])
     {
         SetPosition(id, g_fSavedOrigin[id], g_fSavedVAngles[id]);
-	    set_entvar( id, var_flags, get_entvar(id, var_flags) | g_iSavedDuck[id]);
+        set_entvar( id, var_flags, get_entvar(id, var_flags) | g_iSavedDuck[id]);
     }
     else if(g_bStartPosition)
     {
@@ -506,6 +510,19 @@ public Ham_Item_Deploy_KNIFE_Post(weapon)
     if(get_user_category(id) == Cat_LowGravity)
     {
         set_user_gravity(id, 0.5);
+    }
+}
+public OnObserver_SetMode(const id, const Mode)
+{
+    if(is_user_connected(id))
+    {
+        switch(get_entvar(id, var_iuser1))
+        {
+            case OBS_CHASE_FREE: OrpheuSetParam(2, OBS_ROAMING);
+            case OBS_ROAMING: OrpheuSetParam(2, OBS_IN_EYE);
+            case OBS_IN_EYE: OrpheuSetParam(2, OBS_CHASE_FREE);
+            default: OrpheuSetParam(2, OBS_IN_EYE);
+        }
     }
 }
 public Command_Bhop(id)
