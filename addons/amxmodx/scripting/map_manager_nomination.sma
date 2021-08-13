@@ -1,6 +1,6 @@
 // these words must not trigger nomination, its annoying when someone say just 'nice' to someone other and nomination happens. 
 new const g_szBlacklist[][10] = {
-	"haha", "nice" 
+	"haha", "nice", "this", "what", "ever"
 };
 
 #include <amxmodx>
