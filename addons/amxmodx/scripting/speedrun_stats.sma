@@ -924,7 +924,7 @@ Forward_PlayerFinished(id)
         g_iBestTimeofMap[category] = iTime;
         record = true;
     }
-    if(g_iBestTimeofMap[category] != 0 && g_iBestTimeofMap[category] < iTime)
+    if(g_iBestTimeofMap[category] != 0 && g_iBestTimeofMap[category] <= iTime && !record)
     {
         client_print_color(0, print_team_blue, "^4[^1%s^4] %L", 
             g_szCategory[category], LANG_PLAYER, "SR_TIME_FINISH", szName, szTime);
