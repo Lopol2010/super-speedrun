@@ -111,7 +111,7 @@ public plugin_init()
     register_forward(FM_ClientKill, "FM_ClientKill_Pre", false);
 
     // RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
-    RegisterHam(Ham_Touch, "trigger_hurt", "Ham_Touch_Pre");
+    RegisterHam(Ham_Touch, "trigger_hurt", "Ham_Touch_Trigger_Hurt_Pre");
     RegisterHam(Ham_Item_CanHolster, "weapon_knife", "Ham_Item_CanHolster_Pre");
     RegisterHam( Ham_Item_Deploy, "weapon_knife", "Ham_Item_Deploy_KNIFE_Post", 1);
     
@@ -481,7 +481,7 @@ SetPosition(id, Float:origin[3], Float:vangles[3])
     set_entvar(id, var_health, 100.0);
     engfunc(EngFunc_SetOrigin, id, origin);
 }
-public Ham_Touch_Pre(ent, id)
+public Ham_Touch_Trigger_Hurt_Pre(ent, id)
 {
     if(!is_user_connected(id)) return HAM_IGNORED;
 
