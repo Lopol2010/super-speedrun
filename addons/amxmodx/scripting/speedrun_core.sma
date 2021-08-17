@@ -107,6 +107,7 @@ public plugin_init()
     RegisterHookChain(RG_CBasePlayer_Killed, "HC_CBasePlayer_Killed_Post", true);
     RegisterHookChain(RG_CBasePlayer_GiveDefaultItems, "HC_CBasePlayer_GiveDefaultItems", false);
     RegisterHookChain(RG_CSGameRules_DeadPlayerWeapons, "HC_CSGR_DeadPlayerWeapons_Pre", false);
+    RegisterHookChain(RG_CBasePlayer_Observer_SetMode, "HC_CBasePlayer_Observer_SetMode", 0);
 
     register_forward(FM_ClientKill, "FM_ClientKill_Pre", false);
 
@@ -790,6 +791,16 @@ public HC_CSGR_DeadPlayerWeapons_Pre(id)
 {
     SetHookChainReturn(ATYPE_INTEGER, GR_PLR_DROP_GUN_NO);
     return HC_SUPERCEDE;
+}
+public HC_CBasePlayer_Observer_SetMode(id, mode)
+{
+    switch(get_entvar(id, var_iuser1))
+    {
+        case OBS_CHASE_FREE: SetHookChainArg(2, ATYPE_INTEGER, OBS_ROAMING);
+        case OBS_ROAMING: SetHookChainArg(2, ATYPE_INTEGER, OBS_IN_EYE);
+        case OBS_IN_EYE: SetHookChainArg(2, ATYPE_INTEGER, OBS_CHASE_FREE);
+        default: SetHookChainArg(2, ATYPE_INTEGER, OBS_IN_EYE);
+    }
 }
 // *******************************************************************//
 public FM_ClientKill_Pre(id)
