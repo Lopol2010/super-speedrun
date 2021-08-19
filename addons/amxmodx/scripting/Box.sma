@@ -86,7 +86,6 @@ public plugin_init()
     
     register_clcmd("radio1", "cmdUndo", ADMIN_CFG);
 }
-
 public plugin_precache()
 {
     precache_model(gszModel);
