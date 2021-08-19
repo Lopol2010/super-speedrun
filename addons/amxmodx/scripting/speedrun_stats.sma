@@ -29,7 +29,7 @@
         - [ ] Allow map change when 2 players afk and third player says rtv, so need kind of AFK-detector
         - [ ] Add plugin to freeze entites, for example dooors
         - [ ] Add plugin to remove entities (entity remover, or use ripent)
-        - [ ] Add world record bot (do a research on that, https://dev-cs.ru/resources/142/)
+        - [ ] Add world record bot (do a research on that, https://dev-cs.ru/resources/142/) (also check this file, or whole repo https://github.com/skyrim/qmxx/blob/master/scripting/q_kz_ghost.sma)
         - [ ] Allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
         - [ ] Сделать найтвижену пояснение в чат о двух режимах 
         - [ ] Allow use /save menu for maps with buttons
