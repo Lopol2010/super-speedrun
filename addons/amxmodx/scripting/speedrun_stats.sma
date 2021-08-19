@@ -1,172 +1,131 @@
 /* 
-    идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
-    TODO: 
-        подстраивать спектаторов под настройки наблюдаемого ими игрока, (ноч. вид., худ, инвизы и т.п.)
-        когда сидиш в спеках то стата стрейфов должна показыватся всегда, и еще щас она перекрывает keys
-        заменить /tg на @ или / или ! для связи с админом, репорт читоров и багов
-        для многих карт нету .res файла, а так же вадов или картинок неба
-            возоможно придется скриптов выкачивать карты с сайтов или искать\просить готовые мап-паки
-        -=========-
-        возомжн проблемы на некоторых картах (когда игроки застревают на спавне или вообще негде не могут двигаться)
-            из-за BlockSpawnTriggerPush()
-        !!! невидимые стены на карте mrcn_bom 
-            после жесткой перезагрузки, проблема похоже исправилась
+    - AddToFullPack static version: https://github.com/ddenzer/addtofullpack_manager
+    - идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
+
+    TODO:
+        - [ ] Сделать хук спид для разных игроков свой(и обдумать как это лучше сделать)
+        - [ ] Подстраивать спектаторов под настройки наблюдаемого ими игрока, (ноч. вид., худ, инвизы и т.п.)
+        - [ ] Когда сидиш в спеках то стата стрейфов должна показыватся всегда, и еще щас она перекрывает keys
+        - [ ] Заменить /tg на @ или / или ! для связи с админом, репорт читоров и багов
+        - [ ] Delete finish zone stuff from database, this info now handled by box_system 
+        - [ ] Add kzbr_hii_fastrun, bhop_bloody, bkz_abstract, akzk_desertcliff, chk_neutral2, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
+                тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много карт https://www.google.ru/search?hl=ru&q=hb_dilo
+                https://gamebanana.com/mods/cats/5524
+        - [ ] Для многих карт нету .res файла, а так же вадов или картинок неба, возоможно придется скриптов выкачивать карты с сайтов или искать\просить готовые мап-паки
+        - [ ] Расставить зона на спидран картах (last: speedrun_light2)
+        - [ ] Если зашел игрок с fps_max 100 и поменял например на 500, то после пролистывания категории 100 ему не вернет 500.
+        - [ ] Игрок зашел как нон-стим, но перезашел и стал стим. т.е. стим не прогрузился при первом заходе, 
+                    так же у меня куча записей в топ15 со STEAM_ID_LAN причем пока что только у меня
+                    поставил в reunion.cfg ServerInfoAnswerType = 2 может поможет.  
+        - [ ] Player can't join at speedrun_rqnjar (see if its not enough spawns, maybe should enable kz_auto_add_spawns...)
+        - [ ] Add voteban/kick for players
+        - [ ] Почему ClientAuthorization(id) вызывается дважды? разве не достаточно только authorized?
+                Замена putinserver на authorized ломает игру, не открыть top15 и не работает таймер на спидран картах(возможно это из-за того что БД загружается в начале карты асинхронно)
+        - [ ] speedrun_fatal
+        - [ ] Multilang for remaining client_prints: in hidemenu and core and stats, also in hidemenu add message when water not found
+        - [ ] Bind 2k category's speed to knife alike low gravity 
+        - [ ] Ночное видиние так же видят спектры
+        - [ ] Ограничение скорости убрать? наверно только для спидран карт, щас нашел карту непроходимую на 2к скорости, speedrun_den вроде одна из таких
+        - [ ] Allow map change when 2 players afk and third player says rtv, so need kind of AFK-detector
+        - [ ] Add plugin to freeze entites, for example dooors
+        - [ ] Add plugin to remove entities (entity remover, or use ripent)
+        - [ ] Add world record bot (do a research on that, https://dev-cs.ru/resources/142/)
+        - [ ] Allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
+        - [ ] Сделать найтвижену пояснение в чат о двух режимах 
+        - [ ] Allow use /save menu for maps with buttons
+        - [ ] Проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
+        - [ ] На некоторых картах игроки не могут двигать прямо на спавне, либо могут но есть невидимые стены которых быть не должно.
+                Одна такая карта mrcn_bom, невидимые стены на старте. После жесткой перезагрузки, проблема исправилась.
+                из-за BlockSpawnTriggerPush()
                 надо сделать жесткую перезагрузку раз в день, причем только в случае когда 0 игроков на сервере, 
                 и желательно возвращать ту карту которая была до рестарта.
-        -=========-
-        добавить 333 
-        * так же я не мог использовать нож кнопкой 3 и юсп кнопкой 2 когда взял авп на карте.
-        добавить возможность стрелять по друг другу
-        * у некоторых игроков нет ножа, немогут играть в low gravity
-        * расставить зона на спидран картах
-                остановился размечать зоны на карте после speedrun_light2
-        если зашел игрок с fps_max 100 и поменял например на 500, то после пролистывания категории 100 ему не вернет 500.
-        сделать и протестить новый алгоритм событий box_start_touch и end, 
-        *** игрок зашел как нон-стим, но перезашел и стал стим. т.е. стим не прогрузился при первом заходе, 
-                    так же у меня куча записей в топ15 со STEAM_ID_LAN причем пока что только у меня, не у других админов
-                    поставил в reunion.cfg ServerInfoAnswerType = 2 может поможет.  
-                    почему ClientAuthorization(id) вызывается дважды? разве не достаточно только authorized?
-                    !!! Замена putinserver на authorized ломает игру, не открыть top15 и не работает таймер на спидран картах
-        speedrun_fatal
-        * multilang for remaining client_prints
-            in hidemenu and core and stats
-            also in hidemenu add message when water not found
-        * bind 2k category's speed to knife alike low gravity 
-        проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
-        ночное видиние так же видят спектры
-        ограничение скорости убрать? наверно только для спидран карт, щас нашел карту не проходимую на 2к скорости, speedrun_den вроде одна из таких
-        slowmo, noWASD
-        * allow map change when 2 players afk and third player says rtv
-        * ?? delete finish zone stuff from database
-        * add kzbr_hii_fastrun, bhop_bloody, bkz_abstract, akzk_desertcliff, chk_neutral2, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
-                тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много картhttps://www.google.ru/search?hl=ru&q=hb_dilo
-                https://gamebanana.com/mods/cats/5524
-        * сделать хук спид для разных игроков свой(и обдумать как это лучше сделать)
-        * add plugin to freeze entites, for example dooors
-        * add plugin to remove entities (entity remover, or use ripent)
-        * world record bot (do a research on that, https://dev-cs.ru/resources/142/)
-        * set language automaticaly with sxGeo and:
-            or ask Kushfield how to implement that. 
-            Or see myself how it works on his server
-                                    https://dev-cs.ru/resources/469/
-                                    https://dev-cs.ru/resources/570/field?field=source
-                                    (remove AutoLang - seems not work)
-        * allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
-        ?? * сделать найтвижену пояснение в чат о двух режимах 
-        * ?? allow use /save menu for maps with buttons
-        ?? * добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
-    DONE:
-        сделать чтобы при заходе в спектаторы было только два режима, первое лицо, третье лицо, свободный
-        после смерти спеклист с нуля возникает, чем отвлекает
-        город некоторых игроков не показывает, например (, Украина)
-        прицел то есть то нет
-        на 2к режиме ставить 200фпс
-        добавить поддержку "кем"
-        добавить плагин /stats для стрейфов
-        * сделать ci подругому, заменить ci.rb на тот что я писал для toplist либо даже использовать готовый пакет для вебкухов гитхаба
-        (нормальое решение не найдено даже с помощью форума) после телепорта если жать A или D то вектор скорость не вперед, даже если смотришь вперед, пример карта fu_replayhop
-        если одинаковое время, то в топе первый тот кто первый по дате поставил рекорд
-        починить скрипт компила плагинов на серваке, если делаешь 5 коммитов, он перекомпилирует только файлы в последнем
-        * когда игрок выходит, возвращать ему lang key (user info в langmenu.sma) который был при заходе
-        sxgeo_info стал на английском для всех
-        теперь на сервере компилируются только те плагины которые найдены в последнем коммите
-        старт у кнопки, щас как респавн
-        * когда переключаешь категории в motd toplist то мелькает белый экран, надо поменять это на темный с надписью loading(или без)
-        * заменить название игры сервера на Speedrun
-        /save баг, ты на стартовой зоне, но пишет ошибку "You must be in spawnbox or stop moving."
-        nominate not work
-        * проверить и переделать покупку привелегий 
-        убрать мнгновенные сообщения в чат при выборе 100фпс, когда проскакиваешь эту категорию не выбирая её, бесят эти сообщения
-        fix low gravity (when you enter category, no gravity applied)
-        * add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
-        * check my notebook
-        * (fixed?) fix message on finish showing wrong time
-        // 3. (? optional ?) Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
-        * заменить сообщение о продаже админок на однострочное, типа "напиш /vip для покупки"
-        * geoip показывал префикс стрелку ua вместо kz (вроде пофиксил, забилдив новую версию sxgeo)
-        * add 100fps category
-        * префикс в чате для игроков как на найте (пример [RU])
-        * настроить sxGeo_informer как на найт джампе
-        * chat prefix unifiend for most plugins
-        * добавить к спидометру показ кнопок
-        * донастроить reklama (квары в configs/plugins/reklama), почему то он еще bad load  не загружается.
-        * (fixed? if so... its was fucking hard) git pull fix https://stackoverflow.com/questions/55237191/git-pull-not-executing-through-a-webhook-in-bash-script
-            problem: script on production server not pulling from repo after pushing from developer PC. (based on github's commit webhooks )
-        * уменьшить шанс попадания ср карты в голосования за смену карты
-        * убрать beep на финиш и на финиш-топ1
-        * проверить почему super-speedrun-master.sh не запускает нормально ./compile.sh (вроде бы незапускает)
-        * баг когда скрываешь оружие не стартануть таймер (с кнопки точно, карта bhop_bunnyjump)
-        * сделать stand-up прыжки возможными (щас походу нет эффекта от них)
-            (не сделал, даже толком не поискал норм спидран где это реализовано, на найте например нету) 
-        * 2k mode  в core ограничить 2000, сейчас тупо умножается на 2000, протестить на sr_enemy
-        * (not important for now) 5.3.1 how to check for player leaving start zone? possible solutions: 
-                    4. use simple algorythm that will detect whether a point (player origin) is inside of a box.
-                    3. use th //is or even copy code from rehlds source (as stated in comments in the provided link) https://forums.alliedmods.net/showthread.php?t=307944
-        сгенерить .res файлы
-        * (само исправилось? вроде после освобождения места на диске стало 3сек.) стала слишком долгая интермиссия
-                взять тестовый сервак помощнее, проверить как он справиться со сменой карты https://www.ipserver.su/ru/page/tos
-                через htop видно загрузка проца на 100% возможно он не вывозит?
-                (без файла maps.ini стало 3-4 сек)
-                отключить все плагины и проверить (6 sec стало, 5 сек без pluigns.ini но с map-manager, наоборот тоже 5сек)
-                если это не помогло, отключать модули
-                возможные причины: 1. отключить все плагины и проверить 2. нехватает места на диске (сейчас 93% занято было, команда df для проверки на ubuntu)
-        * если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
+                (похоже что это баг rehlds https://github.com/dreamstalker/rehlds/issues/852)
+        - [ ] (removed map) L 31/05/2021 - 15:01:57: (map "speedrun_action") CalcSurfaceExtents: Bad surface extents
+        - [ ] (removed map) L 31/05/2021 - 14:51:56: (map "speedrun_omg") TEX_InitFromWad: couldn't open srhelvis.wad
+        - [ ] (removed)speedrun_4lunch разобратся (крашит клиент с ошбикой allocblock full)
+        - [ ] (removed) speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
+        - [ ] (removed)speedrun_around сломано освещение
+        - [ ] (removed map) speedrun_CrazySpeed! (miss aaacredits.wad)
+        - [ ] После телепорта если жать A или D то вектор скорость не вперед, даже если смотришь вперед, пример карта fu_replayhop (нормальое решение не найдено даже с помощью форума)
+        - [ ] box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
+        - [x] Добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
+        - [x] Сделать и протестить новый алгоритм событий box_start_touch и end (все попытки безуспешны, время всеравно на 50мс меньше если игрок на 20фпс)
+        - [x] Set language automaticaly with sxGeo and (or ask Kushfield how to implement that, Or see myself how it works on his server) https://dev-cs.ru/resources/469/ https://dev-cs.ru/resources/570/field?field=source
+        - [x] У некоторых игроков нет ножа, немогут играть в low gravity, так же я не мог использовать нож кнопкой 3 и юсп кнопкой 2 когда взял авп на карте.
+        - [x] Сделать чтобы при заходе в спектаторы было только два режима, первое лицо, третье лицо, свободный
+        - [x] После смерти спеклист с нуля возникает, чем отвлекает
+        - [x] Город некоторых игроков не показывает, например (, Украина)
+        - [x] Прицел то есть то нет
+        - [x] На 2к режиме ставить 200фпс
+        - [x] Добавить поддержку "кем"
+        - [x] Добавить плагин /stats для стрейфов
+        - [x] Сделать ci подругому, заменить ci.rb на тот что я писал для toplist либо даже использовать готовый пакет для вебкухов гитхаба
+        - [x] если одинаковое время, то в топе первый тот кто первый по дате поставил рекорд
+        - [x] Починить скрипт компила плагинов на серваке, если делаешь 5 коммитов, он перекомпилирует только файлы в последнем
+        - [x] Когда игрок выходит, возвращать ему lang key (user info в langmenu.sma) который был при заходе
+        - [x] sxgeo_info стал на английском для всех
+        - [x] Старт у кнопки, щас как респавн
+        - [x] Когда переключаешь категории в motd toplist то мелькает белый экран, надо поменять это на темный с надписью loading(или без)
+        - [x] Заменить название игры сервера на Speedrun
+        - [x] /save баг, ты на стартовой зоне, но пишет ошибку "You must be in spawnbox or stop moving."
+        - [x] Nominate not work
+        - [x] Убрать мнгновенные сообщения в чат при выборе 100фпс, когда проскакиваешь эту категорию не выбирая её, бесят эти сообщения
+        - [x] Fix low gravity (when you enter category, no gravity applied)
+        - [x] Fix message on finish showing wrong time
+        - [x] Auto change invalid FPS (no fps categories in the beginning, so this point is not valid for now)
+        - [x] Заменить сообщение о продаже админок на однострочное, типа "напиш /vip для покупки"
+        - [x] geoip показывал префикс стрелку ua вместо kz (вроде пофиксил, забилдив новую версию sxgeo)
+        - [x] Add 100fps category
+        - [x] Префикс в чате для игроков как на найте (пример [RU])
+        - [x] Настроить sxGeo_informer как на найт джампе
+        - [x] Chat prefix unifiend for most plugins
+        - [x] Добавить к спидометру показ кнопок
+        - [x] Донастроить reklama (квары в configs/plugins/reklama), почему то он еще bad load  не загружается.
+        - [x] git pull fix https://stackoverflow.com/questions/55237191/git-pull-not-executing-through-a-webhook-in-bash-script
+                problem: script on production server not pulling from repo after pushing from developer PC. (based on github's commit webhooks )
+        - [x] Уменьшить шанс попадания ср карты в голосования за смену карты
+        - [x] Проверить почему super-speedrun-master.sh не запускает нормально ./compile.sh (вроде бы незапускает)
+        - [x] Баг когда скрываешь оружие не стартануть таймер (с кнопки точно, карта bhop_bunnyjump)
+        - [x] 2k mode  в core ограничить 2000, сейчас тупо умножается на 2000, протестить на sr_enemy
+        - [x] Стала слишком долгая интермиссия (само исправилось? вроде после освобождения места на диске стало 3сек.)
+        - [x] Если сделать сначало финиш а потом старт, то таймер запускается только после рестарта. Причем запускается с багом, в самой старт зоне и после выхода из неё.
                 решение: сначало ставить старт (или переписать box_system чтобы нельзя было ставить несколько зон финиш\старт что тоже не очень круто если будет нужно несколько зон)
-        *(нужные вады не нашлись) проверить скачанный пак спидран карт
-            "C:\Users\der19\Downloads\FILES FROM RUS_SR.zip"
-        * (removed map) L 31/05/2021 - 15:01:57: (map "speedrun_action") CalcSurfaceExtents: Bad surface extents
-        * (removed map) L 31/05/2021 - 14:51:56: (map "speedrun_omg") TEX_InitFromWad: couldn't open srhelvis.wad
-        * L 26/05/2021 - 12:57:33: (map "speedrun_woah") Mod_LoadModel: models/player/gign/gign.mdl has been modified since starting the engine.  Consider running system diagnostics to check for faulty hardware.
-            Info (map "speedrun_4ever") (file "addons/amxmodx/logs/error_20210531.log")
-            L 05/31/2021 - 14:25:23: [AMXX] Run time error 4 (plugin "speedrun_core.amxx") - debug not enabled!
-            L 05/31/2021 - 14:25:23: [AMXX] To enable debug mode, add "debug" after the plugin name in plugins.ini (without quotes).
-        * (removed)speedrun_4lunch разобратся (крашит клиент с ошбикой allocblock full)
-        * (removed) speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
-        * (not checked this) speedrun_aqua demonpesik вылетил
-        * (removed)speedrun_around сломано освещение
-        * (removed map) speedrun_CrazySpeed! (miss aaacredits.wad)
-        * пункт меню 6 оставить 6ым когда в спектрах
-        * fix timer shows for everyone (core line 649)
-        * speclist & fpscchecker мерцают
-        * поставить низкий приоритет картам speedrun для map manager
-        * box_system баг при создании финишной зоны после стартовой
-        * box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
-        * add server to monitorings
-        * исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
-                поллучить ответ https://dev-cs.ru/threads/2457/page-44
+        - [x] L 26/05/2021 - 12:57:33: (map "speedrun_woah") Mod_LoadModel: models/player/gign/gign.mdl has been modified since starting the engine.  Consider running system diagnostics to check for faulty hardware.
+        - [x] Info (map "speedrun_4ever") (file "addons/amxmodx/logs/error_20210531.log")
+        - [x] Пункт меню 6 оставить 6ым когда в спектрах
+        - [x] Fix timer shows for everyone (core line 649)
+        - [x] speclist & fpscchecker мерцают
+        - [x] Add server to monitorings
+        - [x] Исправить смену карты (сделать задержку 15 сек, а затем сразу менять. сейчас сразу интермиссия но 5 сек.)
+                Получить ответ https://dev-cs.ru/threads/2457/page-44
                 ОТВЕТ: переписал сам scheduler, юзать mapm_intermission_delay и mp_chattime
-        * добавить nightvision
-        * player can't join at speedrun_rqnjar (see if its not enough spawns, maybe should enable kz_auto_add_spawns...)
-        * fix weapon hidding (not work properly)
-        * add map ds_ice (also big speedrun pack)
-        * comment out multilang.amxx
-        * fix bug with language not set correctly! (probably need replace LANG_PLAYER to ids)
-        * fix invis menu after reconnect still hides things
-        *fix can't start in the start of map (hook block)
-        * change time for map vote and time after map vote to 15 and 15
-        // 5. start/stop zones are visible
-        // 4. checkpoints.sma beautify chat messages on checkpoin/gocheck
-        * add antispam (done by chatmanager_addon)
-        * copy main menu from nightjump
-        * fixed bug with checkpoints
-        * change "set a map record"
-        * change timer appearence
-        * ??? really need this ??? add voteban/kick for players
-        * set default lang [ru] (in amxx.cfg)
-        * then maybe add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
-                So you move corners as if its 2D plane. 
-        * and then launch new plugins!
-        * migrate toplist
-        * Bugs & suggestions system. 
-                    Get module that can work with telegram and create command for players 
-                    like 'say @text' so that 'text' will be sended to admin's telegram. 
-        * use box system's forwards to make start zone visible!
-        2. spectators menu
-        1. fix hook in speedrun maps
-        5. first rewrite finish drawing, now its temp-entity, need use <beams> stocks. Those can change color faster and seem to be much more reliable!
-                    addtofullpack static version: https://github.com/ddenzer/addtofullpack_manager
-        1. When map starts decide if timer should be managed by buttons on the map or by speedrun zones
-        2. Auto bind for menus (game, category)
+        - [x] Добавить nightvision
+        - [x] Fix weapon hidding (not work properly)
+        - [x] Add map ds_ice (also big speedrun pack)
+        - [x] Fix bug with language not set correctly! (probably need replace LANG_PLAYER to ids)
+        - [x] Fix invis menu after reconnect still hides things
+        - [x] Fix can't start in the start of map (hook block)
+        - [x] Make start/stop zones visible
+        - [x] checkpoints.sma beautify chat messages on checkpoin/gocheck
+        - [x] Add antispam (done by chatmanager_addon)
+        - [x] Copy main menu from nightjump
+        - [x] Change "set a map record"
+        - [x] Change timer appearence
+        - [x] Add possibility to change size of finish zone, so that you can move corners like <box_system> do, but zone itself always sticks to the ground under it.
+        - [x] Migrate toplist (initially there was database in .txt files managed by kz plugin, now its speedrun's sqlite)
+        - [x] Get module that can work with telegram's api
+        - [x] Use box system's forwards to make start zone visible!
+        - [x] Add spectators menu
+        - [x] Fix hook in speedrun maps
+        - [x] First rewrite finish drawing, now its temp-entity, need use <beams> stocks. Those can change color faster and seem to be much more reliable!
+        - [x] When map starts decide if timer should be managed by buttons on the map or by speedrun zones
+        - [x] Auto bind for menus (game, category)
+
+    Странные идеи:
+        - [ ] Добавить возможность стрелять по друг другу
+        - [ ] slowmo, noWASD
+        - [ ] Сделать stand-up прыжки возможными (А есть ли смысл? Сейчас высота прыжка с autobhop сравнима с SBJ)
+        - [ ] Add categories, or maybe a 'modifiers' such as "low gravity", "double jumps"
 */
 #include <amxmodx>
 #include <amxmisc>
