@@ -11,6 +11,8 @@
         - [ ] Add kzbr_hii_fastrun, bhop_bloody, bkz_abstract, akzk_desertcliff, chk_neutral2, clintmo_bhopwarehouse (& maybe other maps https://all-cs.ru/cs16/maps/jumping/bhop)
                 тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много карт https://www.google.ru/search?hl=ru&q=hb_dilo
                 https://gamebanana.com/mods/cats/5524
+        - [ ] Add plugin to freeze entites, for example dooors
+        - [ ] Add plugin to remove entities (entity remover, or use ripent)
         - [ ] Для многих карт нету .res файла, а так же вадов или картинок неба, возоможно придется скриптов выкачивать карты с сайтов или искать\просить готовые мап-паки
         - [ ] Расставить зона на спидран картах (last: speedrun_light2)
         - [ ] Если зашел игрок с fps_max 100 и поменял например на 500, то после пролистывания категории 100 ему не вернет 500.
@@ -27,8 +29,6 @@
         - [ ] Ночное видиние так же видят спектры
         - [ ] Ограничение скорости убрать? наверно только для спидран карт, щас нашел карту непроходимую на 2к скорости, speedrun_den вроде одна из таких
         - [ ] Allow map change when 2 players afk and third player says rtv, so need kind of AFK-detector
-        - [ ] Add plugin to freeze entites, for example dooors
-        - [ ] Add plugin to remove entities (entity remover, or use ripent)
         - [ ] Add world record bot (do a research on that, https://dev-cs.ru/resources/142/) (also check this file, or whole repo https://github.com/skyrim/qmxx/blob/master/scripting/q_kz_ghost.sma)
         - [ ] Allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
         - [ ] Сделать найтвижену пояснение в чат о двух режимах 
@@ -48,6 +48,7 @@
         - [ ] (removed map) speedrun_CrazySpeed! (miss aaacredits.wad)
         - [ ] После телепорта если жать A или D то вектор скорость не вперед, даже если смотришь вперед, пример карта fu_replayhop (нормальое решение не найдено даже с помощью форума)
         - [ ] box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
+        - [ ] Потестировать, возможно с помощью ClearSyncHud можно сделать не мерцающий hud, хотя и сейчас не мерцает 
         - [x] Добавить постоянное сообщение типа "о всех багах и предложениях писать в /tg"
         - [x] Сделать и протестить новый алгоритм событий box_start_touch и end (все попытки безуспешны, время всеравно на 50мс меньше если игрок на 20фпс)
         - [x] Set language automaticaly with sxGeo and (or ask Kushfield how to implement that, Or see myself how it works on his server) https://dev-cs.ru/resources/469/ https://dev-cs.ru/resources/570/field?field=source
@@ -192,6 +193,7 @@ new Trie:g_tStops;
 
 public plugin_init()
 {
+    
     register_plugin(PLUGIN, VERSION, AUTHOR);
     
     g_pCvars[SQL_HOST] = register_cvar("speedrun_host", "127.0.0.1");
