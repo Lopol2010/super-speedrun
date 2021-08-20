@@ -831,12 +831,12 @@ public Think_Hud(ent)
         {
             button = get_entvar(target, var_button);
             
-            len = formatex(szKeys, charsmax(szKeys), "%s^n",          (button & IN_FORWARD) ? 	    "W" : ".");
+            len = formatex(szKeys, charsmax(szKeys), "^n%s^n",          (button & IN_FORWARD) ? 	    "W" : ".");
             len += formatex(szKeys[len], charsmax(szKeys)-len, "%s",  (button & IN_MOVELEFT) ? 	    "A" : ". ");
             len += formatex(szKeys[len], charsmax(szKeys)-len, "%s",  (button & IN_BACK) ? 		    " S " : " . ");
             len += formatex(szKeys[len], charsmax(szKeys)-len, "%s^n",    (button & IN_MOVERIGHT) ?   "D" : " .");
             len += formatex(szKeys[len], charsmax(szKeys)-len, "%s^n",    (button & IN_JUMP) ? 		"JUMP" : ".");
-            len += formatex(szKeys[len], charsmax(szKeys)-len, "%s^n^n",  (button & IN_DUCK) ? 		"DUCK" : "      ");
+            len += formatex(szKeys[len], charsmax(szKeys)-len, "%s^n",  (button & IN_DUCK) ? 		"DUCK" : "      ");
         }
         else
         {
@@ -845,7 +845,7 @@ public Think_Hud(ent)
 
         sr_get_timer_display_text(target, szTime, charsmax(szTime));
 
-        set_hudmessage(0, 55, 255, -1.0, 0.73, 0, _, rate, _, _, _); //channel selected automaticly by ShowSyncHudMsg
+        set_hudmessage(5, 60, 255, -1.0, 0.73, 0, _, rate, rate, rate, _); //channel selected automaticly by ShowSyncHudMsg
         ShowSyncHudMsg(id, g_iSyncHudSpeed, "%s%s^n%3.2f", szKeys, szTime, fSpeed);
         szTime[0] = '^0';
     }

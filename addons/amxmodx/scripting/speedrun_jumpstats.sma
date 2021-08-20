@@ -16,6 +16,7 @@
 #define PLUGIN_TAG "LJStats"
 
 #define LJSTATS_MENU_ID "LJ Stats Menu"
+#define TASK_HUD_RATE   0.1
 
 enum (+=100)
 {
@@ -177,7 +178,7 @@ public plugin_init( )
     // sv_airaccelerate = get_cvar_pointer( "sv_airaccelerate" );
     // sv_gravity = get_cvar_pointer( "sv_gravity" );
 
-    set_task(0.1, "task_hud", TASK_HUD, .flags = "b");
+    set_task(TASK_HUD_RATE, "task_hud", TASK_HUD, .flags = "b");
 }
 
 public client_connect( id )
@@ -200,25 +201,32 @@ public client_connect( id )
 
 public task_hud()
 {
-    static jump_info[256];
+    static jump_info[256], id, i, bSpec, specMode;
 
-    for( new id = 1; id <= MaxClients; ++id )
+    for( id = 1; id <= MaxClients; id++ )
     {
-        if((get_gametime() - hud[id][hud_last_time_displayed] > 3.0)) continue;
         if(!is_user_connected(id) || is_user_bot(id)) continue;
+        if(get_gametime() - hud[id][hud_last_time_displayed] > 3.0) continue;
         // if(!hud[id][hud_can_update]) continue;
 
-        for( new i = 1; i <= MaxClients; ++i )
+        for( i = 1; i <= MaxClients; i++ )
         {
-            if( player_show_stats[i] && ( ( i == id ) || ( ( ( pev( i, pev_iuser1 ) == 2 ) || ( pev( i, pev_iuser1 ) == 4 ) ) && ( pev( i, pev_iuser2 ) == id ) ) ) )
+            if(!is_user_connected(i) || is_user_bot(i)) continue;
+
+            specMode = pev( i, pev_iuser1 );
+            bSpec = ( ( specMode == OBS_CHASE_FREE || specMode == OBS_CHASE_LOCKED || specMode == OBS_IN_EYE ) && pev( i, pev_iuser2 ) == id );
+
+            // client_print(0, print_chat, "i:%d id:%d spec-%d, disp: %f", i, id, bSpec, hud[i][hud_last_time_displayed]);
+            // new infoId = pev(i, pev_iuser2);
+            // if( player_show_stats[i] && ( i == id || bSpec ) )
+            if( (g_DisplaySimpleStats[i] && i == id) || bSpec )
             {
                 formatex( jump_info, charsmax(jump_info), "STRAFES: %d / SYNC: %d%%^nGAIN: %.2f",
                         hud[id][hud_jump_strafes],
                         hud[id][hud_jump_sync] * 100 / hud[id][hud_jump_frames],
                         hud[id][hud_jump_maxspeed] - hud[id][hud_jump_prestrafe]
                 );
-
-                set_hudmessage( 0, 55, 255, -1.0, 0.75, 0, 0.0, 0.1, _, _, 1 );
+                set_hudmessage( 5, 60, 255, -1.0, bSpec ? 0.71 : 0.73, 0, 0.0, TASK_HUD_RATE, TASK_HUD_RATE, TASK_HUD_RATE, 1 );
                 show_hudmessage( i, "%s", jump_info );
             }
         }
@@ -526,10 +534,10 @@ state_injump_firstframe( id )
         //     default: bJumpTypeDisabled = false;
         // }
 
-        if(!g_DisplaySimpleStats[id])
-        {
-            bJumpTypeDisabled = true;
-        }
+        // if(!g_DisplaySimpleStats[id])
+        // {
+        //     bJumpTypeDisabled = true;
+        // }
 
 
         if (inertia_frames[id] && (get_player_hspeed(id) > 400.0 || velocity[id][2] > 400.0)
