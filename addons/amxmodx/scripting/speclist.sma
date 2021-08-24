@@ -2,10 +2,6 @@
 #include <fakemeta>
 #include <speedrun>
 
-#if !defined MAX_PLAYERS
-	#define MAX_PLAYERS 32
-#endif
-
 #define IMMUNITY_FLAG ADMIN_BAN	// Флаг с которым игрока не будет выводить в speclist, закомментируйте если хотите чтобы выводило всех.
 #define UPDATE 0.5				// Частота обновлений списка
 
@@ -16,10 +12,10 @@
 /*** Конец настройки цвета ***/
 
 #pragma semicolon 1
-new szDhud[MAX_PLAYERS][512];
+new szDhud[MAX_PLAYERS+1][MAX_PLAYERS * MAX_NAME_LENGTH];
 new gCvarPluginEnabled;
 new gCvarImmunity;
-new bool:gOnOff[33] = { true, ... };
+new bool:gOnOff[MAX_PLAYERS+1] = { true, ... };
 
 public plugin_init() {
 	register_plugin("SpecList", "1.0", "Lopol2010");	// Remake Spectators List by FatalisDK
@@ -66,8 +62,8 @@ public ShowSpecList() {
 
 	if(!get_pcvar_num(gCvarPluginEnabled)) return;
 
-	new szName[16], iLen[MAX_PLAYERS];
-	new iDead[MAX_PLAYERS], dCount;
+	new szName[MAX_NAME_LENGTH], iLen[33];
+	new iDead[33], dCount;
 	get_players(iDead, dCount, "bch");
 
 
@@ -84,7 +80,7 @@ public ShowSpecList() {
 		szDhud[id] = szDhud[spec];
 	}
 
-	new iAlive[MAX_PLAYERS], aCount;
+	new iAlive[33], aCount;
 	get_players(iAlive, aCount, "ch"); //ach
 	for(new i, id; i < aCount; i++) {
 		id = iAlive[i];
