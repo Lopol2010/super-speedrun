@@ -11,6 +11,7 @@
 #define BLUE 50		// Количество синего
 /*** Конец настройки цвета ***/
 
+
 #pragma semicolon 1
 new szDhud[MAX_PLAYERS+1][MAX_PLAYERS * MAX_NAME_LENGTH];
 new gCvarPluginEnabled;
