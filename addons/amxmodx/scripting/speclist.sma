@@ -64,7 +64,7 @@ public ShowSpecList() {
 	if(!get_pcvar_num(gCvarPluginEnabled)) return;
 
 	new szName[MAX_NAME_LENGTH], iLen[33];
-	new iDead[33], dCount;
+	new iDead[MAX_PLAYERS], dCount;
 	get_players(iDead, dCount, "bch");
 
 
@@ -81,7 +81,7 @@ public ShowSpecList() {
 		szDhud[id] = szDhud[spec];
 	}
 
-	new iAlive[33], aCount;
+	new iAlive[MAX_PLAYERS], aCount;
 	get_players(iAlive, aCount, "ch"); //ach
 	for(new i, id; i < aCount; i++) {
 		id = iAlive[i];
