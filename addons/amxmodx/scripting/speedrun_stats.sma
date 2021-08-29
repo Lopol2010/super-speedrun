@@ -153,7 +153,7 @@
 #endif
 
 #define PLUGIN "Speedrun: Stats"
-#define VERSION "1.0"
+#define VERSION "2.0"
 #define AUTHOR "Mistrick & Lopol2010"
 
 #pragma semicolon 1
