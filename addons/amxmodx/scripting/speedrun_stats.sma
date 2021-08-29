@@ -3,6 +3,7 @@
     - идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
 
     TODO:
+        - [x] Проверить наличие уязвимости SQL Injection. (Нашёл и исправил)
         - [x] шустрик в стиме написал что худ спектаторов обрезается, видимо ттолько если ты сам спектатор
             - [ ] опять сказал обрезается ник, надо проверить
         - [ ] Сделать хук спид для разных игроков свой(и обдумать как это лучше сделать)
@@ -372,7 +373,7 @@ public Command_Update(id)
 {
     if(!g_ePlayerInfo[id][m_bAuthorized] || is_flooding(id)) return PLUGIN_HANDLED;
     
-    new szName[32]; get_user_name(id, szName, charsmax(szName)); SQL_PrepareString(szName, szName, charsmax(szName));
+    new szName[MAX_NAME_LENGTH * 3]; get_user_name(id, szName, charsmax(szName)); SQL_PrepareString(szName, szName, charsmax(szName));
     formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `runners` SET nickname = '%s' WHERE id=%d", szName, g_ePlayerInfo[id][m_iPlayerIndex]);
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
@@ -622,8 +623,8 @@ public Query_LoadRunnerInfoHandler(failstate, Handle:query, error[], errnum, dat
     {
         new szAuth[32]; get_user_authid(id, szAuth, charsmax(szAuth));
         new szIP[32]; get_user_ip(id, szIP, charsmax(szIP), 1);
-        new szName[64]; get_user_name(id, szName, charsmax(szName));
-        SQL_PrepareString(szName, szName, 63);
+        new szName[MAX_NAME_LENGTH * 3]; get_user_name(id, szName, charsmax(szName));
+        SQL_PrepareString(szName, szName, charsmax(szName));
         
         get_nationality(id, szIP, szCode);
         
@@ -1069,10 +1070,19 @@ bool:is_flooding(id)
     fAntiFlood[id] = fNow;
     return fl;
 }
+
 stock SQL_PrepareString(const szQuery[], szOutPut[], size)
 {
     copy(szOutPut, size, szQuery);
-    replace_all(szOutPut, size, "'", "\'");
-    replace_all(szOutPut,size, "`", "\`");
-    replace_all(szOutPut,size, "\\", "\\\\");
+    mysql_escape_string(szOutPut, size);
+}
+
+stock mysql_escape_string(dest[],len){
+	replace_string(dest,len,"\\","\\\\");
+	replace_string(dest,len,"\0","\\0");
+	replace_string(dest,len,"\n","\\n");
+	replace_string(dest,len,"\r","\\r");
+	replace_string(dest,len,"\x1a","\Z");
+	replace_string(dest,len,"'","''");
+	replace_string(dest,len,"^"","^"^"");
 }
