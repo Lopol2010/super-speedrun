@@ -1,6 +1,7 @@
 #include <amxmodx>
 #include <amxmisc>
 #include <fakemeta>
+#include <fakemeta_util>
 #include <fun>
 #include <engine>
 #include <xs>
@@ -47,6 +48,7 @@ new gbInMenu[33];
 new Float:gfDistance[33];
 new giCatched[33];
 new giMarked[33];
+new Trie:ghTouches;
 
 new bool:gbEditorMode = false;
 
@@ -74,8 +76,7 @@ public plugin_init()
     register_forward( FM_CmdStart, "FwdCmdStart" );
     register_forward(FM_TraceLine, "fwTraceLine", 1);
     register_forward(FM_PlayerPreThink, "fwPlayerPreThink", 1);
-    
-    register_touch("box", "*", "fwBoxTouch");
+    // RegisterHookChain(RG_PM_Move, "RG_PM_Move_Pre");
     
     fwOnStartTouch = CreateMultiForward("box_start_touch", ET_STOP, FP_CELL, FP_CELL, FP_STRING);
     fwOnStopTouch = CreateMultiForward("box_stop_touch", ET_STOP, FP_CELL, FP_CELL, FP_STRING);
@@ -85,6 +86,8 @@ public plugin_init()
     fwOnDelete = CreateMultiForward("box_deleted", ET_STOP, FP_CELL, FP_STRING);
     
     register_clcmd("radio1", "cmdUndo", ADMIN_CFG);
+
+    ghTouches = TrieCreate();
 }
 public plugin_precache()
 {
@@ -117,9 +120,41 @@ public plugin_cfg()
     BOX_Load();
 }
 
+public log_arrays()
+{
+    log_amx("-======= Start Box System's dynamic arrays sizes =======-");
+    log_amx("TRIE SIZE: %d", TrieGetSize(ghTouches));
+    new Array:hArray, TrieIter:it;
+    it = TrieIterCreate(ghTouches);
+    while(!TrieIterEnded(it))
+    {
+        if(TrieIterGetCell(it, hArray))
+        {
+            log_amx("ARRAY SIZE: %d", ArraySize(hArray));
+        }
+        TrieIterNext(it);
+    }
+    TrieIterDestroy(it);
+    log_amx("-======= End Box System's dynamic arrays sizes =======-");
+}
+
 public plugin_end()
 {
     BOX_Save();
+
+    log_arrays();
+    new Array:hArray, TrieIter:it;
+    it = TrieIterCreate(ghTouches);
+    while(!TrieIterEnded(it))
+    {
+        if(TrieIterGetCell(it, hArray))
+        {
+            ArrayDestroy(hArray);
+        }
+        TrieIterNext(it);
+    }
+    TrieIterDestroy(it);
+    TrieDestroy(ghTouches);
 }
 
 public client_putinserver(id)
@@ -344,7 +379,6 @@ public cmdUndo(id, level, cid)
 
 public fwPlayerPreThink(id)
 {
-
     if(gbInMenu[id])
     {
         set_member(id, m_flNextAttack, 1.0);
@@ -364,6 +398,73 @@ public fwPlayerPreThink(id)
             }
         }
     }
+    else
+    {
+        RG_PM_Move_Pre(id);
+    }
+}
+public RG_PM_Move_Pre( id )
+{
+    new Array:hArray, TrieIter:it, key[4], box, iTouch;
+
+    for(new i=0;i<giZonesP;i++)
+    {
+        box = giZones[i];
+
+        if(fm_boxents_distance(id, box) <= 0.0)
+        {
+            fwTouch(box, id);
+            // server_print("touching!");
+            
+            new Array:hArray, bool:bStartTouch, key[4]; num_to_str(box, key, sizeof key);
+            if(TrieGetCell(ghTouches, key, hArray))
+            {
+                if(ArrayFindValue(hArray, id) == -1)
+                {
+                    bStartTouch = true;
+                    ArrayPushCell(hArray, id);
+                    // server_print("box's touches added!");
+                }
+                // server_print("box's touches array found!");
+            }
+            else
+            {
+                // server_print("box's touches not found");
+                bStartTouch = true;
+                hArray = ArrayCreate();
+                ArrayPushCell(hArray, id);
+                TrieSetCell(ghTouches, key, hArray);
+            }
+
+            if(bStartTouch)
+            {
+                // server_print("start touch: %d, harr: %d", box, hArray);
+                fwStartTouch(box, id);
+            }
+        }
+    }
+
+
+    // detect end of touch
+    it = TrieIterCreate(ghTouches);
+    while(!TrieIterEnded(it))
+    {
+        TrieIterGetKey(it, key, sizeof key);
+        box = str_to_num(key);
+        TrieIterGetCell(it, hArray);
+        iTouch = ArrayFindValue(hArray, id)
+        if(iTouch != -1)
+        {
+            if(fm_boxents_distance(id, box) > 0.0)
+            {
+                ArrayDeleteItem(hArray, iTouch);
+                fwStopTouch(box, id);
+            }
+        }
+
+        TrieIterNext(it);
+    }
+    TrieIterDestroy(it);
 }
 public FwdCmdStart( client, ucHandle ) 
 {
@@ -1004,44 +1105,6 @@ Create_Implode(ent){
     write_byte(2);
     message_end();
 }
-
-getBoxFromTaskId(tid, &box, &ent)
-{
-    ent = tid&0xFFFF;
-    box = (tid&0xFFFF0000) >> 16;
-}
-
-getTaskIdFormBox(box, ent)
-{
-    return ((box<<16) | ent);
-}
-
-public taskInTouch(tid)
-{
-    new box, ent;
-    getBoxFromTaskId(tid, box, ent);
-    
-    fwStopTouch(box, ent);
-}
-
-public fwBoxTouch(box, ent)
-{
-    fwTouch(box, ent);
-    
-    new tid = getTaskIdFormBox(box, ent);
-    
-    if(task_exists(tid))
-    {
-        remove_task(tid);
-    }
-    else
-    {
-        fwStartTouch(box, ent);
-    }
-    
-    set_task(0.1, "taskInTouch", tid);
-}
-
 
 fwStartTouch(box, ent)
 {
