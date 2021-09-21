@@ -122,7 +122,6 @@ public plugin_cfg()
 
 public log_arrays()
 {
-    log_amx("-======= Start Box System's dynamic arrays sizes =======-");
     log_amx("TRIE SIZE: %d", TrieGetSize(ghTouches));
     new Array:hArray, TrieIter:it;
     it = TrieIterCreate(ghTouches);
@@ -135,7 +134,6 @@ public log_arrays()
         TrieIterNext(it);
     }
     TrieIterDestroy(it);
-    log_amx("-======= End Box System's dynamic arrays sizes =======-");
 }
 
 public plugin_end()
