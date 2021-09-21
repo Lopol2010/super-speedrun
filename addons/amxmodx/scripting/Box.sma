@@ -76,7 +76,6 @@ public plugin_init()
     register_forward( FM_CmdStart, "FwdCmdStart" );
     register_forward(FM_TraceLine, "fwTraceLine", 1);
     register_forward(FM_PlayerPreThink, "fwPlayerPreThink", 1);
-    // RegisterHookChain(RG_PM_Move, "RG_PM_Move_Pre");
     
     fwOnStartTouch = CreateMultiForward("box_start_touch", ET_STOP, FP_CELL, FP_CELL, FP_STRING);
     fwOnStopTouch = CreateMultiForward("box_stop_touch", ET_STOP, FP_CELL, FP_CELL, FP_STRING);
