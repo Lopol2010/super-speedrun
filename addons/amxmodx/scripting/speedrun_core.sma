@@ -35,7 +35,7 @@
 #pragma semicolon 1
 #define MENU_KEY_ALL ~(0<<11)
 #define FPS_LIMIT 1050
-#define FPS_OFFSET 5
+#define FPS_OFFSET 1
 #define FAILS_TILL_PRINT 3
 #define CRAZYSPEED_BOOST 250.0
 #define FASTRUN_AIRACCELERATE -55.0
