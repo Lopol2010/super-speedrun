@@ -486,9 +486,9 @@ public Ham_Touch_Trigger_Hurt_Pre(ent, id)
 {
     if(!is_user_connected(id)) return HAM_IGNORED;
 
-    new dmg = get_entvar(ent, var_dmg);
+    new Float:dmg = get_entvar(ent, var_dmg);
     dmg *= 0.5; // from triggers.cpp
-    new hp = get_entvar(id, var_health);
+    new Float:hp = get_entvar(id, var_health);
 
     if(dmg >= hp)
     {
