@@ -11,7 +11,7 @@
         - [ ] Настроить reunion, обдумать стоит ли добавлять хеширование, ведь придется видимо конвертировать базу данных ?
                 Гайд по настройке reunion: https://dev-cs.ru/threads/808/
         - [ ] Обновить rehlds, regame, модули amxx и metamod
-        - [ ] Создать git репозиторий для сервера, который будет содержать например cstrike/addons, cstrike/**.cfg, может что-то еще? 
+        - [ ] Создать git репозиторий для сервера, который будет содержать например cstrike/addons, cstrike\*.cfg, может что-то еще? 
         - [ ] Если зашел игрок с fps_max 100 и поменял например на 500, то после пролистывания категории 100 ему не вернет 500.
         - [ ] Сделать в чат уведомление при заходе "Ваш fps по умолчанию n сохранён. Для удобства установите cl_filterstuffcmd 0 это позволит серверу менять ваш fps."
         - [ ] Переосмыслить и переделать логику инвалидации фпс клиента, например вернуть уведомление в чат когда фпс выше допустимого.  
@@ -782,6 +782,7 @@ public HC_CBasePlayer_Spawn_Post(id)
     g_ePlayerInfo[id][m_bTimerStarted] = false;
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_bWasUseHook] = false;
+    user_hook_enable(id, false);
     user_hook_enable(id, true);
 }
 public HC_CheckStartTimer(id)
