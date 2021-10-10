@@ -110,9 +110,9 @@ public HandleSay(id) {
         return PLUGIN_HANDLED;
     }
 
-    server_print("%s", Args);
-
-    client_print_color(id, print_team_default, "%l %l", "TG_TAG", "TG_ENTER");
+    // server_print("%s", Args);
+    // client_print_color(id, print_team_default, "%l %l", "TG_TAG", "TG_ENTER");
+    Args[0] = ' ';
 
     g_flNextTime[id] = get_gametime() + DELAY;
 
