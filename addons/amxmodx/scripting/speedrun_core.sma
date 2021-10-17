@@ -34,9 +34,10 @@
 
 #pragma semicolon 1
 #define MENU_KEY_ALL ~(0<<11)
-#define FPS_LIMIT 1050
+#define FPS_LIMIT 1000
 #define FPS_OFFSET 1
-#define FAILS_TILL_PRINT 3
+#define FPS_CHECK_FREQUENCY 1.0
+#define FAILS_TILL_PRINT 2
 #define CRAZYSPEED_BOOST 250.0
 #define FASTRUN_AIRACCELERATE -55.0
 #define PUSH_DIST 300.0
@@ -130,7 +131,7 @@ public plugin_init()
     g_iSyncHudSpeed = CreateHudSyncObj();
 
     CreateHudThink();
-    set_task(3.0, "Task_CheckFrames", TASK_CHECKFRAMES, .flags = "b");
+    set_task(FPS_CHECK_FREQUENCY, "Task_CheckFrames", TASK_CHECKFRAMES, .flags = "b");
     
     set_cvar_num("mp_autoteambalance", 0);
     set_cvar_num("mp_round_infinite", 1);
