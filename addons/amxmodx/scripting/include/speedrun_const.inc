@@ -4,12 +4,14 @@
 #define _speedrun_const_included
 
 stock const PREFIX[] = "^4[^1Super Speedrun^4]^1";
+stock const MENU_VERSION[] = "\rv1.1-beta";
 
 stock const g_szCategory[][] = 
 {
     "100 FPS", "200 FPS", "250 FPS", "333 FPS", "500 FPS", "Fastrun", "Bhop", "Crazy Speed", "2K", "Low Gravity"
 };
 
+// IMPORTANT NOTE: Always add new category at the end! Otherwise database will be broken! Category id should be unique.
 enum _:Categories
 {
     Cat_100fps =  0,

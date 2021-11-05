@@ -44,7 +44,7 @@ public Command_Menu(id)
 
     new szMenu[64];
 
-    new menu = menu_create("\wSuper Speedrun \rv1.0-beta", "Menu_Handler")
+    new menu = menu_create(fmt("\wSuper Speedrun %s", MENU_VERSION), "Menu_Handler")
 
     if(get_user_team(id) == 2)
     {
@@ -59,8 +59,11 @@ public Command_Menu(id)
         menu_additem(menu, szMenu, "1");
 
         menu_addblank2(menu);
+        // menu_addtext(menu, fmt("      \d%s \w< \y%s \w> \d%s", g_szCategory[get_user_category(id)-1], g_szCategory[get_user_category(id)], g_szCategory[get_user_category(id)+1]), 0);
 
         formatex(szMenu, charsmax(szMenu), "%L [\y%s\w]", id, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)]);
+        // formatex(szMenu, charsmax(szMenu), fmt("%L [\d%s \w< \y%s \w> \d%s]", id, "SR_MENU_CATEGORY", g_szCategory[get_user_category(id)], g_szCategory[get_user_category(id)-1], g_szCategory[get_user_category(id)+1]));
+        
         menu_additem(menu, szMenu, "2");
 
         formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_RESTART");

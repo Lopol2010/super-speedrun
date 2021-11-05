@@ -3,7 +3,7 @@
     - идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
 
     TODO:
-        - [ ] баг, если хукнуть и вернутся на /start то может сохранится скорость до 700, читерство такое
+        - [x] баг, если хукнуть и вернутся на /start то может сохранится скорость до 700, читерство такое
         - [ ] Выкачать скриптом всё (сначало skyboxes) отсуда https://en.ds-servers.com/goldsrc-res/
         - [x] ВАЖНО! Для многих карт нету .res файла. А resgen зависает на многих speedrun_ картах, может смогу исправить? https://github.com/kriswema/resgen
                 ПОХОЖЕ ЧТО ВЕРСИЯ ПОД Linux ИСПРАВНО ГЕНЕРИРУЕТ .res ДЛЯ ТАКИХ ПРОБЛЕМНЫХ .bsp карт.
@@ -226,7 +226,6 @@ public plugin_init()
     g_pCvars[STATS_MOTD_URL] = register_cvar("speedrun_stats_url", "http://127.0.0.1:1337/stats");
     
     register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
-    // register_clcmd("setfinish", "Command_SetFinish", ADMIN_CFG);
     register_clcmd("say /rank", "Command_Rank");
     register_clcmd("say /top15", "Command_Top15");
     register_clcmd("say /update", "Command_Update");
