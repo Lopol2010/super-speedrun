@@ -10,15 +10,36 @@
 #define VERSION "0.1"
 #define AUTHOR	"Lopol2010"
 
-new bool:canusehook[33]
-new bool:ishooked[33]
-new hookorigin[33][3]
+enum _:HookSettings 
+{
+    SPEED
+};
+
+new const HOOK_SPEED_NAMES[][] = 
+{
+    "SR_HOOK_SPEED_SLOW",
+    "SR_HOOK_SPEED_MID",
+    "SR_HOOK_SPEED_FAST",
+    "SR_HOOK_SPEED_MAX",
+};
+
+new const Float:HOOK_SPEED_VALUES[] = 
+{
+    600.0, 800.0, 1200.0, 2000.0
+};
+
+new const g_iTotalSpeedTypes = sizeof HOOK_SPEED_NAMES;
+new g_ePlayerSettings[33][HookSettings];
+
+new bool:g_bCanHook[33];
+new bool:g_bIsHooked[33];
+new g_iHookOrigin[33][3];
 /* new Float:antihookcheat[33] */
-new hook_sound
-new hook_speed
-new Sbeam = 0
-new Float:lastTimeHook[33] = { -1.0, ... } 
-new g_fwOnHookStart
+new bool:g_bHookSound;
+new Float:g_fHookSpeed[33] = { 800.0, ... };
+new g_iBeamSprite = 0;
+new Float:g_fLastTimeHook[33] = { -1.0, ... };
+new g_fwOnHookStart;
 
 public plugin_init()
 {
@@ -29,8 +50,18 @@ public plugin_init()
     register_clcmd("-hook","hook_off",KZ_LEVEL)
     register_concmd("hook","give_hook", KZ_LEVEL, "<name|#userid|steamid|@ALL> <on/off>")
     g_fwOnHookStart = CreateMultiForward("OnHookStart", ET_IGNORE, FP_CELL)
-    hook_sound = register_cvar("hook_sound","0")
-    hook_speed = register_cvar("hook_speed", "800.0")
+    g_bHookSound = bool:register_cvar("hook_sound","0")
+
+    register_clcmd("say /hook","Hook_Menu");
+    register_clcmd("say /h","Hook_Menu");
+}
+
+public plugin_cfg()
+{
+    for(new id = 1; id <= MaxClients; id++)
+    {
+        g_ePlayerSettings[id][SPEED] = 1;
+    }
 }
 
 public plugin_natives()
@@ -41,28 +72,70 @@ public plugin_natives()
     register_native("user_hook_enable","_user_hook_enable",1)
     register_native("is_time_after_hook_passed","_is_time_after_hook_passed",1)
 }
+
+public Hook_Menu(id)
+{
+    if(!is_user_connected(id)) return PLUGIN_CONTINUE;
+
+    new szMenu[64];
+
+    new menu = menu_create(fmt("\wHook Menu"), "Menu_Handler")
+
+    formatex(szMenu, charsmax(szMenu), "%L", id, HOOK_SPEED_NAMES[g_ePlayerSettings[id][SPEED]]);
+    menu_additem(menu, szMenu, "0");
+    
+    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CLOSE");
+    menu_setprop(menu, MPROP_EXITNAME, szMenu);
+    menu_setprop(menu, MPROP_EXIT, MEXIT_FORCE);                // Force an EXIT item since pagination is disabled.
+    menu_setprop(menu, MPROP_PERPAGE, 0);
+    menu_display(id, menu);
+    
+    return PLUGIN_HANDLED;
+}
+
+public Menu_Handler(id, menu, item)
+{
+    if(item < 0) return PLUGIN_CONTINUE;
+
+    new cmd[3];
+    menu_item_getinfo(menu, item, _, cmd, 2);
+    new key = str_to_num(cmd);
+    switch(key)
+    {
+        case 0: {
+            g_ePlayerSettings[id][SPEED] += 1;
+            if(g_iTotalSpeedTypes-1 < g_ePlayerSettings[id][SPEED]) {
+                g_ePlayerSettings[id][SPEED] = 0;
+            }
+            g_fHookSpeed[id] = HOOK_SPEED_VALUES[g_ePlayerSettings[id][SPEED]]; 
+        }
+    }
+    if(key != 9)
+        Hook_Menu(id);
+    return PLUGIN_HANDLED;
+}
 public bool:_is_time_after_hook_passed(id, Float:time)
 {
-    // server_print("%f %f %f", lastTimeHook[id], get_gametime(), (get_gametime() - lastTimeHook[id]))
-    return lastTimeHook[id] < 0.0 ? true : ((get_gametime() - lastTimeHook[id]) >= time)
+    // server_print("%f %f %f", g_fLastTimeHook[id], get_gametime(), (get_gametime() - g_fLastTimeHook[id]))
+    return g_fLastTimeHook[id] < 0.0 ? true : ((get_gametime() - g_fLastTimeHook[id]) >= time)
 }
 public _is_hook_active(id)
 {
-    return ishooked[id]
+    return g_bIsHooked[id]
 }
 public _is_hook_allowed(id)
 {
-    return canusehook[id]
+    return g_bCanHook[id]
 }
 public _user_hook_enable(id, bool:isEnabled)
 {
-    canusehook[id] = isEnabled
+    g_bCanHook[id] = isEnabled
     if(!isEnabled) remove_hook(id)
 }
 public plugin_precache()
 {
     precache_sound("weapons/xbow_hit2.wav")
-    Sbeam = precache_model("sprites/laserbeam.spr")
+    g_iBeamSprite = precache_model("sprites/laserbeam.spr")
 }
 
 public give_hook(id)
@@ -82,7 +155,7 @@ public give_hook(id)
         get_players(Alive, alivePlayers, "ach")
         for(new i;i<alivePlayers;i++)
         {
-            canusehook[i] = mode
+            g_bCanHook[i] = mode
             if(mode)
                 client_print_color(i, print_team_default,  "%s %L.", PREFIX, i, "KZ_HOOK")
                 
@@ -93,7 +166,7 @@ public give_hook(id)
         new pid = find_player("bl",szarg1);
         if(pid > 0)
         {
-            canusehook[pid] = mode
+            g_bCanHook[pid] = mode
             if(mode)
             {
                 client_print_color(pid, print_team_default, "%s %L.", PREFIX, pid, "KZ_HOOK")
@@ -107,21 +180,21 @@ public give_hook(id)
 
 public hook_on(id)
 {
-    if( !canusehook[id] /*&& !( get_user_flags( id ) & KZ_LEVEL )*/ || !is_user_alive(id) )
+    if( !g_bCanHook[id] /*&& !( get_user_flags( id ) & KZ_LEVEL )*/ || !is_user_alive(id) )
     {
         return PLUGIN_HANDLED
     }
 
-    get_user_origin(id,hookorigin[id],3)
-    ishooked[id] = true
+    get_user_origin(id, g_iHookOrigin[id], 3)
+    g_bIsHooked[id] = true
     /* antihookcheat[id] = get_gametime() */
     
-    if (get_pcvar_num(hook_sound) == 1)
+    if (get_pcvar_num(g_bHookSound) == 1)
     emit_sound(id,CHAN_STATIC,"weapons/xbow_hit2.wav",1.0,ATTN_NORM,0,PITCH_NORM)
 
     set_task(0.1,"hook_task",id,"",0,"ab")
     hook_task(id)
-    lastTimeHook[id] = get_gametime()
+    g_fLastTimeHook[id] = get_gametime()
     ExecuteForward(g_fwOnHookStart, _, id)
     
     return PLUGIN_HANDLED
@@ -139,17 +212,17 @@ public hook_task(id)
     if(!is_user_connected(id) || !is_user_alive(id))
         remove_hook(id)
     
-    lastTimeHook[id] = get_gametime()
+    g_fLastTimeHook[id] = get_gametime()
     remove_beam(id)
     draw_hook(id)
     
     new origin[3], Float:velocity[3]
     get_user_origin(id,origin)
-    new distance = get_distance(hookorigin[id],origin)
+    new distance = get_distance(g_iHookOrigin[id],origin)
     
-    velocity[0] = (hookorigin[id][0] - origin[0]) * (get_pcvar_float(hook_speed) / distance)
-    velocity[1] = (hookorigin[id][1] - origin[1]) * (get_pcvar_float(hook_speed) / distance)
-    velocity[2] = (hookorigin[id][2] - origin[2]) * (get_pcvar_float(hook_speed) / distance)
+    velocity[0] = (g_iHookOrigin[id][0] - origin[0]) * (g_fHookSpeed[id] / distance)
+    velocity[1] = (g_iHookOrigin[id][1] - origin[1]) * (g_fHookSpeed[id] / distance)
+    velocity[2] = (g_iHookOrigin[id][2] - origin[2]) * (g_fHookSpeed[id] / distance)
         
     set_pev(id,pev_velocity,velocity)
 }
@@ -159,10 +232,10 @@ public draw_hook(id)
     message_begin(MSG_BROADCAST,SVC_TEMPENTITY)
     write_byte(1)				// TE_BEAMENTPOINT
     write_short(id)				// entid
-    write_coord(hookorigin[id][0])		// origin
-    write_coord(hookorigin[id][1])		// origin
-    write_coord(hookorigin[id][2])		// origin
-    write_short(Sbeam)			// sprite index
+    write_coord(g_iHookOrigin[id][0])		// origin
+    write_coord(g_iHookOrigin[id][1])		// origin
+    write_coord(g_iHookOrigin[id][2])		// origin
+    write_short(g_iBeamSprite)			// sprite index
     write_byte(0)				// start frame
     write_byte(0)				// framerate
     write_byte(random_num(1,100))		// life
@@ -181,7 +254,7 @@ public remove_hook(id)
     if(task_exists(id))
         remove_task(id)
     remove_beam(id)
-    ishooked[id] = false
+    g_bIsHooked[id] = false
 }
 
 public remove_beam(id)
