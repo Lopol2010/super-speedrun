@@ -6,25 +6,31 @@
 #define VERSION "0.1"
 #define AUTHOR	"Lopol2010"
 
-new const HOOK_SPEED_NAMES[][] = 
+#define speed_option(%1,%2) (SPEED_OPTIONS[g_ePlayerSettings[%1][m_iSpeedOption]][%2])
+#define sprite_option(%1,%2) (SPRITE_OPTIONS[g_ePlayerSettings[%1][m_iSpriteOption]][%2])
+
+enum _:SpeedOptions { Name[32], Float:Velocity };
+new SPEED_OPTIONS[][SpeedOptions] = 
 {
-    "SR_HOOK_SPEED_SLOW",
-    "SR_HOOK_SPEED_MID",
-    "SR_HOOK_SPEED_FAST",
-    "SR_HOOK_SPEED_MAX",
+    { "SR_HOOK_SPEED_SLOW", 600.0 },
+    { "SR_HOOK_SPEED_MID",  800.0 },
+    { "SR_HOOK_SPEED_FAST", 1200.0 },
+    { "SR_HOOK_SPEED_MAX",  2000.0 },
 };
 
-new const Float:HOOK_SPEED_VALUES[] = 
+enum _:SpriteOptions { Name[32], Path[64] };
+new SPRITE_OPTIONS[][SpriteOptions] = 
 {
-    600.0, 800.0, 1200.0, 2000.0
+    { "SR_HOOK_SPRITE_DEFAULT", "sprites/laserbeam.spr" },
+    { "SR_HOOK_SPRITE_SUPER",   "sprites/iHOOK/super_hook.spr" },
 };
 
 enum _:HookSettings 
 {
-    m_iSpeedMode
+    m_iSpeedOption,
+    m_iSpriteOption,
 };
 
-new const g_iTotalSpeedTypes = sizeof HOOK_SPEED_NAMES;
 new g_ePlayerSettings[33][HookSettings];
 
 new bool:g_bCanHook[33] = { true, ... };
@@ -33,7 +39,8 @@ new g_iHookOrigin[33][3];
 /* new Float:antihookcheat[33] */
 new bool:g_bHookSound;
 new Float:g_fHookSpeed[33];
-new g_iBeamSprite = 0;
+new g_iSprite[33];
+new g_iSpriteIds[sizeof SPRITE_OPTIONS];
 new Float:g_fLastTimeHook[33] = { -1.0, ... };
 new g_fwOnHookStart;
 
@@ -62,9 +69,14 @@ public plugin_cfg()
     }
 }
 
-public client_disconnected(id)
+public plugin_precache()
 {
-    ResetCachedSettings(id);
+    precache_sound("weapons/xbow_hit2.wav");
+    
+    for(new i = 0; i < sizeof SPRITE_OPTIONS; i ++)
+    {
+        g_iSpriteIds[i] = precache_model(SPRITE_OPTIONS[i][Path]);
+    }
 }
 
 public plugin_natives()
@@ -75,11 +87,18 @@ public plugin_natives()
     register_native("is_time_after_hook_passed", "_is_time_after_hook_passed", 1);
 }
 
+public client_disconnected(id)
+{
+    ResetCachedSettings(id);
+}
+
 public ResetCachedSettings(id)
 {
-    g_ePlayerSettings[id][m_iSpeedMode] = 1;
+    g_ePlayerSettings[id][m_iSpeedOption] = 1;
+    g_ePlayerSettings[id][m_iSpriteOption] = 0;
 
-    g_fHookSpeed[id] = HOOK_SPEED_VALUES[g_ePlayerSettings[id][m_iSpeedMode]]; 
+    g_fHookSpeed[id] = speed_option(id, Velocity);
+    g_iSprite[id] = g_iSpriteIds[g_ePlayerSettings[id][m_iSpriteOption]];
 }
 
 public Command_Menu(id)
@@ -88,10 +107,13 @@ public Command_Menu(id)
 
     new szMenu[64];
 
-    new menu = menu_create(fmt("\wHook Menu"), "Menu_Handler");
+    new menu = menu_create(fmt("\w%L", id, "SR_HOOK_MENU_TITLE"), "Menu_Handler");
 
-    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPEED", id, HOOK_SPEED_NAMES[g_ePlayerSettings[id][m_iSpeedMode]]);
+    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPEED", id, speed_option(id, Name));
     menu_additem(menu, szMenu, "0");
+
+    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPRITE", id, sprite_option(id, Name));
+    menu_additem(menu, szMenu, "1");
     
     formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CLOSE");
     menu_setprop(menu, MPROP_EXITNAME, szMenu);
@@ -112,11 +134,18 @@ public Menu_Handler(id, menu, item)
     switch(key)
     {
         case 0: {
-            g_ePlayerSettings[id][m_iSpeedMode] += 1;
-            if(g_iTotalSpeedTypes-1 < g_ePlayerSettings[id][m_iSpeedMode]) {
-                g_ePlayerSettings[id][m_iSpeedMode] = 0;
+            g_ePlayerSettings[id][m_iSpeedOption] += 1;
+            if(sizeof SPEED_OPTIONS-1 < g_ePlayerSettings[id][m_iSpeedOption]) {
+                g_ePlayerSettings[id][m_iSpeedOption] = 0;
             }
-            g_fHookSpeed[id] = HOOK_SPEED_VALUES[g_ePlayerSettings[id][m_iSpeedMode]]; 
+            g_fHookSpeed[id] = speed_option(id, Velocity); 
+        }
+        case 1: {
+            g_ePlayerSettings[id][m_iSpriteOption] += 1;
+            if(sizeof SPRITE_OPTIONS-1 < g_ePlayerSettings[id][m_iSpriteOption]) {
+                g_ePlayerSettings[id][m_iSpriteOption] = 0;
+            }
+            g_iSprite[id] = g_iSpriteIds[g_ePlayerSettings[id][m_iSpriteOption]]; 
         }
     }
     if(key != 9)
@@ -140,11 +169,6 @@ public _user_hook_enable(id, bool:isEnabled)
 {
     g_bCanHook[id] = isEnabled
     if(!isEnabled) remove_hook(id)
-}
-public plugin_precache()
-{
-    precache_sound("weapons/xbow_hit2.wav")
-    g_iBeamSprite = precache_model("sprites/laserbeam.spr")
 }
 
 public Command_Hook_On(id)
@@ -204,7 +228,7 @@ public draw_hook(id)
     write_coord(g_iHookOrigin[id][0])		// origin
     write_coord(g_iHookOrigin[id][1])		// origin
     write_coord(g_iHookOrigin[id][2])		// origin
-    write_short(g_iBeamSprite)			// sprite index
+    write_short(g_iSprite[id])			// sprite index
     write_byte(0)				// start frame
     write_byte(0)				// framerate
     write_byte(random_num(1,100))		// life

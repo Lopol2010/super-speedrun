@@ -16,11 +16,17 @@ SR_TIME_FINISH = ^3%s^1 финишировал за ^3%s
 SR_TIME_WR_FIRST = ^3%s^1 финишировал за ^3%s^1 и установил рекорд карты!
 SR_TIME_WR_BY = ^3%s^1 Побил рекорд карты на ^4%s
 
+SR_HOOK_MENU_TITLE = Настройки паутинки
+
 SR_HOOK_SPEED = Скорость: \y%L\w
 SR_HOOK_SPEED_SLOW = Медленная
 SR_HOOK_SPEED_MID = Средняя
 SR_HOOK_SPEED_FAST = Быстрая
 SR_HOOK_SPEED_MAX = Максимальная
+
+SR_HOOK_SPRITE = Вид: \y%L\w
+SR_HOOK_SPRITE_DEFAULT = Обычный
+SR_HOOK_SPRITE_SUPER = Полосатый
 
 [en]
 SR_MENU_CHECKPOINT = Checkpoint
@@ -40,8 +46,14 @@ SR_TIME_FINISH = ^3%s^1 finish in ^3%s
 SR_TIME_WR_FIRST = ^3%s^1 finish in ^3%s^1 and set a map record!
 SR_TIME_WR_BY = ^3%s^1 and broke map record by ^4%s
 
+SR_HOOK_MENU_TITLE = Hook settings
+
 SR_HOOK_SPEED = Speed
 SR_HOOK_SPEED_SLOW = Slow
 SR_HOOK_SPEED_MID = Average
 SR_HOOK_SPEED_FAST = Fast
 SR_HOOK_SPEED_MAX = Fastest
+
+SR_HOOK_SPRITE = Look: \y%L\w
+SR_HOOK_SPRITE_DEFAULT = Common
+SR_HOOK_SPRITE_SUPER = Zebra
