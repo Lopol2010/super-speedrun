@@ -1,11 +1,7 @@
 #include <amxmodx>
-#include <cstrike>
-#include <fun>
-#include <fakemeta>
-#include <hamsandwich>
+#include <reapi>
 #include <speedrun>
 
-#define KZ_LEVEL ADMIN_KICK 
 #define PLUGIN	"Speedrun: Hook"
 #define VERSION "0.1"
 #define AUTHOR	"Lopol2010"
@@ -31,7 +27,7 @@ enum _:HookSettings
 new const g_iTotalSpeedTypes = sizeof HOOK_SPEED_NAMES;
 new g_ePlayerSettings[33][HookSettings];
 
-new bool:g_bCanHook[33];
+new bool:g_bCanHook[33] = { true, ... };
 new bool:g_bIsHooked[33];
 new g_iHookOrigin[33][3];
 /* new Float:antihookcheat[33] */
@@ -46,14 +42,16 @@ public plugin_init()
     
     register_plugin(PLUGIN, VERSION, AUTHOR);
 
-    register_clcmd("+hook","hook_on",KZ_LEVEL)
-    register_clcmd("-hook","hook_off",KZ_LEVEL)
-    register_concmd("hook","give_hook", KZ_LEVEL, "<name|#userid|steamid|@ALL> <on/off>")
-    g_fwOnHookStart = CreateMultiForward("OnHookStart", ET_IGNORE, FP_CELL)
-    g_bHookSound = bool:register_cvar("hook_sound","0")
+    register_clcmd("+hook", "Command_Hook_On");
+    register_clcmd("-hook", "Command_Hook_Off");
+    g_fwOnHookStart = CreateMultiForward("OnHookStart", ET_IGNORE, FP_CELL);
+    g_bHookSound = bool:register_cvar("hook_sound","0");
 
-    register_clcmd("say /hook","Hook_Menu");
-    register_clcmd("say /h","Hook_Menu");
+    new const cmd[][] = { "/hook", "/h", "!hook", "!h" };
+    for(new i = 0; i < sizeof cmd; i++) {
+        register_clcmd(fmt("say %s", cmd[i]), "Command_Menu");
+        register_clcmd(fmt("say_team %s", cmd[i]), "Command_Menu");
+    }
 }
 
 public plugin_cfg()
@@ -67,30 +65,30 @@ public plugin_cfg()
 public client_disconnected(id)
 {
     ResetCachedSettings(id);
-    g_fHookSpeed[id] = 0.0;
 }
 
 public plugin_natives()
 {
-    register_native("is_hook_active","_is_hook_active",1)
-    register_native("is_hook_allowed","_is_hook_allowed",1)
-    /* register_native("give_hook","give_hook",1) */
-    register_native("user_hook_enable","_user_hook_enable",1)
-    register_native("is_time_after_hook_passed","_is_time_after_hook_passed",1)
+    register_native("is_hook_active", "_is_hook_active", 1);
+    register_native("is_hook_allowed", "_is_hook_allowed", 1);
+    register_native("user_hook_enable", "_user_hook_enable", 1);
+    register_native("is_time_after_hook_passed", "_is_time_after_hook_passed", 1);
 }
 
 public ResetCachedSettings(id)
 {
     g_ePlayerSettings[id][m_iSpeedMode] = 1;
+
+    g_fHookSpeed[id] = HOOK_SPEED_VALUES[g_ePlayerSettings[id][m_iSpeedMode]]; 
 }
 
-public Hook_Menu(id)
+public Command_Menu(id)
 {
     if(!is_user_connected(id)) return PLUGIN_CONTINUE;
 
     new szMenu[64];
 
-    new menu = menu_create(fmt("\wHook Menu"), "Menu_Handler")
+    new menu = menu_create(fmt("\wHook Menu"), "Menu_Handler");
 
     formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPEED", id, HOOK_SPEED_NAMES[g_ePlayerSettings[id][m_iSpeedMode]]);
     menu_additem(menu, szMenu, "0");
@@ -122,7 +120,7 @@ public Menu_Handler(id, menu, item)
         }
     }
     if(key != 9)
-        Hook_Menu(id);
+        Command_Menu(id);
     return PLUGIN_HANDLED;
 }
 public bool:_is_time_after_hook_passed(id, Float:time)
@@ -149,49 +147,9 @@ public plugin_precache()
     g_iBeamSprite = precache_model("sprites/laserbeam.spr")
 }
 
-public give_hook(id)
+public Command_Hook_On(id)
 {
-    if (!(  get_user_flags( id ) & KZ_LEVEL ))
-        return PLUGIN_HANDLED
-
-    new szarg1[32], szarg2[8], bool:mode
-    read_argv(1,szarg1,32)
-    read_argv(2,szarg2,32)
-    if(equal(szarg2,"on"))
-        mode = true
-        
-    if(equal(szarg1,"@ALL"))
-    {
-        new Alive[32], alivePlayers
-        get_players(Alive, alivePlayers, "ach")
-        for(new i;i<alivePlayers;i++)
-        {
-            g_bCanHook[i] = mode
-            if(mode)
-                client_print_color(i, print_team_default,  "%s %L.", PREFIX, i, "KZ_HOOK")
-                
-        }
-    }
-    else
-    {
-        new pid = find_player("bl",szarg1);
-        if(pid > 0)
-        {
-            g_bCanHook[pid] = mode
-            if(mode)
-            {
-                client_print_color(pid, print_team_default, "%s %L.", PREFIX, pid, "KZ_HOOK")
-                
-            }
-        }
-    }
-    
-    return PLUGIN_HANDLED
-}
-
-public hook_on(id)
-{
-    if( !g_bCanHook[id] /*&& !( get_user_flags( id ) & KZ_LEVEL )*/ || !is_user_alive(id) )
+    if( !g_bCanHook[id] || !is_user_alive(id) )
     {
         return PLUGIN_HANDLED
     }
@@ -211,7 +169,7 @@ public hook_on(id)
     return PLUGIN_HANDLED
 }
 
-public hook_off(id)
+public Command_Hook_Off(id)
 {
     remove_hook(id)
     
@@ -221,21 +179,21 @@ public hook_off(id)
 public hook_task(id)
 {
     if(!is_user_connected(id) || !is_user_alive(id))
-        remove_hook(id)
+        remove_hook(id);
     
-    g_fLastTimeHook[id] = get_gametime()
-    remove_beam(id)
-    draw_hook(id)
+    g_fLastTimeHook[id] = get_gametime();
+    remove_beam(id);
+    draw_hook(id);
     
-    new origin[3], Float:velocity[3]
-    get_user_origin(id,origin)
-    new distance = get_distance(g_iHookOrigin[id],origin)
+    new origin[3], Float:velocity[3];
+    get_user_origin(id, origin);
+    new distance = get_distance(g_iHookOrigin[id],origin);
     
-    velocity[0] = (g_iHookOrigin[id][0] - origin[0]) * (g_fHookSpeed[id] / distance)
-    velocity[1] = (g_iHookOrigin[id][1] - origin[1]) * (g_fHookSpeed[id] / distance)
-    velocity[2] = (g_iHookOrigin[id][2] - origin[2]) * (g_fHookSpeed[id] / distance)
-        
-    set_pev(id,pev_velocity,velocity)
+    velocity[0] = (g_iHookOrigin[id][0] - origin[0]) * (g_fHookSpeed[id] / distance);
+    velocity[1] = (g_iHookOrigin[id][1] - origin[1]) * (g_fHookSpeed[id] / distance);
+    velocity[2] = (g_iHookOrigin[id][2] - origin[2]) * (g_fHookSpeed[id] / distance);
+    
+    set_entvar(id, var_velocity, velocity);
 }
 
 public draw_hook(id)
