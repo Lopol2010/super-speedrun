@@ -231,14 +231,14 @@ public draw_hook(id)
     write_short(g_iSprite[id])			// sprite index
     write_byte(0)				// start frame
     write_byte(0)				// framerate
-    write_byte(random_num(1,100))		// life
-    write_byte(random_num(1,20))		// width
-    write_byte(random_num(1,0))		// noise					
-    write_byte(random_num(1,255))		// r
-    write_byte(random_num(1,255))		// g
-    write_byte(random_num(1,255))		// b
-    write_byte(random_num(1,500))		// brightness
-    write_byte(random_num(1,200))		// speed
+    write_byte(random_num(100,100))		// life
+    write_byte(random_num(15,15))		// width
+    write_byte(random_num(0,0))		// noise					
+    write_byte(random_num(255,255))		// r
+    write_byte(random_num(255,255))		// g
+    write_byte(random_num(255,255))		// b
+    write_byte(random_num(500,500))		// brightness
+    write_byte(random_num(0,0))		// speed
     message_end()
 }
 
