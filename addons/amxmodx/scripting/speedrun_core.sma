@@ -208,6 +208,10 @@ public plugin_cfg()
     BlockChangingTeam();
     BlockSpawnTriggerPush();
 
+    if(containi(MapName, "speedrun") != -1) {
+        set_cvar_num("sv_maxvelocity", 100000);
+    }
+
     // g_iMaxSpeed = max(get_cvar_num("sv_maxvelocity"), get_cvar_num("sv_maxspeed"));
 }
 LoadStartPosition()
