@@ -10,11 +10,6 @@
 #define VERSION "0.1"
 #define AUTHOR	"Lopol2010"
 
-enum _:HookSettings 
-{
-    SPEED
-};
-
 new const HOOK_SPEED_NAMES[][] = 
 {
     "SR_HOOK_SPEED_SLOW",
@@ -28,6 +23,11 @@ new const Float:HOOK_SPEED_VALUES[] =
     600.0, 800.0, 1200.0, 2000.0
 };
 
+enum _:HookSettings 
+{
+    m_iSpeedMode
+};
+
 new const g_iTotalSpeedTypes = sizeof HOOK_SPEED_NAMES;
 new g_ePlayerSettings[33][HookSettings];
 
@@ -36,7 +36,7 @@ new bool:g_bIsHooked[33];
 new g_iHookOrigin[33][3];
 /* new Float:antihookcheat[33] */
 new bool:g_bHookSound;
-new Float:g_fHookSpeed[33] = { 800.0, ... };
+new Float:g_fHookSpeed[33];
 new g_iBeamSprite = 0;
 new Float:g_fLastTimeHook[33] = { -1.0, ... };
 new g_fwOnHookStart;
@@ -60,8 +60,14 @@ public plugin_cfg()
 {
     for(new id = 1; id <= MaxClients; id++)
     {
-        g_ePlayerSettings[id][SPEED] = 1;
+        ResetCachedSettings(id);
     }
+}
+
+public client_disconnected(id)
+{
+    ResetCachedSettings(id);
+    g_fHookSpeed[id] = 0.0;
 }
 
 public plugin_natives()
@@ -73,6 +79,11 @@ public plugin_natives()
     register_native("is_time_after_hook_passed","_is_time_after_hook_passed",1)
 }
 
+public ResetCachedSettings(id)
+{
+    g_ePlayerSettings[id][m_iSpeedMode] = 1;
+}
+
 public Hook_Menu(id)
 {
     if(!is_user_connected(id)) return PLUGIN_CONTINUE;
@@ -81,7 +92,7 @@ public Hook_Menu(id)
 
     new menu = menu_create(fmt("\wHook Menu"), "Menu_Handler")
 
-    formatex(szMenu, charsmax(szMenu), "%L", id, HOOK_SPEED_NAMES[g_ePlayerSettings[id][SPEED]]);
+    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPEED", id, HOOK_SPEED_NAMES[g_ePlayerSettings[id][m_iSpeedMode]]);
     menu_additem(menu, szMenu, "0");
     
     formatex(szMenu, charsmax(szMenu), "%L", id, "SR_MENU_CLOSE");
@@ -103,11 +114,11 @@ public Menu_Handler(id, menu, item)
     switch(key)
     {
         case 0: {
-            g_ePlayerSettings[id][SPEED] += 1;
-            if(g_iTotalSpeedTypes-1 < g_ePlayerSettings[id][SPEED]) {
-                g_ePlayerSettings[id][SPEED] = 0;
+            g_ePlayerSettings[id][m_iSpeedMode] += 1;
+            if(g_iTotalSpeedTypes-1 < g_ePlayerSettings[id][m_iSpeedMode]) {
+                g_ePlayerSettings[id][m_iSpeedMode] = 0;
             }
-            g_fHookSpeed[id] = HOOK_SPEED_VALUES[g_ePlayerSettings[id][SPEED]]; 
+            g_fHookSpeed[id] = HOOK_SPEED_VALUES[g_ePlayerSettings[id][m_iSpeedMode]]; 
         }
     }
     if(key != 9)
@@ -255,6 +266,7 @@ public remove_hook(id)
         remove_task(id)
     remove_beam(id)
     g_bIsHooked[id] = false
+    
 }
 
 public remove_beam(id)
