@@ -48,7 +48,7 @@ SR_TIME_WR_BY = ^3%s^1 and broke map record by ^4%s
 
 SR_HOOK_MENU_TITLE = Hook settings
 
-SR_HOOK_SPEED = Speed
+SR_HOOK_SPEED = Speed: \y%L\w
 SR_HOOK_SPEED_SLOW = Slow
 SR_HOOK_SPEED_MID = Average
 SR_HOOK_SPEED_FAST = Fast
