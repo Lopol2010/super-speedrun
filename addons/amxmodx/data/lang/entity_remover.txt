@@ -1,0 +1,23 @@
+[en]
+CANNOT_DELETE_PLAYER = ^4[Entity Remover] ^1Вы не можете удалить игрока!
+MENU_REMOVE_ENTITY = ^4[Entity Remover] ^1Удалить этот объект
+MENU_YES_INFO = Используйте er_undo для отмены удаления!
+AIM_AT_ENTITY = ^4[Entity Remover] ^1Вы должны нацелиться на объект!
+ENTITY_REMOVED = ^4[Entity Remover] ^1Объект удалён!
+NO_UNDO_ENTITIES = ^4[Entity Remover] ^1Нет объектов для удаления!
+UNDO_INVALID_ENTITY = ^4[Entity Remover] ^1Невозможно удалить объект!
+UNDO_SUCCESS = ^4[Entity Remover] ^1Вы отменили удаление ^3'%s'
+RESET_1 = ^4[Entity Remover] ^1Все удаления были сброшены!
+RESET_2 = ^4[Entity Remover] ^1Перезагрузите карту и изменения вступят в силу!
+
+[RU]
+CANNOT_DELETE_PLAYER = ^4[Entity Remover] ^1Вы не можете удалить игрока!
+MENU_REMOVE_ENTITY = ^4[Entity Remover] ^1Удалить этот объект
+MENU_YES_INFO = Используйте er_undo для отмены удаления!
+AIM_AT_ENTITY = ^4[Entity Remover] ^1Вы должны нацелиться на объект!
+ENTITY_REMOVED = ^4[Entity Remover] ^1Объект удалён!
+NO_UNDO_ENTITIES = ^4[Entity Remover] ^1Нет объектов для удаления!
+UNDO_INVALID_ENTITY = ^4[Entity Remover] ^1Невозможно удалить объект!
+UNDO_SUCCESS = ^4[Entity Remover] ^1Вы отменили удаление ^3'%s'
+RESET_1 = ^4[Entity Remover] ^1Все удаления были сброшены!
+RESET_2 = ^4[Entity Remover] ^1Перезагрузите карту и изменения вступят в силу!
