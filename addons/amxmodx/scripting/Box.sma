@@ -10,11 +10,12 @@
 #include <box_system>
 #include <reapi>
 
+#define ACCESS_FLAG ADMIN_LEVEL_B
+
 new gszConfigDir[256];
 new gszConfigDirPerMap[256];
 new gszConfigFile[256+32];
 new giConfigFile;
-
 
 //Shortcuts
 #define PEV_TYPE 	FAKEMETA_PEV_TYPE
@@ -68,8 +69,8 @@ public plugin_init()
     register_dictionary("box_editor.txt");
     
     register_menucmd(register_menuid("box"), KEYSBOX|(1<<6), "Pressedbox");
-    register_clcmd("box", "cmdBox", ADMIN_CFG);
-    register_clcmd("boxid", "cmdBoxRename", ADMIN_CFG);
+    register_clcmd("box", "cmdBox", ACCESS_FLAG);
+    register_clcmd("boxid", "cmdBoxRename", ACCESS_FLAG);
     
     register_think("box", "Box_Think");
 
@@ -84,7 +85,7 @@ public plugin_init()
     fwOnResize = CreateMultiForward("box_resized", ET_STOP, FP_CELL, FP_STRING);
     fwOnDelete = CreateMultiForward("box_deleted", ET_STOP, FP_CELL, FP_STRING);
     
-    register_clcmd("radio1", "cmdUndo", ADMIN_CFG);
+    register_clcmd("radio1", "cmdUndo", ACCESS_FLAG);
 
     ghTouches = TrieCreate();
 }
