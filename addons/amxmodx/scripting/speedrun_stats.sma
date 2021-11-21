@@ -191,7 +191,7 @@ enum _:PlayerData
     m_iPlayerIndex,
     Float:m_fStartRun,
     m_bWasUseHook,       // true if player used hook and until next respawn (by command or death)
-    bool:m_bNoBeep
+    bool:m_bBeep
 };
 enum _:Cvars
 {
@@ -360,8 +360,8 @@ public plugin_precache()
 
 public Command_NoBeep(id, level, cid)
 {
-    g_ePlayerInfo[id][m_bNoBeep] = !g_ePlayerInfo[id][m_bNoBeep];
-    client_print_color(id, print_team_red, "%s^1 finish beep is %s^1.", PREFIX, g_ePlayerInfo[id][m_bNoBeep] ? "^4on" : "^3off");
+    g_ePlayerInfo[id][m_bBeep] = !g_ePlayerInfo[id][m_bBeep];
+    client_print_color(id, print_team_red, "%s^1 finish beep is %s^1.", PREFIX, g_ePlayerInfo[id][m_bBeep] ? "^4on" : "^3off");
 }
 
 public Command_ClearTop(id, level, cid)
@@ -601,6 +601,7 @@ public client_connect(id)
     g_ePlayerInfo[id][m_bTimerStarted] = false;
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_iPlayerIndex] = 0;
+    g_ePlayerInfo[id][m_bBeep] = true;
 }
 
 public client_putinserver(id)
@@ -713,7 +714,7 @@ public client_disconnected(id)
 {
     g_ePlayerInfo[id][m_bAuthorized] = false;
     g_ePlayerInfo[id][m_bConnected] = false;
-    g_ePlayerInfo[id][m_bNoBeep] = false;
+    g_ePlayerInfo[id][m_bBeep] = true;
 }
 
 public Engine_TouchFinish(ent, id)
@@ -927,13 +928,15 @@ Forward_PlayerFinished(id)
             g_szCategory[category], LANG_PLAYER, "SR_TIME_FINISH", szName, szTime);
     }
 
-    if(record)
-    {
-        rg_send_audio(0, "sound/buttons/bell1.wav");
-    }
-    else
-    {
-        rg_send_audio(0, "sound/buttons/bell1.wav");
+    if(g_ePlayerInfo[id][m_bBeep]) {
+        if(record)
+        {
+            rg_send_audio(0, "sound/buttons/bell1.wav");
+        }
+        else
+        {
+            rg_send_audio(0, "sound/buttons/bell1.wav");
+        }
     }
     
     // ExecuteForward(g_fwFinished, g_iReturn, id, iTime, record);
