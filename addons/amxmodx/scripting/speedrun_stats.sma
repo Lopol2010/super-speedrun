@@ -928,14 +928,18 @@ Forward_PlayerFinished(id)
             g_szCategory[category], LANG_PLAYER, "SR_TIME_FINISH", szName, szTime);
     }
 
-    if(g_ePlayerInfo[id][m_bBeep]) {
-        if(record)
+    for(new i = 1; i <= MaxClients; i++) 
+    {
+        if(g_ePlayerInfo[i][m_bBeep]) 
         {
-            rg_send_audio(0, "sound/buttons/bell1.wav");
-        }
-        else
-        {
-            rg_send_audio(0, "sound/buttons/bell1.wav");
+            if(record)
+            {
+                rg_send_audio(i, "sound/buttons/bell1.wav");
+            }
+            else
+            {
+                rg_send_audio(i, "sound/buttons/bell1.wav");
+            }
         }
     }
     
