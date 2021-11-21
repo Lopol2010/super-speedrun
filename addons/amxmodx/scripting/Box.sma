@@ -193,6 +193,7 @@ public cmdBoxRename(id, level, cid){
 
 public cmdBox(id, level, cid)
 {
+    client_print(id, print_chat, "%b", level);
     if(!cmd_access(id, level, cid, 1))
         return PLUGIN_HANDLED;
         

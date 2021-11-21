@@ -3,6 +3,7 @@
     - идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
 
     TODO:
+        - [ ] Сделать nobeep через меню
         - [ ] Сделать команды в say + say_team + не через слеш но и ! восклицательный знак.
         - [x] баг, если хукнуть и вернутся на /start то может сохранится скорость до 700, читерство такое
         - [ ] Выкачать скриптом всё (сначало skyboxes) отсуда https://en.ds-servers.com/goldsrc-res/
@@ -189,7 +190,8 @@ enum _:PlayerData
     m_bFinished,
     m_iPlayerIndex,
     Float:m_fStartRun,
-    m_bWasUseHook       // true if player used hook and until next respawn (by command or death)
+    m_bWasUseHook,       // true if player used hook and until next respawn (by command or death)
+    bool:m_bNoBeep
 };
 enum _:Cvars
 {
@@ -227,6 +229,7 @@ public plugin_init()
     g_pCvars[STATS_MOTD_URL] = register_cvar("speedrun_stats_url", "http://127.0.0.1:1337/stats");
     
     register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
+    register_clcmd("nobeep", "Command_NoBeep");
     register_clcmd("say /rank", "Command_Rank");
     register_clcmd("say /top15", "Command_Top15");
     register_clcmd("say /update", "Command_Update");
@@ -354,6 +357,13 @@ public plugin_cfg()
 public plugin_precache()
 {
 }
+
+public Command_NoBeep(id, level, cid)
+{
+    g_ePlayerInfo[id][m_bNoBeep] = !g_ePlayerInfo[id][m_bNoBeep];
+    client_print_color(id, print_team_red, "%s^1 finish beep is %s^1.", PREFIX, g_ePlayerInfo[id][m_bNoBeep] ? "^4on" : "^3off");
+}
+
 public Command_ClearTop(id, level, cid)
 {
     if(!cmd_access(id, level, cid, 0)) return PLUGIN_HANDLED;
@@ -703,6 +713,7 @@ public client_disconnected(id)
 {
     g_ePlayerInfo[id][m_bAuthorized] = false;
     g_ePlayerInfo[id][m_bConnected] = false;
+    g_ePlayerInfo[id][m_bNoBeep] = false;
 }
 
 public Engine_TouchFinish(ent, id)

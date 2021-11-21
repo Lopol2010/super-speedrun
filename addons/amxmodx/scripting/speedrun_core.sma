@@ -210,6 +210,8 @@ public plugin_cfg()
 
     if(containi(MapName, "speedrun") != -1) {
         set_cvar_num("sv_maxvelocity", 100000);
+    } else {
+        set_cvar_num("sv_maxvelocity", 2000);
     }
 
     // g_iMaxSpeed = max(get_cvar_num("sv_maxvelocity"), get_cvar_num("sv_maxspeed"));
