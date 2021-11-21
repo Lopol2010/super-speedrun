@@ -229,7 +229,7 @@ public plugin_init()
     g_pCvars[STATS_MOTD_URL] = register_cvar("speedrun_stats_url", "http://127.0.0.1:1337/stats");
     
     register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
-    register_clcmd("nobeep", "Command_NoBeep");
+    register_clcmd("toggle_beep", "Command_ToggleBeep");
     register_clcmd("say /rank", "Command_Rank");
     register_clcmd("say /top15", "Command_Top15");
     register_clcmd("say /update", "Command_Update");
@@ -268,8 +268,29 @@ public plugin_init()
 }
 public plugin_natives()
 {
+    register_native("sr_toggle_beep", "_sr_toggle_beep");
+    register_native("sr_is_beep_enabled", "_sr_is_beep_enabled");
+    register_native("sr_update_nickname", "_sr_update_nickname");
     register_native("sr_show_toplist", "_sr_show_toplist");
     register_native("sr_get_timer_display_text", "_sr_get_timer_display_text");
+}
+public _sr_is_beep_enabled(plugin, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    return g_ePlayerInfo[id][m_bBeep];
+}
+public _sr_toggle_beep(plugin, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    Command_ToggleBeep(id);
+}
+public _sr_update_nickname(plugin, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    Command_Update(id);
 }
 public _sr_get_timer_display_text(plugin, argc)
 {
@@ -358,7 +379,7 @@ public plugin_precache()
 {
 }
 
-public Command_NoBeep(id, level, cid)
+public Command_ToggleBeep(id)
 {
     g_ePlayerInfo[id][m_bBeep] = !g_ePlayerInfo[id][m_bBeep];
     client_print_color(id, print_team_red, "%s^1 finish beep is %s^1.", PREFIX, g_ePlayerInfo[id][m_bBeep] ? "^4on" : "^3off");

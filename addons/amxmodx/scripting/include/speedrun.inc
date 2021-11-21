@@ -19,8 +19,11 @@ forward SR_StartButtonPress(id);
 
 native main_menu_display(id);
 
+native sr_update_nickname(id);
 native sr_show_toplist(id);
 native sr_get_timer_display_text(id, text[] = "", len = 0);
+native sr_toggle_beep(id);
+native sr_is_beep_enabled(id);
 
 native is_hook_active(id);
 native is_hook_allowed(id);

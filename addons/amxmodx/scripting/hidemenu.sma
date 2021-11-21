@@ -150,19 +150,20 @@ public HideMenu(id)
 
     new msginvis[64], msgwaterinvis[64], msgwpninvis[64], msgspeclist[64]
     
-    formatex(msginvis, 63, "Players - %s",  gViewInvisible[id] ? "\yON" : "\rOFF" )
-    formatex(msgwpninvis, 63, "Weapon - %s", g_weaponHidden[id] ? "\yON" : "\rOFF" )
-    formatex(msgwaterinvis, 63, "Water - %s", gWaterInvisible[id] ? "\yON" : "\rOFF" )
+    formatex(msginvis, 63, "Players - %s",  !gViewInvisible[id] ? "\yON" : "\rOFF" )
+    formatex(msgwpninvis, 63, "Weapon - %s", !g_weaponHidden[id] ? "\yON" : "\rOFF" )
+    formatex(msgwaterinvis, 63, "Water - %s", !gWaterInvisible[id] ? "\yON" : "\rOFF" )
     formatex(msgspeclist, 63, "Spectators - %s", is_speclist_enabled(id) ? "\yON" : "\rOFF" )
-    
+
     menu_additem( g_menu, msginvis, "1" )
-    menu_additem( g_menu, msgwpninvis, "2" , .callback = callback)
+    menu_additem( g_menu, msgwpninvis, "2" , .callback = callback )
     menu_additem( g_menu, msgwaterinvis, "3" )
     menu_additem( g_menu, msgspeclist, "4" )
+    menu_additem( g_menu, fmt("Finish Beep - %s", sr_is_beep_enabled(id) ? "\yON" : "\rOFF" ), "5" )
     menu_addblank2( g_menu )
+    
+    menu_additem( g_menu, fmt("Update nickname in top"), "6" )
     menu_addblank2( g_menu )
-    menu_addblank2( g_menu )
-    menu_additem( g_menu, "Main menu", "8" )
     menu_addblank2( g_menu )
 
     menu_setprop( g_menu, MPROP_PERPAGE, 0 )
@@ -189,8 +190,9 @@ public HideMenu_Handler(id, menu, key)
 {
     if( key == MENU_EXIT )
     {
-        menu_destroy(menu)
-        return PLUGIN_HANDLED
+        // menu_destroy(menu)
+        // return PLUGIN_HANDLED
+        key = 7;
     }
     switch(key)
     {
@@ -209,6 +211,14 @@ public HideMenu_Handler(id, menu, key)
         case 3:
         {
             speclist_toggle(id)
+        }
+        case 4:
+        {
+            sr_toggle_beep(id)
+        }
+        case 5:
+        {
+            sr_update_nickname(id)
         }
         case 7:
         {
