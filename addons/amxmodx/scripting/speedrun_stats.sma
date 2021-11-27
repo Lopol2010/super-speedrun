@@ -899,6 +899,8 @@ StartTimer(id)
 {
     user_hook_enable(id, false);
     reset_checkpoints(id);
+    
+    g_ePlayerInfo[id][m_bTimerStarted] = true;
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_fStartRun] = _:get_gametime();
 }

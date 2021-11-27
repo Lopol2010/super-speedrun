@@ -9,6 +9,15 @@
             g_iCategoryRotateOrder[]
         2. toplist(nodejs): 
             add entry for list of categories (currently in stats.ts file)
+
+    metamod plugins currently installed on Super Speedrun:
+    linux addons/amxmodx/dlls/amxmodx_mm_i386.so
+    linux addons/reunion/reunion_mm_i386.so
+    linux addons/revoice/revoice_mm_i386.so
+    linux addons/resemiclip/resemiclip_mm_i386.so
+    linux addons/SafeNameAndChat/SafeNameAndChat.so
+    linux addons/resrdetector/resrdetector_mm_i386.so
+
 */
 #include <amxmodx>
 #include <engine>
