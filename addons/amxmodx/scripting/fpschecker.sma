@@ -23,14 +23,18 @@ public plugin_init()
 
 }
 
-enum fps_s {
+enum _:fps_s {
     warnings,
     num_cmds,
     msec_sum,
-    bool:record,
     Float: next_check,
     Float: fps,
+
+    bool:record,
+    Float: max_avg_fps,
+    Float: min_avg_fps,
 } 
+
 // this is for interval checks
 new fps_info[33][fps_s];
 // this is for recording total fps on period of time
@@ -59,6 +63,14 @@ public CmdStart(id, uc_handle)
         fps_record[id][num_cmds]++;
         fps_record[id][msec_sum] += get_uc(uc_handle, UC_Msec);
         fps_record[id][fps] = (fps_record[id][num_cmds] * 1000.0) / fps_record[id][msec_sum];
+        if(fps_record[id][fps] > fps_record[id][max_avg_fps])
+        {
+            fps_record[id][max_avg_fps] = fps_record[id][fps];
+        }
+        else if(fps_record[id][fps] < fps_record[id][min_avg_fps])
+        {
+            fps_record[id][min_avg_fps] = fps_record[id][fps];
+        }
     }
 }
 
@@ -81,10 +93,24 @@ public plugin_natives()
 {
     register_native("get_user_fps", "_get_user_fps");
     register_native("record_user_fps", "_record_user_fps");
-    register_native("get_recorded_user_fps", "_get_recorded_user_fps");
+    register_native("get_user_avg_fps", "_get_user_avg_fps");
+    register_native("get_user_max_avg_fps", "_get_user_max_avg_fps");
+    register_native("get_user_min_avg_fps", "_get_user_min_avg_fps");
 }
 
-public Float:_get_recorded_user_fps(plugin, argc)
+public Float:_get_user_min_avg_fps(plugin, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    return fps_record[id][min_avg_fps];
+}
+public Float:_get_user_max_avg_fps(plugin, argc)
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    return fps_record[id][max_avg_fps];
+}
+public Float:_get_user_avg_fps(plugin, argc)
 {
     enum { arg_id = 1 }
     new id = get_param(arg_id);
@@ -100,6 +126,8 @@ public _record_user_fps(plugin, argc)
     {
         fps_record[id][num_cmds] = 0;
         fps_record[id][msec_sum] = 0;
+        fps_record[id][max_avg_fps] = 0.0;
+        fps_record[id][min_avg_fps] = 1_000_000_000.0;
     }
 }
 

@@ -899,6 +899,7 @@ StartTimer(id)
 {
     user_hook_enable(id, false);
     reset_checkpoints(id);
+    record_user_fps(id, true);
     
     g_ePlayerInfo[id][m_bTimerStarted] = true;
     g_ePlayerInfo[id][m_bFinished] = false;
@@ -908,6 +909,7 @@ StartTimer(id)
 Forward_PlayerFinished(id)
 {
     g_ePlayerInfo[id][m_bFinished] = true;
+    record_user_fps(id, false);
     
     new record = false;
     new iTime = get_running_time(id);
