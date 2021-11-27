@@ -186,16 +186,15 @@ public HideMenu_ItemsCallback(id, menu, item)
     //     return ITEM_DISABLED
     return ITEM_IGNORE
 }
-public HideMenu_Handler(id, menu, key)
+public HideMenu_Handler(id, menu, item)
 {
-    if( key == MENU_EXIT )
+    if( item == MENU_EXIT )
     {
-        // menu_destroy(menu)
-        // return PLUGIN_HANDLED
-        key = 7;
+        main_menu_display(id)
+        return PLUGIN_HANDLED
     }
     new cmd[3];
-    menu_item_getinfo(menu, key, _, cmd, 2);
+    menu_item_getinfo(menu, item, _, cmd, 2);
     new key = str_to_num(cmd);
     switch(key)
     {
@@ -222,11 +221,6 @@ public HideMenu_Handler(id, menu, key)
         case 5:
         {
             sr_update_nickname(id)
-        }
-        case 7:
-        {
-            main_menu_display(id)
-            return PLUGIN_HANDLED
         }
     }
     HideMenu(id)
