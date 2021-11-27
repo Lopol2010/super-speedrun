@@ -239,7 +239,6 @@ public plugin_init()
     RegisterHookChain(RG_CBasePlayer_Jump, "HC_CheckStartTimer", false);
     RegisterHookChain(RG_CBasePlayer_Duck, "HC_CheckStartTimer", false);
     RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
- Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
     RegisterHam( Ham_Use, "func_button", "fwdUse", 0);
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
@@ -474,7 +473,7 @@ SQL_Init()<sqlite>
             ip		TEXT 	NOT NULL, \
             nationality	TEXT 	NULL)");
     
-    SQL_ThreadQuery(g_hTuple, "Query_I Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)ngnoredHandle", g_szQuery);
+    SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
     
     formatex(g_szQuery, charsmax(g_szQuery),
             "CREATE TABLE IF NOT EXISTS `maps`( \
@@ -900,8 +899,6 @@ StartTimer(id)
 {
     user_hook_enable(id, false);
     reset_checkpoints(id);
-    
-    g_ePlayerInfo[id][m_bTimerStarted] = true;
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_fStartRun] = _:get_gametime();
 }
