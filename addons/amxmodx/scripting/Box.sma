@@ -120,27 +120,27 @@ public plugin_cfg()
     BOX_Load();
 }
 
-public log_arrays()
-{
-    log_amx("TRIE SIZE: %d", TrieGetSize(ghTouches));
-    new Array:hArray, TrieIter:it;
-    it = TrieIterCreate(ghTouches);
-    while(!TrieIterEnded(it))
-    {
-        if(TrieIterGetCell(it, hArray))
-        {
-            log_amx("ARRAY SIZE: %d", ArraySize(hArray));
-        }
-        TrieIterNext(it);
-    }
-    TrieIterDestroy(it);
-}
+// public log_arrays()
+// {
+//     log_amx("TRIE SIZE: %d", TrieGetSize(ghTouches));
+//     new Array:hArray, TrieIter:it;
+//     it = TrieIterCreate(ghTouches);
+//     while(!TrieIterEnded(it))
+//     {
+//         if(TrieIterGetCell(it, hArray))
+//         {
+//             log_amx("ARRAY SIZE: %d", ArraySize(hArray));
+//         }
+//         TrieIterNext(it);
+//     }
+//     TrieIterDestroy(it);
+// }
 
 public plugin_end()
 {
     BOX_Save();
 
-    log_arrays();
+    // log_arrays();
     new Array:hArray, TrieIter:it;
     it = TrieIterCreate(ghTouches);
     while(!TrieIterEnded(it))
