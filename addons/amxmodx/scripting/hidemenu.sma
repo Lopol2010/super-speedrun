@@ -155,14 +155,14 @@ public HideMenu(id)
     formatex(msgwaterinvis, 63, "Water - %s", !gWaterInvisible[id] ? "\yON" : "\rOFF" )
     formatex(msgspeclist, 63, "Spectators - %s", is_speclist_enabled(id) ? "\yON" : "\rOFF" )
 
-    menu_additem( g_menu, msginvis, "1" )
-    menu_additem( g_menu, msgwpninvis, "2" , .callback = callback )
-    menu_additem( g_menu, msgwaterinvis, "3" )
-    menu_additem( g_menu, msgspeclist, "4" )
-    menu_additem( g_menu, fmt("Finish Beep - %s", sr_is_beep_enabled(id) ? "\yON" : "\rOFF" ), "5" )
+    menu_additem( g_menu, msginvis, "0" )
+    menu_additem( g_menu, msgwpninvis, "1" , .callback = callback )
+    menu_additem( g_menu, msgwaterinvis, "2" )
+    menu_additem( g_menu, msgspeclist, "3" )
+    menu_additem( g_menu, fmt("Finish Beep - %s", sr_is_beep_enabled(id) ? "\yON" : "\rOFF" ), "4" )
     menu_addblank2( g_menu )
     
-    menu_additem( g_menu, fmt("Update nickname in top"), "6" )
+    menu_additem( g_menu, fmt("Update nickname in top"), "5" )
     menu_addblank2( g_menu )
     menu_addblank2( g_menu )
 
@@ -194,6 +194,9 @@ public HideMenu_Handler(id, menu, key)
         // return PLUGIN_HANDLED
         key = 7;
     }
+    new cmd[3];
+    menu_item_getinfo(menu, key, _, cmd, 2);
+    new key = str_to_num(cmd);
     switch(key)
     {
         case 0: 

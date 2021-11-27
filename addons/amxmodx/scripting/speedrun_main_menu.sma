@@ -117,7 +117,7 @@ public Menu_Handler(id, menu, item)
     if(item < 0) return PLUGIN_CONTINUE;
 
     new cmd[3];
-    menu_item_getinfo(menu, item, _, cmd,2);
+    menu_item_getinfo(menu, item, _, cmd, 2);
     new key = str_to_num(cmd);
     switch(key)
     {

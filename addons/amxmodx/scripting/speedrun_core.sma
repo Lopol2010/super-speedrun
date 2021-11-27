@@ -94,7 +94,6 @@ public plugin_init()
     register_clcmd("say /save", "Command_SaveMenu");
     register_clcmd("drop", "Command_CategoryMenu");
 
-
     register_menucmd(register_menuid("CategoryMenu"), 1023, "CategoryMenu_Handler");
     register_menucmd(register_menuid("SpeedrunMenu"), 1023, "SpeedrunMenu_Handler");
     register_menucmd(register_menuid("SaveMenu"), 1023, "SaveMenu_Handler");

@@ -3,7 +3,8 @@
     - идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
 
     TODO:
-        - [ ] Сделать nobeep через меню
+        - [ ] Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
+        - [x] Сделать nobeep через меню
         - [ ] Сделать команды в say + say_team + не через слеш но и ! восклицательный знак.
         - [x] баг, если хукнуть и вернутся на /start то может сохранится скорость до 700, читерство такое
         - [ ] Выкачать скриптом всё (сначало skyboxes) отсуда https://en.ds-servers.com/goldsrc-res/
@@ -165,6 +166,7 @@
 #include <box_system>
 #include <checkpoints>
 #include <speedrun>
+#include <fpschecker>
 #include <hidemenu>
 #include <beams>
 #pragma loadlib sqlite
@@ -237,7 +239,7 @@ public plugin_init()
     RegisterHookChain(RG_CBasePlayer_Jump, "HC_CheckStartTimer", false);
     RegisterHookChain(RG_CBasePlayer_Duck, "HC_CheckStartTimer", false);
     RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
-
+ Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
     RegisterHam( Ham_Use, "func_button", "fwdUse", 0);
     
     g_fwFinished = CreateMultiForward("SR_PlayerFinishedMap", ET_IGNORE, FP_CELL, FP_CELL, FP_CELL);
@@ -472,7 +474,7 @@ SQL_Init()<sqlite>
             ip		TEXT 	NOT NULL, \
             nationality	TEXT 	NULL)");
     
-    SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
+    SQL_ThreadQuery(g_hTuple, "Query_I Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)ngnoredHandle", g_szQuery);
     
     formatex(g_szQuery, charsmax(g_szQuery),
             "CREATE TABLE IF NOT EXISTS `maps`( \
