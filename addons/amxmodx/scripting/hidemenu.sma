@@ -92,6 +92,7 @@ public plugin_init()
 //	g_cvarDrawCross = register_cvar("amx_hud_draw_newcross", "0")
 
     HudApplyCVars()
+    register_dictionary("speedrun.txt");
 } 
 
 public plugin_cfg()
@@ -145,27 +146,19 @@ public plugin_natives()
 }
 public HideMenu(id)
 {
-    new g_menu = menu_create("Settings", "HideMenu_Handler");
-    new callback = menu_makecallback("HideMenu_ItemsCallback")
+    new g_menu = menu_create(fmt("%L", id, "SR_SET_MENU_TITLE"), "HideMenu_Handler");
 
-    new msginvis[64], msgwaterinvis[64], msgwpninvis[64], msgspeclist[64]
-    
-    formatex(msginvis, 63, "Players - %s",  !gViewInvisible[id] ? "\yON" : "\rOFF" )
-    formatex(msgwpninvis, 63, "Weapon - %s", !g_weaponHidden[id] ? "\yON" : "\rOFF" )
-    formatex(msgwaterinvis, 63, "Water - %s", !gWaterInvisible[id] ? "\yON" : "\rOFF" )
-    formatex(msgspeclist, 63, "Spectators - %s", is_speclist_enabled(id) ? "\yON" : "\rOFF" )
-
-    menu_additem( g_menu, msginvis, "0" )
-    menu_additem( g_menu, msgwpninvis, "1" , .callback = callback )
-    menu_additem( g_menu, msgwaterinvis, "2" )
-    menu_additem( g_menu, msgspeclist, "3" )
+    menu_additem( g_menu, fmt("%L - %L", id, "SR_SET_MENU_PLAYERS", id, !gViewInvisible[id] ? "SR_SET_MENU_VISIBLE" : "SR_SET_MENU_HIDDEN"), "0" )
+    menu_additem( g_menu, fmt("%L - %L", id, "SR_SET_MENU_WEAPON", id, !g_weaponHidden[id] ? "SR_SET_MENU_VISIBLE" : "SR_SET_MENU_HIDDEN"), "1" )
+    menu_additem( g_menu, fmt("%L - %L", id, "SR_SET_MENU_WATER", id, !gWaterInvisible[id] ? "SR_SET_MENU_VISIBLE" : "SR_SET_MENU_HIDDEN"), "2" )
+    menu_additem( g_menu, fmt("%L - %L", id, "SR_SET_MENU_SPEC", id, is_speclist_enabled(id) ? "SR_SET_MENU_VISIBLE" : "SR_SET_MENU_HIDDEN"), "3" )
     menu_addblank( g_menu, 0 )
-    menu_additem( g_menu, fmt("Finish Beep - %s", sr_is_beep_enabled(id) ? "\yON" : "\rOFF" ), "4" )
-    menu_additem( g_menu, fmt("Hook menu"), "6" )
+    menu_additem( g_menu, fmt("%L - %L", id, "SR_SET_MENU_BEEP", id, sr_is_beep_enabled(id) ? "SR_SET_MENU_VISIBLE" : "SR_SET_MENU_HIDDEN"), "4" )
+    menu_additem( g_menu, fmt("%L", id, "SR_SET_MENU_HOOKMENU"), "6" )
     // menu_addblank2( g_menu )
     menu_addblank( g_menu, 0 )
     
-    menu_additem( g_menu, fmt("Update nickname in top"), "5" )
+    menu_additem( g_menu, fmt("%L", id, "SR_SET_MENU_UPDATE"), "5" )
     menu_addblank2( g_menu )
     menu_addblank2( g_menu )
 
@@ -183,12 +176,7 @@ public client_disconnected(id)
     gWaterInvisible[id] = false
     g_viewmodel[id] = ""
 }
-public HideMenu_ItemsCallback(id, menu, item)
-{
-    // if(item == 1)
-    //     return ITEM_DISABLED
-    return ITEM_IGNORE
-}
+
 public HideMenu_Handler(id, menu, item)
 {
     if( item == MENU_EXIT )

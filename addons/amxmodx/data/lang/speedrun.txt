@@ -17,16 +17,25 @@ SR_TIME_WR_FIRST = ^3%s^1 финишировал за ^3%s^1 и установи
 SR_TIME_WR_BY = ^3%s^1 Побил рекорд карты на ^4%s
 
 SR_HOOK_MENU_TITLE = Настройки паутинки
-
 SR_HOOK_SPEED = Скорость: \y%L\w
 SR_HOOK_SPEED_SLOW = Медленная
 SR_HOOK_SPEED_MID = Средняя
 SR_HOOK_SPEED_FAST = Быстрая
 SR_HOOK_SPEED_MAX = Максимальная
-
 SR_HOOK_SPRITE = Вид: \y%L\w
 SR_HOOK_SPRITE_DEFAULT = Обычный
 SR_HOOK_SPRITE_SUPER = Полосатый
+
+SR_SET_MENU_TITLE = Настройки
+SR_SET_MENU_VISIBLE = \yВКЛ
+SR_SET_MENU_HIDDEN = \rВЫКЛ
+SR_SET_MENU_PLAYERS = Игроки
+SR_SET_MENU_WEAPON = Оружие
+SR_SET_MENU_WATER = Вода
+SR_SET_MENU_SPEC = Наблюдатели
+SR_SET_MENU_BEEP = Звонок финиша
+SR_SET_MENU_HOOKMENU = Настройки хука
+SR_SET_MENU_UPDATE = Обновить ник в топе
 
 [en]
 SR_MENU_CHECKPOINT = Checkpoint
