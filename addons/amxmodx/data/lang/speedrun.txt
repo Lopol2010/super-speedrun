@@ -33,7 +33,7 @@ SR_SET_MENU_PLAYERS = Игроки
 SR_SET_MENU_WEAPON = Оружие
 SR_SET_MENU_WATER = Вода
 SR_SET_MENU_SPEC = Наблюдатели
-SR_SET_MENU_BEEP = Звонок финиша
+SR_SET_MENU_BEEP = Звук финиша
 SR_SET_MENU_HOOKMENU = Настроить паутинку
 SR_SET_MENU_UPDATE = Обновить ник в топе
 
