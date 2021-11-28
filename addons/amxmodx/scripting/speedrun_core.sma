@@ -78,6 +78,7 @@ new g_fwOnStart;
 new g_iReturn;
 new Float:g_fSavedOrigin[33][3], Float:g_fSavedVAngles[33][3], g_iSavedDuck[33], Float: g_fNextFpsCheck[33];
 new Trie:g_tRemoveEntities, g_iForwardSpawn;
+new Float:fCmdStartNextUpdate;
 
 public plugin_init()
 {
@@ -118,6 +119,7 @@ public plugin_init()
     RegisterHookChain(RG_CSGameRules_DeadPlayerWeapons, "HC_CSGR_DeadPlayerWeapons_Pre", false);
     RegisterHookChain(RG_CBasePlayer_Observer_SetMode, "HC_CBasePlayer_Observer_SetMode", 0);
 
+    register_forward(FM_CmdStart, "CmdStart");
     register_forward(FM_ClientKill, "FM_ClientKill_Pre", false);
 
     // RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
@@ -764,8 +766,53 @@ public HC_CBasePlayer_Jump_Pre(id)
 
     return HC_CONTINUE;
 }
+
+public CmdStart(id, ucHandle)
+{
+    if(get_member(id, m_iTeam) != TEAM_SPECTATOR) {
+        return FMRES_IGNORED;
+    }
+
+    if(fCmdStartNextUpdate <= get_gametime()) {
+        fCmdStartNextUpdate = get_gametime() + 0.01;
+    } else {
+        return FMRES_IGNORED;
+    }
+
+    static Float:fForward, Float:fSide;
+    get_ucmd( ucHandle, ucmd_forwardmove, fForward );
+    get_ucmd( ucHandle, ucmd_sidemove, fSide );
+    
+    if( fForward == 0.0 && fSide == 0.0 ) {
+        return FMRES_IGNORED;
+    }
+
+    static Float:fMaxSpeed;
+    pev( id, pev_maxspeed, fMaxSpeed );
+    
+    new Float:fWalkSpeed = fMaxSpeed * 0.32;
+    if( floatabs( fForward ) <= fWalkSpeed
+    && floatabs( fSide ) <= fWalkSpeed ) {
+        static Float:vOrigin[ 3 ];
+        pev( id, pev_origin, vOrigin );
+        
+        static Float:vAngle[ 3 ];
+        pev( id, pev_v_angle, vAngle );
+        engfunc( EngFunc_MakeVectors, vAngle );
+        global_get( glb_v_forward, vAngle );
+        
+        vOrigin[ 0 ] += ( vAngle[ 0 ] * 22.0 );
+        vOrigin[ 1 ] += ( vAngle[ 1 ] * 22.0 );
+        vOrigin[ 2 ] += ( vAngle[ 2 ] * 22.0 );
+        
+        engfunc( EngFunc_SetOrigin, id, vOrigin );
+    }
+    return FMRES_IGNORED;
+}
+
 public HC_PM_AirMove_Pre(id)
 {
+    // not used since fastrun is blocked
     if(g_ePlayerInfo[id][m_iCategory] != Cat_FastRun) return HC_CONTINUE;
 
     static bFastRun[33];
