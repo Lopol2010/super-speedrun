@@ -4,7 +4,7 @@
 #define _speedrun_const_included
 
 stock const PREFIX[] = "^4[^1Super Speedrun^4]^1";
-stock const MENU_VERSION[] = "\rv1.1-beta";
+stock const MENU_VERSION[] = "\rv1.2-beta";
 
 stock const g_szCategory[][] = 
 {
