@@ -145,7 +145,7 @@ public plugin_natives()
 }
 public HideMenu(id)
 {
-    new g_menu = menu_create("Hide Menu", "HideMenu_Handler");
+    new g_menu = menu_create("Settings", "HideMenu_Handler");
     new callback = menu_makecallback("HideMenu_ItemsCallback")
 
     new msginvis[64], msgwaterinvis[64], msgwpninvis[64], msgspeclist[64]
@@ -159,8 +159,11 @@ public HideMenu(id)
     menu_additem( g_menu, msgwpninvis, "1" , .callback = callback )
     menu_additem( g_menu, msgwaterinvis, "2" )
     menu_additem( g_menu, msgspeclist, "3" )
+    menu_addblank( g_menu, 0 )
     menu_additem( g_menu, fmt("Finish Beep - %s", sr_is_beep_enabled(id) ? "\yON" : "\rOFF" ), "4" )
-    menu_addblank2( g_menu )
+    menu_additem( g_menu, fmt("Hook menu"), "6" )
+    // menu_addblank2( g_menu )
+    menu_addblank( g_menu, 0 )
     
     menu_additem( g_menu, fmt("Update nickname in top"), "5" )
     menu_addblank2( g_menu )
@@ -221,6 +224,11 @@ public HideMenu_Handler(id, menu, item)
         case 5:
         {
             sr_update_nickname(id)
+        }
+        case 6:
+        {
+            hook_menu_display(id)
+            return PLUGIN_HANDLED
         }
     }
     HideMenu(id)

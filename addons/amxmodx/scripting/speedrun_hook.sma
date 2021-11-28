@@ -81,6 +81,7 @@ public plugin_precache()
 
 public plugin_natives()
 {
+    register_native("hook_menu_display", "_hook_menu_display");
     register_native("is_hook_active", "_is_hook_active", 1);
     register_native("is_hook_allowed", "_is_hook_allowed", 1);
     register_native("user_hook_enable", "_user_hook_enable", 1);
@@ -156,6 +157,12 @@ public bool:_is_time_after_hook_passed(id, Float:time)
 {
     // server_print("%f %f %f", g_fLastTimeHook[id], get_gametime(), (get_gametime() - g_fLastTimeHook[id]))
     return g_fLastTimeHook[id] < 0.0 ? true : ((get_gametime() - g_fLastTimeHook[id]) >= time)
+}
+public _hook_menu_display()
+{
+    enum { arg_id = 1 }
+    new id = get_param(arg_id);
+    Command_Menu(id);
 }
 public _is_hook_active(id)
 {

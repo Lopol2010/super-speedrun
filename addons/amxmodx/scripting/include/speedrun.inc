@@ -25,6 +25,7 @@ native sr_get_timer_display_text(id, text[] = "", len = 0);
 native sr_toggle_beep(id);
 native sr_is_beep_enabled(id);
 
+native hook_menu_display(id);
 native is_hook_active(id);
 native is_hook_allowed(id);
 /* native give_hook(id); */

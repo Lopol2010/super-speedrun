@@ -43,7 +43,7 @@
         - [ ] Multilang for remaining client_prints: in hidemenu and core and stats, also in hidemenu add message when water not found
         - [ ] Bind 2k category's speed to knife alike low gravity 
         - [ ] Ночное видиние так же видят спектры
-        - [ ] Ограничение скорости убрать? наверно только для спидран карт, щас нашел карту непроходимую на 2к скорости, speedrun_den вроде одна из таких
+        - [x] Ограничение скорости убрать? наверно только для спидран карт, щас нашел карту непроходимую на 2к скорости, speedrun_den вроде одна из таких
         - [ ] Allow map change when 2 players afk and third player says rtv, so need kind of AFK-detector
         - [ ] Add world record bot (do a research on that, https://dev-cs.ru/resources/142/) (also check this file, or whole repo https://github.com/skyrim/qmxx/blob/master/scripting/q_kz_ghost.sma)
         - [ ] Allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
@@ -51,18 +51,15 @@
         - [ ] Allow use /save menu for maps with buttons
         - [ ] Проверить список плагинов amxmodx в утилите hlds_loader похоже много полезного
         - [ ] На некоторых картах игроки не могут двигать прямо на спавне, либо могут но есть невидимые стены которых быть не должно.
-                Одна такая карта mrcn_bom, невидимые стены на старте. После жесткой перезагрузки, проблема исправилась.
-                из-за BlockSpawnTriggerPush()
-                надо сделать жесткую перезагрузку раз в день, причем только в случае когда 0 игроков на сервере, 
-                и желательно возвращать ту карту которая была до рестарта.
                 (похоже что это баг rehlds https://github.com/dreamstalker/rehlds/issues/852)
+                * Решение видимо найдено, там сказали надо форсировать спрайтам нулевый размер.
         - [ ] (removed map) L 31/05/2021 - 15:01:57: (map "speedrun_action") CalcSurfaceExtents: Bad surface extents
         - [ ] (removed map) L 31/05/2021 - 14:51:56: (map "speedrun_omg") TEX_InitFromWad: couldn't open srhelvis.wad
         - [ ] (removed)speedrun_4lunch разобратся (крашит клиент с ошбикой allocblock full)
         - [ ] (removed) speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
         - [ ] (removed)speedrun_around сломано освещение
         - [ ] (removed map) speedrun_CrazySpeed! (miss aaacredits.wad)
-        - [ ] После телепорта если жать A или D то вектор скорость не вперед, даже если смотришь вперед, пример карта fu_replayhop (нормальое решение не найдено даже с помощью форума)
+        - [ ] После телепорта если жать A или D то вектор скорость не вперёд, даже если смотришь вперёд, пример карта fu_replayhop (нормальое решение не найдено даже с помощью форума)
         - [ ] box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
         - [ ] Потестировать, возможно с помощью ClearSyncHud можно сделать не мерцающий hud, хотя и сейчас не мерцает 
         - [x] На bhop_arizonabhop касаясь змеи игрок сразу респавнится, но должен лишь получать урон, а респавнится только когда жизней стало <=0
@@ -425,6 +422,7 @@ public Command_Update(id)
     
     new szName[MAX_NAME_LENGTH * 3]; get_user_name(id, szName, charsmax(szName)); SQL_PrepareString(szName, szName, charsmax(szName));
     formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `runners` SET nickname = '%s' WHERE id=%d", szName, g_ePlayerInfo[id][m_iPlayerIndex]);
+    client_print_color(id, print_team_default, "%s^1 Your nickname in top should be updated to ^4%n^1.", PREFIX, id);
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
     
