@@ -17,7 +17,7 @@ SR_TIME_WR_FIRST = ^3%s^1 финишировал за ^3%s^1 и установи
 SR_TIME_WR_BY = ^3%s^1 Побил рекорд карты на ^4%s
 
 SR_HOOK_MENU_TITLE = Настройки паутинки
-SR_HOOK_SPEED = Скорость: \y%L\w
+SR_HOOK_SPEED = Скорость: \y%0.f\w
 SR_HOOK_SPEED_SLOW = Медленная
 SR_HOOK_SPEED_MID = Средняя
 SR_HOOK_SPEED_FAST = Быстрая
@@ -56,7 +56,7 @@ SR_TIME_WR_FIRST = ^3%s^1 finish in ^3%s^1 and set a map record!
 SR_TIME_WR_BY = ^3%s^1 and broke map record by ^4%s
 
 SR_HOOK_MENU_TITLE = Hook settings
-SR_HOOK_SPEED = Speed: \y%L\w
+SR_HOOK_SPEED = Speed: \y%0.f\w
 SR_HOOK_SPEED_SLOW = Slow
 SR_HOOK_SPEED_MID = Average
 SR_HOOK_SPEED_FAST = Fast
@@ -95,7 +95,7 @@ SR_TIME_WR_FIRST = ^3%s^1 ukończone w^3%s^1 i ustaw rekord mapy!
 SR_TIME_WR_BY = ^ 3%s^1 Pobił rekord karty o ^4%s
 
 SR_HOOK_MENU_TITLE = Ustawienia Spiderweb
-SR_HOOK_SPEED = Prędkość: \y%L \w
+SR_HOOK_SPEED = Prędkość: \y%0.f\w
 SR_HOOK_SPEED_SLOW = Wolno
 SR_HOOK_SPEED_MID = Średnia
 SR_HOOK_SPEED_FAST = Szybko

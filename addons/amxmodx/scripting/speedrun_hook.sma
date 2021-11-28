@@ -12,7 +12,6 @@
 enum _:SpeedOptions { Name[32], Float:Velocity };
 new SPEED_OPTIONS[][SpeedOptions] = 
 {
-    { "SR_HOOK_SPEED_SLOW", 600.0 },
     { "SR_HOOK_SPEED_MID",  800.0 },
     { "SR_HOOK_SPEED_FAST", 1200.0 },
     { "SR_HOOK_SPEED_MAX",  2000.0 },
@@ -95,7 +94,7 @@ public client_disconnected(id)
 
 public ResetCachedSettings(id)
 {
-    g_ePlayerSettings[id][m_iSpeedOption] = 1;
+    g_ePlayerSettings[id][m_iSpeedOption] = 0;
     g_ePlayerSettings[id][m_iSpriteOption] = 0;
 
     g_fHookSpeed[id] = speed_option(id, Velocity);
@@ -110,7 +109,7 @@ public Command_Menu(id)
 
     new menu = menu_create(fmt("\w%L", id, "SR_HOOK_MENU_TITLE"), "Menu_Handler");
 
-    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPEED", id, speed_option(id, Name));
+    formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPEED", speed_option(id, Velocity));
     menu_additem(menu, szMenu, "0");
 
     formatex(szMenu, charsmax(szMenu), "%L", id, "SR_HOOK_SPRITE", id, sprite_option(id, Name));
