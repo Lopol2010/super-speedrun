@@ -4,12 +4,17 @@ LANG_MENU_CURRENT = Current
 LANG_MENU_CANCEL = Cancel
 LANG_MENU_SAVED = %s Your language was saved.
 
-
 [ru]
 LANG_MENU_TITLE = Выберите Язык \y/lang
 LANG_MENU_CURRENT = Текущий
 LANG_MENU_CANCEL = Отмена
 LANG_MENU_SAVED = %s Ваш язык был сохранен.
+
+[pl]
+LANG_MENU_TITLE = Wybierz język \y/lang
+LANG_MENU_CURRENT = Bieżący
+LANG_MENU_CANCEL = Anuluj
+LANG_MENU_SAVED = %s Twój język został zapisany
 
 [ua]
 LANG_MENU_TITLE = Виберіть Мову \y/lang

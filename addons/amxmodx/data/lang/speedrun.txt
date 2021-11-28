@@ -34,7 +34,7 @@ SR_SET_MENU_WEAPON = Оружие
 SR_SET_MENU_WATER = Вода
 SR_SET_MENU_SPEC = Наблюдатели
 SR_SET_MENU_BEEP = Звонок финиша
-SR_SET_MENU_HOOKMENU = Настройки паутинки
+SR_SET_MENU_HOOKMENU = Настроить паутинку
 SR_SET_MENU_UPDATE = Обновить ник в топе
 
 [en]
@@ -75,3 +75,42 @@ SR_SET_MENU_SPEC = Spectators
 SR_SET_MENU_BEEP = Finish beep
 SR_SET_MENU_HOOKMENU = Hook settings
 SR_SET_MENU_UPDATE = Update nick in top
+
+[pl]
+SR_MENU_CHECKPOINT = Zapisz pozycję
+SR_MENU_GOCHECK = Załaduj pozycję
+SR_MENU_CATEGORY = Kategoria
+SR_MENU_RESTART = Uruchom ponownie
+SR_MENU_STATISTICS = Statystyki
+SR_MENU_FPS = Ustawienia
+SR_MENU_SPEC = Do obserwatorów
+SR_MENU_JOINCT = Powrót do gry
+SR_MENU_CONTACT = Kontakty
+SR_MENU_CLOSE = Zamknij
+SR_MENU_FEEDBACK = Czat zaczynający się od ^4@^1, aby wysłać list do administracji
+SR_MENU_TELEGRAM = Lub napisz bezpośrednio do telegramu
+
+SR_TIME_FINISH = ^3%s^1 ukończone za ^3%s
+SR_TIME_WR_FIRST = ^3%s^1 ukończone w^3%s^1 i ustaw rekord mapy!
+SR_TIME_WR_BY = ^ 3%s^1 Pobił rekord karty o ^4%s
+
+SR_HOOK_MENU_TITLE = Ustawienia Spiderweb
+SR_HOOK_SPEED = Prędkość: \y%L \w
+SR_HOOK_SPEED_SLOW = Wolno
+SR_HOOK_SPEED_MID = Średnia
+SR_HOOK_SPEED_FAST = Szybko
+SR_HOOK_SPEED_MAX = Maksimum
+SR_HOOK_SPRITE = Widok: \y%L \w
+SR_HOOK_SPRITE_DEFAULT = Normalny
+SR_HOOK_SPRITE_SUPER = Paski
+
+SR_SET_MENU_TITLE = Ustawienia
+SR_SET_MENU_VISIBLE = \yon
+SR_SET_MENU_HIDDEN = \roff
+SR_SET_MENU_PLAYERS = Gracze
+SR_SET_MENU_WEAPON = Broń
+SR_SET_MENU_WATER = Woda
+SR_SET_MENU_SPEC = Obserwatorzy
+SR_SET_MENU_BEEP = Zakończ połączenie
+SR_SET_MENU_HOOKMENU = Dostosuj sieć
+SR_SET_MENU_UPDATE = Zaktualizuj pseudonim na górze
