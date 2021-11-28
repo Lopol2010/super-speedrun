@@ -34,7 +34,7 @@ SR_SET_MENU_WEAPON = Оружие
 SR_SET_MENU_WATER = Вода
 SR_SET_MENU_SPEC = Наблюдатели
 SR_SET_MENU_BEEP = Звонок финиша
-SR_SET_MENU_HOOKMENU = Настройки хука
+SR_SET_MENU_HOOKMENU = Настройки паутинки
 SR_SET_MENU_UPDATE = Обновить ник в топе
 
 [en]
@@ -56,13 +56,22 @@ SR_TIME_WR_FIRST = ^3%s^1 finish in ^3%s^1 and set a map record!
 SR_TIME_WR_BY = ^3%s^1 and broke map record by ^4%s
 
 SR_HOOK_MENU_TITLE = Hook settings
-
 SR_HOOK_SPEED = Speed: \y%L\w
 SR_HOOK_SPEED_SLOW = Slow
 SR_HOOK_SPEED_MID = Average
 SR_HOOK_SPEED_FAST = Fast
 SR_HOOK_SPEED_MAX = Fastest
-
 SR_HOOK_SPRITE = Look: \y%L\w
 SR_HOOK_SPRITE_DEFAULT = Common
 SR_HOOK_SPRITE_SUPER = Zebra
+
+SR_SET_MENU_TITLE = Settings
+SR_SET_MENU_VISIBLE = \yON
+SR_SET_MENU_HIDDEN = \rOFF
+SR_SET_MENU_PLAYERS = Players
+SR_SET_MENU_WEAPON = Weapon
+SR_SET_MENU_WATER = Water
+SR_SET_MENU_SPEC = Spectators
+SR_SET_MENU_BEEP = Finish beep
+SR_SET_MENU_HOOKMENU = Hook settings
+SR_SET_MENU_UPDATE = Update nick in top
