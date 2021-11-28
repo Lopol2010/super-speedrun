@@ -164,7 +164,7 @@ public HideMenu(id)
 
     menu_setprop( g_menu, MPROP_PERPAGE, 0 )
 	menu_setprop( g_menu, MPROP_EXIT, MEXIT_FORCE )
-	// menu_setprop( g_menu, MPROP_EXITNAME, "Exit" )
+	menu_setprop( g_menu, MPROP_EXITNAME, fmt("%L", id, "SR_MENU_CLOSE") )
     menu_display( id, g_menu )
     return PLUGIN_HANDLED
 }
