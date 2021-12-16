@@ -3,6 +3,14 @@
     - идея для паблика: фан сервер с багами которые сделанны специально, использывание hitbox_tracker, баг граната взрывается несколько раз
 
     TODO:
+    
+        finish 'isCheater' thing, need to manage g_IbestTime and g_IBestTimeOfMap
+        change database to add isCheater column manually:
+        ALTER TABLE runners ADD isCheater INTEGER NOT NULL;
+        ALTER TABLE results ADD isCheated INTEGER NOT NULL;
+
+        - [ ] При респавне так как идёт телепорт а не смерть то эффекты типа гравитации остаются
+        - [ ] При респавне сбрасывается ночное виденье
         - [ ] Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
         - [x] Сделать nobeep через меню
         - [ ] Сделать команды в say + say_team + не через слеш но и ! восклицательный знак. (пример реализации в speedrun_hook)
@@ -187,6 +195,7 @@ enum _:PlayerData
     m_bTimerStarted,
     m_bFinished,
     m_iPlayerIndex,
+    bool:m_bCheater,
     Float:m_fStartRun,
     m_bWasUseHook,       // true if player used hook and until next respawn (by command or death)
     bool:m_bBeep
@@ -225,6 +234,9 @@ public plugin_init()
     g_pCvars[SQL_PASSWORD] = register_cvar("speedrun_password", "root");
     g_pCvars[SQL_DATABASE] = register_cvar("speedrun_database", "speedrun_stats.db");
     g_pCvars[STATS_MOTD_URL] = register_cvar("speedrun_stats_url", "http://127.0.0.1:1337/stats");
+    
+    register_concmd("cheater", "Command_ToggleCheater", ADMIN_LEVEL_H);
+    register_concmd("pids", "Command_ListPlayerIndexes", ADMIN_LEVEL_H);
     
     register_clcmd("cleartop", "Command_ClearTop", ADMIN_CFG);
     register_clcmd("toggle_beep", "Command_ToggleBeep");
@@ -382,6 +394,70 @@ public Command_ToggleBeep(id)
     client_print_color(id, print_team_red, "%s^1 finish beep is %s^1.", PREFIX, g_ePlayerInfo[id][m_bBeep] ? "^4on" : "^3off");
 }
 
+public Command_ListPlayerIndexes(id, level, cid)
+{
+    if(!cmd_access(id, level, cid, 0)) return PLUGIN_HANDLED;
+    
+    console_print(id, "pid    nickname    cheater    steamid");
+    for(new i = 1; i <= MaxClients; i++) 
+    {
+        if(is_user_connected(i))
+        {
+            new szAuth[32]; get_user_authid(i, szAuth, charsmax(szAuth));
+            console_print(id, 
+                "%d    %n    %d    %s",
+                g_ePlayerInfo[i][m_iPlayerIndex],
+                i,
+                g_ePlayerInfo[i][m_bCheater],
+                szAuth
+            );
+        }
+    }
+    
+    return PLUGIN_HANDLED;
+}
+public Command_ToggleCheater(id, level, cid)
+{
+    if(!cmd_access(id, level, cid, 0)) return PLUGIN_HANDLED;
+    
+    // player index in database
+    new pid = read_argv_int(1);
+
+    if(pid < 1)
+    {
+        console_print(id, "WRONG PID %d", pid);
+        return PLUGIN_HANDLED;
+    }
+
+    new chid;
+    for(new i = 1; i <= MaxClients; i++) 
+    {
+        if(g_ePlayerInfo[i][m_iPlayerIndex] == pid) 
+        {
+            chid = i;
+        }   
+    }
+
+    if(chid == 0)
+    {
+        console_print(id, "Player not on the server %d", pid);
+        return PLUGIN_HANDLED;
+    }
+
+    formatex(g_szQuery, charsmax(g_szQuery), 
+        "UPDATE `runners` SET isCheater=%d WHERE id=%d", 
+        g_ePlayerInfo[chid][m_bCheater] == false, 
+        pid
+    );
+
+    new data[3]; 
+    data[0] = pid;
+    data[1] = id;
+    data[2] = g_ePlayerInfo[chid][m_bCheater] == false;
+    SQL_ThreadQuery(g_hTuple, "Query_ToggleCheater", g_szQuery, data, sizeof data);
+    
+    return PLUGIN_HANDLED;
+}
 public Command_ClearTop(id, level, cid)
 {
     if(!cmd_access(id, level, cid, 0)) return PLUGIN_HANDLED;
@@ -464,11 +540,12 @@ SQL_Init()<sqlite>
     
     formatex(g_szQuery, charsmax(g_szQuery),
             "CREATE TABLE IF NOT EXISTS `runners`( \
-            id 		INTEGER		PRIMARY KEY,\
+            id 		    INTEGER		PRIMARY KEY,\
             steamid		TEXT 	NOT NULL, \
             nickname	TEXT 	NOT NULL, \
-            ip		TEXT 	NOT NULL, \
-            nationality	TEXT 	NULL)");
+            ip		    TEXT 	NOT NULL, \
+            nationality	TEXT 	NULL, \
+            isCheater   INTEGER NOT NULL)");
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
     
@@ -606,6 +683,44 @@ public Query_ClearTop(failstate, Handle:query, error[], errnum, data[], size)
 
     client_print(0, print_chat, "Top15 just cleared.");
 }
+public Query_ToggleCheater(failstate, Handle:query, error[], errnum, data[], size)
+{
+    new pid = data[0];
+    new id = data[1];
+    new isCheater = data[2];
+    if(failstate != TQUERY_SUCCESS)
+    {
+        console_print(id, "SQL error[ToggleCheater]: %s", error);
+        console_print(id, "SQL cheater pid was %d", pid);
+        log_amx("SQL error[ToggleCheater]: %s", error); return;
+    }
+
+    for(new i = 1; i <= MaxClients; i++) 
+    {
+        if(g_ePlayerInfo[i][m_iPlayerIndex] == pid) 
+        {
+            g_ePlayerInfo[i][m_bCheater] = bool:isCheater;
+            if(g_ePlayerInfo[i][m_bCheater]) 
+            {
+                console_print(id, "Saved cheater with pid %d", pid);
+                for(new o = 0; o < Categories; o++)
+                {
+                    // arrayset(g_iBestTime[o], 0, sizeof(g_iBestTime[]));
+                    if(g_iBestTimeofMap[o] == g_iBestTime[i][o])
+                    {
+                        g_iBestTimeofMap[o] = 0;
+                    }
+                    g_iBestTime[i][o] = 1000000000000000;
+                    SaveRunnerData(i, o, g_iBestTime[i][o]);
+                }
+            }
+            else
+            {
+                console_print(id, "Removed cheater with pid %d", pid);
+            }
+        }   
+    }
+}
 public Query_IngnoredHandle(failstate, Handle:query, error[], errnum, data[], size)
 {
     if(failstate != TQUERY_SUCCESS)
@@ -620,6 +735,7 @@ public client_connect(id)
     g_ePlayerInfo[id][m_bTimerStarted] = false;
     g_ePlayerInfo[id][m_bFinished] = false;
     g_ePlayerInfo[id][m_iPlayerIndex] = 0;
+    g_ePlayerInfo[id][m_bCheater] = false;
     g_ePlayerInfo[id][m_bBeep] = true;
 }
 
@@ -639,7 +755,7 @@ ClientAuthorization(id)
     new szAuth[32]; get_user_authid(id, szAuth, charsmax(szAuth));
     
     new data[1]; data[0] = id;
-    formatex(g_szQuery, charsmax(g_szQuery), "SELECT id, ip, nationality FROM `runners` WHERE steamid='%s'", szAuth);
+    formatex(g_szQuery, charsmax(g_szQuery), "SELECT id, ip, nationality, isCheater FROM `runners` WHERE steamid='%s'", szAuth);
     SQL_ThreadQuery(g_hTuple, "Query_LoadRunnerInfoHandler", g_szQuery, data, sizeof(data));
 }
 public Query_LoadRunnerInfoHandler(failstate, Handle:query, error[], errnum, data[], size)
@@ -655,7 +771,7 @@ public Query_LoadRunnerInfoHandler(failstate, Handle:query, error[], errnum, dat
     
     if(SQL_MoreResults(query))
     {
-        client_authorized_db(id, SQL_ReadResult(query, 0));
+        client_authorized_db(id, SQL_ReadResult(query, 0), SQL_ReadResult(query, 3));
         
         SQL_ReadResult(query, 2, szCode, 1);
         
@@ -677,7 +793,14 @@ public Query_LoadRunnerInfoHandler(failstate, Handle:query, error[], errnum, dat
         
         get_nationality(id, szIP, szCode);
         
-        formatex(g_szQuery, charsmax(g_szQuery), "INSERT INTO `runners` (steamid, nickname, ip, nationality) VALUES ('%s', '%s', '%s', '%s')", szAuth, szName, szIP, szCode);
+        formatex(g_szQuery, charsmax(g_szQuery), 
+            "INSERT INTO `runners` (steamid, nickname, ip, nationality, isCheater) VALUES ('%s', '%s', '%s', '%s', %d)", 
+            szAuth, 
+            szName, 
+            szIP, 
+            szCode,
+            0
+        );
         SQL_ThreadQuery(g_hTuple, "Query_InsertRunnerHandle", g_szQuery, data, size);
     }
 }
@@ -691,12 +814,13 @@ public Query_InsertRunnerHandle(failstate, Handle:query, error[], errnum, data[]
     new id = data[0];
     if(!is_user_connected(id)) return;
     
-    client_authorized_db(id , SQL_GetInsertId(query));
+    client_authorized_db(id , SQL_GetInsertId(query), 0);
 }
-client_authorized_db(id, pid)
+client_authorized_db(id, pid, isCheater)
 {
     g_ePlayerInfo[id][m_iPlayerIndex] = pid;
     g_ePlayerInfo[id][m_bAuthorized] = true;
+    g_ePlayerInfo[id][m_bCheater] = bool:isCheater;
     
     arrayset(g_iBestTime[id], 0, sizeof(g_iBestTime[]));
 
@@ -734,14 +858,6 @@ public client_disconnected(id)
     g_ePlayerInfo[id][m_bAuthorized] = false;
     g_ePlayerInfo[id][m_bConnected] = false;
     g_ePlayerInfo[id][m_bBeep] = true;
-}
-
-public Engine_TouchFinish(ent, id)
-{
-    if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished])
-    {
-        Forward_PlayerFinished(id);
-    }
 }
 
 Create_Box(ent, Float:color[3] = {255.0,255.0,255.0})
@@ -880,7 +996,10 @@ public box_start_touch(box, id, const szClass[])
 
     if(equal(szClass, "finish"))
     {
-        Engine_TouchFinish(box, id);
+        if(g_ePlayerInfo[id][m_bTimerStarted] && !g_ePlayerInfo[id][m_bFinished])
+        {
+            Forward_PlayerFinished(id);
+        }
     }
 }
 public box_stop_touch(box, id, const szClass[])
@@ -916,14 +1035,20 @@ Forward_PlayerFinished(id)
     
     new szName[32]; get_user_name(id, szName, charsmax(szName));
 
-    if(g_iBestTime[id][category] == 0)
+    if(g_ePlayerInfo[id][m_bCheater])
     {
-        SaveRunnerData(id, category, iTime);
+        for(new i = 1; i <= MaxClients; i++) 
+        {
+            if(g_ePlayerInfo[i][m_bCheater]) 
+            {
+                client_print_color(i, print_team_red, "^4[^1%s^4] ^3%s finished in %s", 
+                    g_szCategory[category], szName, szTime);
+            }
+        }
+        return;
     }
-    else if(g_iBestTime[id][category] > iTime)
-    {
-        SaveRunnerData(id, category, iTime);
-    }
+
+    SaveRunnerData(id, category, iTime);
     
     if(g_iBestTimeofMap[category] == 0 || g_iBestTimeofMap[category] > iTime)
     {
@@ -951,7 +1076,7 @@ Forward_PlayerFinished(id)
 
     for(new i = 1; i <= MaxClients; i++) 
     {
-        if(g_ePlayerInfo[i][m_bBeep]) 
+        if(g_ePlayerInfo[i][m_bBeep] && is_user_connected(i)) 
         {
             if(record)
             {
@@ -978,13 +1103,28 @@ public SaveRunnerData(id, category, iTime)
     
     if(query_type)
     {
-        formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `results` SET checkpoints=%d, gochecks=%d, besttime=%d, recorddate='%s' WHERE id=%d AND mid=%d AND category=%d",
-            get_checkpoints_count(id), get_gochecks_count(id), iTime, szRecordTime, g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category);
+        formatex(g_szQuery, charsmax(g_szQuery), 
+            "UPDATE `results` SET checkpoints=%d, gochecks=%d, besttime=%d, recorddate='%s' WHERE id=%d AND mid=%d AND category=%d",
+            get_checkpoints_count(id), 
+            get_gochecks_count(id), 
+            iTime, 
+            szRecordTime, 
+            g_ePlayerInfo[id][m_iPlayerIndex], 
+            g_iMapIndex, 
+            category
+        );
     }
     else
     {
         formatex(g_szQuery, charsmax(g_szQuery), "INSERT INTO `results` VALUES (%d, %d, %d, %d, %d, %d, '%s')",
-            g_ePlayerInfo[id][m_iPlayerIndex], g_iMapIndex, category, get_checkpoints_count(id), get_gochecks_count(id), iTime, szRecordTime);
+            g_ePlayerInfo[id][m_iPlayerIndex], 
+            g_iMapIndex, 
+            category, 
+            get_checkpoints_count(id), 
+            get_gochecks_count(id), 
+            iTime, 
+            szRecordTime
+        );
     }
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
