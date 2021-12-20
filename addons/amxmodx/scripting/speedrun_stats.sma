@@ -4,11 +4,15 @@
 
     TODO:
     
+        when cheater is marked, should move all his results to another table - cheatedResults
+        test this cheaters system on 2 accs
         finish 'isCheater' thing, need to manage g_IbestTime and g_IBestTimeOfMap
         change database to add isCheater column manually:
-        ALTER TABLE runners ADD isCheater INTEGER NOT NULL;
+        ALTER TABLE runners ADD isCheater INTEGER NOT NULL DEFAULT 0;
         ALTER TABLE results ADD isCheated INTEGER NOT NULL;
 
+        - [ ] Crazy speed залочен на 2к на карте timecheck
+        - [ ] Limit time to 0
         - [ ] При респавне так как идёт телепорт а не смерть то эффекты типа гравитации остаются
         - [ ] При респавне сбрасывается ночное виденье
         - [ ] Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
@@ -1048,7 +1052,14 @@ Forward_PlayerFinished(id)
         return;
     }
 
-    SaveRunnerData(id, category, iTime);
+    if(g_iBestTime[id][category] == 0)
+    {
+        SaveRunnerData(id, category, iTime);
+    }
+    else if(g_iBestTime[id][category] > iTime)
+    {
+        SaveRunnerData(id, category, iTime);
+    }
     
     if(g_iBestTimeofMap[category] == 0 || g_iBestTimeofMap[category] > iTime)
     {
