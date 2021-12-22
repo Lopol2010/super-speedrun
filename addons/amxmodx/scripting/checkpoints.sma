@@ -4,6 +4,7 @@
 #include <fakemeta>
 #include <hamsandwich>
 #include <speedrun>
+#include <reapi>
 
 #define VERSION "0.02"
 
@@ -122,6 +123,9 @@ public GoCheck(id)
 	// set_pev( id, pev_fuser2, 0.0 );
 	// engfunc( EngFunc_SetSize, id, {-16.0, -16.0, -18.0 }, { 16.0, 16.0, 32.0 } );
 	set_pev(id, pev_origin, Checkpoints[ id ][ !g_bCpAlternate[id] ] )
+	
+	set_user_gravity(id, 1.0);
+
 	gochecknumbers[id]++
 
 	return PLUGIN_HANDLED

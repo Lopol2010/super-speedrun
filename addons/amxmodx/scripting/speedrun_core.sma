@@ -13,6 +13,7 @@
     metamod plugins currently installed on Super Speedrun:
     linux addons/amxmodx/dlls/amxmodx_mm_i386.so
     linux addons/reunion/reunion_mm_i386.so
+    linux addons/reauthcheck/reauthcheck_mm_i386.so
     linux addons/revoice/revoice_mm_i386.so
     linux addons/resemiclip/resemiclip_mm_i386.so
     linux addons/SafeNameAndChat/SafeNameAndChat.so
@@ -113,16 +114,12 @@ public plugin_init()
     RegisterHookChain(RG_PM_AirMove, "HC_PM_AirMove_Pre", false);
     RegisterHookChain(RG_CBasePlayer_Jump, "HC_CBasePlayer_Jump_Pre", false);
     RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
-    RegisterHookChain(RG_CBasePlayer_Killed, "HC_CBasePlayer_Killed_Pre", false);
-    RegisterHookChain(RG_CBasePlayer_Killed, "HC_CBasePlayer_Killed_Post", true);
     RegisterHookChain(RG_CBasePlayer_GiveDefaultItems, "HC_CBasePlayer_GiveDefaultItems", false);
     RegisterHookChain(RG_CSGameRules_DeadPlayerWeapons, "HC_CSGR_DeadPlayerWeapons_Pre", false);
     RegisterHookChain(RG_CBasePlayer_Observer_SetMode, "HC_CBasePlayer_Observer_SetMode", 0);
 
     register_forward(FM_CmdStart, "CmdStart");
-    register_forward(FM_ClientKill, "FM_ClientKill_Pre", false);
 
-    // RegisterHam( Ham_Item_Deploy, "weapon_usp", "Ham_Item_Deploy_USP_Post", 1);
     RegisterHam(Ham_Touch, "trigger_hurt", "Ham_Touch_Trigger_Hurt_Pre");
     RegisterHam(Ham_Item_CanHolster, "weapon_knife", "Ham_Item_CanHolster_Pre");
     RegisterHam( Ham_Item_Deploy, "weapon_knife", "Ham_Item_Deploy_KNIFE_Post", 1);
@@ -321,6 +318,8 @@ public _sr_command_start(pid, argc)
 
     if(!is_user_connected(id)) return;
 
+    ExecuteHamB(Ham_CS_RoundRespawn, id);
+
     if(g_ePlayerInfo[id][m_bSavePoint])
     {
         SetPosition(id, g_fSavedOrigin[id], g_fSavedVAngles[id]);
@@ -329,10 +328,6 @@ public _sr_command_start(pid, argc)
     else if(g_bStartPosition)
     {
         SetPosition(id, g_fStartOrigin, g_fStartVAngles);
-    }
-    else
-    {
-        ExecuteHamB(Ham_CS_RoundRespawn, id);
     }
 
     if(get_user_weapon(id) == CSW_KNIFE && get_user_category(id) == Cat_LowGravity)
@@ -506,6 +501,7 @@ public Ham_Touch_Trigger_Hurt_Pre(ent, id)
 
     if(dmg >= hp)
     {
+        ExecuteHamB(Ham_CS_RoundRespawn, id);
         Command_Start(id);
         return HAM_SUPERCEDE; 
     }
@@ -714,18 +710,6 @@ public HC_CBasePlayer_Spawn_Post(id)
 
     return HC_CONTINUE;
 }
-public HC_CBasePlayer_Killed_Pre(id)
-{
-    SetHookChainArg(3, ATYPE_INTEGER, 1);
-}
-public HC_CBasePlayer_Killed_Post(id)
-{
-    if(TEAM_UNASSIGNED < get_member(id, m_iTeam) < TEAM_SPECTATOR)
-    {
-        ExecuteHamB(Ham_CS_RoundRespawn, id);
-        Command_Start(id);
-    }
-}
 public HC_CBasePlayer_GiveDefaultItems(id)
 {
     sr_give_default_items(id);
@@ -848,13 +832,6 @@ public HC_CBasePlayer_Observer_SetMode(id, mode)
         default: SetHookChainArg(2, ATYPE_INTEGER, OBS_IN_EYE);
     }
 }
-// *******************************************************************//
-public FM_ClientKill_Pre(id)
-{
-    Command_Start(id);
-    return FMRES_SUPERCEDE;
-}
-// *******************************************************************//
 public Think_Hud(ent)
 {
     new Float:rate = 0.091;

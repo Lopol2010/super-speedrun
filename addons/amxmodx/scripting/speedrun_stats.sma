@@ -11,9 +11,11 @@
         ALTER TABLE runners ADD isCheater INTEGER NOT NULL DEFAULT 0;
         ALTER TABLE results ADD isCheated INTEGER NOT NULL;
 
+        - [x] Gocheck allows to save gravity for actual run, example on bhop_astro
+        - [x] При респавне так как идёт телепорт а не смерть то эффекты типа гравитации остаются
+        - [ ] Move cheaters related things to distinct file
         - [ ] Crazy speed залочен на 2к на карте timecheck
-        - [ ] Limit time to 0
-        - [ ] При респавне так как идёт телепорт а не смерть то эффекты типа гравитации остаются
+        - [ ] Limit time to 0 (maybe add temp ban system for those who finished at 0 sec)
         - [ ] При респавне сбрасывается ночное виденье
         - [ ] Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
         - [x] Сделать nobeep через меню
