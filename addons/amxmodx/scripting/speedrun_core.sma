@@ -80,6 +80,7 @@ new g_iReturn;
 new Float:g_fSavedOrigin[33][3], Float:g_fSavedVAngles[33][3], g_iSavedDuck[33], Float: g_fNextFpsCheck[33];
 new Trie:g_tRemoveEntities, g_iForwardSpawn;
 new Float:fCmdStartNextUpdate;
+new HookChain:g_iSpawnHook;
 
 public plugin_init()
 {
@@ -113,7 +114,7 @@ public plugin_init()
 
     RegisterHookChain(RG_PM_AirMove, "HC_PM_AirMove_Pre", false);
     RegisterHookChain(RG_CBasePlayer_Jump, "HC_CBasePlayer_Jump_Pre", false);
-    RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
+    g_iSpawnHook = RegisterHookChain(RG_CBasePlayer_Spawn, "HC_CBasePlayer_Spawn_Post", true);
     RegisterHookChain(RG_CBasePlayer_GiveDefaultItems, "HC_CBasePlayer_GiveDefaultItems", false);
     RegisterHookChain(RG_CSGameRules_DeadPlayerWeapons, "HC_CSGR_DeadPlayerWeapons_Pre", false);
     RegisterHookChain(RG_CBasePlayer_Observer_SetMode, "HC_CBasePlayer_Observer_SetMode", 0);
@@ -318,7 +319,7 @@ public _sr_command_start(pid, argc)
 
     if(!is_user_connected(id)) return;
 
-    ExecuteHamB(Ham_CS_RoundRespawn, id);
+    ExecuteHam(Ham_CS_RoundRespawn, id);
 
     if(g_ePlayerInfo[id][m_bSavePoint])
     {
@@ -706,7 +707,11 @@ public HC_CBasePlayer_Spawn_Post(id)
         set_user_gravity(id, 0.5);
 
     if(g_bStartPosition)
+    {
+        DisableHookChain(g_iSpawnHook);
         Command_Start(id);
+        EnableHookChain(g_iSpawnHook);
+    }
 
     return HC_CONTINUE;
 }
