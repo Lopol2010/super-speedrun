@@ -214,7 +214,7 @@ public plugin_cfg()
     LoadStartPosition();
     SetGameName();
     BlockChangingTeam();
-    BlockSpawnTriggerPush();
+    // BlockSpawnTriggerPush();
 
     if(containi(MapName, "speedrun") != -1) {
         set_cvar_num("sv_maxvelocity", 100000);
