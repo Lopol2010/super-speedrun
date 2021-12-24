@@ -22,7 +22,6 @@ new p_cvSkyColor[3];
 public plugin_init(){
     register_plugin(plugin, version, author);
      
-	RegisterHookChain(RG_CSGameRules_PlayerSpawn, "HC_CSGameRules_PlayerSpawn", true);
 	RegisterHookChain(RG_CBasePlayer_Observer_SetMode, "HC_CBasePlayer_Observer_SetMode", true);
  
     unregister_forward(FM_LightStyle, fwLightStyle);
@@ -38,11 +37,6 @@ public plugin_init(){
     set_pcvar_num(p_cvSkyColor[2], 0);
 
     // set_task(0.1, "spectators_nvg", .flags = "b");
-}
-
-public HC_CSGameRules_PlayerSpawn(id)
-{
-    set_user_nvg_mode(id, NVG_OFF);
 }
 
 public HC_CBasePlayer_Observer_SetMode(id)

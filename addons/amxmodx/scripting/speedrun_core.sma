@@ -70,8 +70,14 @@ enum _:PlayerData
     m_iPrevCategory,
 };
 
+enum _:Cvars
+{
+    MAXVELOCITY
+};
+
 new g_bStartPosition, Float:g_fStartOrigin[3], Float:g_fStartVAngles[3];
 new g_ePlayerInfo[33][PlayerData];
+new g_pCvars[Cvars];
 new g_szMapName[32];
 new g_iSyncHudSpeed;
 new g_fwChangedCategory;
@@ -216,13 +222,12 @@ public plugin_cfg()
     BlockChangingTeam();
     // BlockSpawnTriggerPush();
 
+    g_pCvars[MAXVELOCITY] = get_cvar_pointer("sv_maxvelocity");
     if(containi(MapName, "speedrun") != -1) {
-        set_cvar_num("sv_maxvelocity", 100000);
+        set_pcvar_num(g_pCvars[MAXVELOCITY], 10000000);
     } else {
-        set_cvar_num("sv_maxvelocity", 2000);
+        set_pcvar_num(g_pCvars[MAXVELOCITY], 2000);
     }
-
-    // g_iMaxSpeed = max(get_cvar_num("sv_maxvelocity"), get_cvar_num("sv_maxspeed"));
 }
 LoadStartPosition()
 {

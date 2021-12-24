@@ -11,34 +11,18 @@
         ALTER TABLE runners ADD isCheater INTEGER NOT NULL DEFAULT 0;
         ALTER TABLE results ADD isCheated INTEGER NOT NULL;
 
-        - [x] когда ты gocheckаешся у тебя грава пропадает (на Low Gravity)
-        - [x] Fix: messages was duplicated for oposite teams because there is new cvar sv_allchat in regamedll
-        - [x] Gocheck allows to save gravity for actual run, example on bhop_astro
-        - [x] При респавне так как идёт телепорт а не смерть то эффекты типа гравитации остаются
         - [ ] Move cheaters related things to distinct file
-        - [ ] Crazy speed залочен на 2к на карте timecheck
         - [ ] Limit time to 0 (maybe add temp ban system for those who finished at 0 sec)
-        - [ ] При респавне сбрасывается ночное виденье
-        - [ ] Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
-        - [x] Сделать nobeep через меню
+        - [ ] Ночное видиние так же видят спектры
         - [ ] Сделать команды в say + say_team + не через слеш но и ! восклицательный знак. (пример реализации в speedrun_hook)
-        - [x] баг, если хукнуть и вернутся на /start то может сохранится скорость до 700, читерство такое
         - [ ] Выкачать скриптом всё (сначало skyboxes) отсуда https://en.ds-servers.com/goldsrc-res/
-        - [x] ВАЖНО! Для многих карт нету .res файла. А resgen зависает на многих speedrun_ картах, может смогу исправить? https://github.com/kriswema/resgen
-                ПОХОЖЕ ЧТО ВЕРСИЯ ПОД Linux ИСПРАВНО ГЕНЕРИРУЕТ .res ДЛЯ ТАКИХ ПРОБЛЕМНЫХ .bsp карт.
-                Версия linux которая на github тоже страдает этой ошибкой, но если скомпилировать программу самому через линукс команду make, то похоже .res генерируются исправно.
-        - [ ] Настроить reunion, обдумать стоит ли добавлять хеширование, ведь придется видимо конвертировать базу данных ?
-                Гайд по настройке reunion: https://dev-cs.ru/threads/808/
-        - [ ] Обновить rehlds, regame, модули amxx и metamod
         - [ ] Создать git репозиторий для сервера, который будет содержать например cstrike/addons, cstrike\*.cfg, может что-то еще? 
         - [ ] Если зашел игрок с fps_max 100 и поменял например на 500, то после пролистывания категории 100 ему не вернет 500.
         - [ ] Сделать в чат уведомление при заходе "Ваш fps по умолчанию n сохранён. Для удобства установите cl_filterstuffcmd 0 это позволит серверу менять ваш fps."
         - [ ] Переосмыслить и переделать логику инвалидации фпс клиента, например вернуть уведомление в чат когда фпс выше допустимого.  
         - [ ] Переделать худ наблюдателя
         - [ ] Когда скрыты игроки и заходишь в наблюдатели, то нужно всёравно показывать игроков, но скрывать если ты снова играешь сам
-        - [x] Античит. Сделать подсчет кадров за всё время прохождения карты, так можно будет отловить тех у кого кадров окажется больше чем должно быть на выбранной категории фпс.
         - [ ] Баг. Зашел на сервер, затем на Night Jump, и снова на свой. После этого язык меню стал на английском. Английский ставится из-за ника "12' WHERE 1=1 -- m".
-        - [x] Сделать хук спид для разных игроков свой(и обдумать как это лучше сделать)
         - [ ] Подстраивать спектаторов под настройки наблюдаемого ими игрока, (ноч. вид., худ, инвизы и т.п.)
         - [ ] Когда сидиш в спеках то стата стрейфов должна показыватся всегда, и еще щас она перекрывает keys
         - [ ] Delete finish zone stuff from database, this info now handled by box_system 
@@ -46,11 +30,6 @@
                 тут на kz-rush, cosy-climbing, 17buddies можно вроде нарыть много карт https://www.google.ru/search?hl=ru&q=hb_dilo
                 https://gamebanana.com/mods/cats/5524
         - [ ] Add plugin to freeze entites, for example dooors
-        - [x] Add plugin to remove entities (entity remover, or use ripent)
-        - [x] Расставить зона на спидран картах (last: speedrun_light2)
-        - [ ] (эта проблема не только у меня, на форуме дев-кс была тема) Игрок зашел как нон-стим, но перезашел и стал стим. т.е. стим не прогрузился при первом заходе, 
-                    так же у меня куча записей в топ15 со STEAM_ID_LAN причем пока что только имеенно привязанно ко мне как к админу видимо
-                    поставил в reunion.cfg ServerInfoAnswerType = 2 может поможет.  
         - [ ] Player can't join at speedrun_rqnjar (see if its not enough spawns, maybe should enable kz_auto_add_spawns...)
         - [ ] Add voteban/kick for players
         - [ ] Почему ClientAuthorization(id) вызывается дважды? разве не достаточно только authorized?
@@ -58,8 +37,6 @@
         - [ ] speedrun_fatal
         - [ ] Multilang for remaining client_prints: in hidemenu and core and stats, also in hidemenu add message when water not found
         - [ ] Bind 2k category's speed to knife alike low gravity 
-        - [ ] Ночное видиние так же видят спектры
-        - [x] Ограничение скорости убрать? наверно только для спидран карт, щас нашел карту непроходимую на 2к скорости, speedrun_den вроде одна из таких
         - [ ] Allow map change when 2 players afk and third player says rtv, so need kind of AFK-detector
         - [ ] Add world record bot (do a research on that, https://dev-cs.ru/resources/142/) (also check this file, or whole repo https://github.com/skyrim/qmxx/blob/master/scripting/q_kz_ghost.sma)
         - [ ] Allow to interupt run with hook (menu open up 1. stop timer & use hoo 2. continue run)
@@ -75,9 +52,29 @@
         - [ ] (removed) speedrun_aztec_hd2020, speedrun_badbl3 (miss creditsbadbl.wad)
         - [ ] (removed)speedrun_around сломано освещение
         - [ ] (removed map) speedrun_CrazySpeed! (miss aaacredits.wad)
-        - [ ] После телепорта если жать A или D то вектор скорость не вперёд, даже если смотришь вперёд, пример карта fu_replayhop (нормальое решение не найдено даже с помощью форума)
+        - [ ] После телепорта если жать A или D то вектор скорость не вперёд, даже если смотришь вперёд, пример карта fu_replayhop (нормальое решение не найдено даже с помощью форума, угробил неделю)
         - [ ] box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
         - [ ] Потестировать, возможно с помощью ClearSyncHud можно сделать не мерцающий hud, хотя и сейчас не мерцает 
+        - [x] Античит. Сделать подсчет кадров за всё время прохождения карты, так можно будет отловить тех у кого кадров окажется больше чем должно быть на выбранной категории фпс.
+        - [x] Сделать хук спид для разных игроков свой(и обдумать как это лучше сделать)
+        - [x] Add plugin to remove entities (entity remover, or use ripent)
+        - [x] Расставить зона на спидран картах (last: speedrun_light2)
+        - [x] Ограничение скорости убрать? наверно только для спидран карт, щас нашел карту непроходимую на 2к скорости, speedrun_den вроде одна из таких
+        - [x] когда ты gocheckаешся у тебя грава пропадает (на Low Gravity)
+        - [x] Fix: chat messages duplicated for oposite teams because there is new cvar sv_allchat in regamedll
+        - [x] Gocheck allows to save gravity for actual run, example on bhop_astro
+        - [x] При респавне так как идёт телепорт а не смерть то эффекты типа гравитации остаются
+        - [x] Crazy speed залочен на 2к на карте timecheck (решение конфиги в amxmodx/configs/maps)
+        - [x] fix: При респавне сбрасывается ночное виденье
+        - [x] (не пашет) Проверить работу resrdetector, его логи, если всё он работает то установить свою команду наказания (просто пометить игрока как спидхакера)
+        - [x] Сделать nobeep через меню
+        - [x] баг, если хукнуть и вернутся на /start то может сохранится скорость до 700, читерство такое
+        - [x] ВАЖНО! Для многих карт нету .res файла. А resgen зависает на многих speedrun_ картах, может смогу исправить? https://github.com/kriswema/resgen
+                ПОХОЖЕ ЧТО ВЕРСИЯ ПОД Linux ИСПРАВНО ГЕНЕРИРУЕТ .res ДЛЯ ТАКИХ ПРОБЛЕМНЫХ .bsp карт.
+                Версия linux которая на github тоже страдает этой ошибкой, но если скомпилировать программу самому через линукс команду make, то похоже .res генерируются исправно.
+        - [x] Настроить reunion, обдумать стоит ли добавлять хеширование, ведь придется видимо конвертировать базу данных ?
+                Гайд по настройке reunion: https://dev-cs.ru/threads/808/
+        - [x] (сделал ~24.12.2021)Обновить rehlds, regame, модули amxx и metamod
         - [x] На bhop_arizonabhop касаясь змеи игрок сразу респавнится, но должен лишь получать урон, а респавнится только когда жизней стало <=0
         - [x] Заменить /tg на @ или / или ! для связи с админом, репорт читоров и багов
         - [x] Разброс фпс позволяет на 100фпс ставить 104
