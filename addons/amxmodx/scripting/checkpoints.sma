@@ -124,7 +124,10 @@ public GoCheck(id)
 	// engfunc( EngFunc_SetSize, id, {-16.0, -16.0, -18.0 }, { 16.0, 16.0, 32.0 } );
 	set_pev(id, pev_origin, Checkpoints[ id ][ !g_bCpAlternate[id] ] )
 	
-	set_user_gravity(id, 1.0);
+	if(get_user_weapon(id) == CSW_KNIFE && get_user_category(id) == Cat_LowGravity)
+        set_user_gravity(id, 0.5);
+	else
+        set_user_gravity(id, 1.0);
 
 	gochecknumbers[id]++
 

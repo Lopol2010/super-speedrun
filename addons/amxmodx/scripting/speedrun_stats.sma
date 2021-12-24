@@ -11,6 +11,8 @@
         ALTER TABLE runners ADD isCheater INTEGER NOT NULL DEFAULT 0;
         ALTER TABLE results ADD isCheated INTEGER NOT NULL;
 
+        - [x] когда ты gocheckаешся у тебя грава пропадает (на Low Gravity)
+        - [x] Fix: messages was duplicated for oposite teams because there is new cvar sv_allchat in regamedll
         - [x] Gocheck allows to save gravity for actual run, example on bhop_astro
         - [x] При респавне так как идёт телепорт а не смерть то эффекты типа гравитации остаются
         - [ ] Move cheaters related things to distinct file
