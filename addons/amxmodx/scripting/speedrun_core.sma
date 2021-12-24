@@ -660,17 +660,17 @@ public SaveMenu_Handler(id, key)
                 if(g_ePlayerInfo[id][m_bInSaveBox] && floatabs(fVelocity[0]) < 0.00001 && floatabs(fVelocity[1]) < 0.00001 && floatabs(fVelocity[2]) < 0.00001)
                 {
                     SavePoint(id);
-                    client_print_color(id, print_team_default, "%s^1 Start point created.", PREFIX);
+                    client_print_color(id, print_team_default, "%s^1 %L", PREFIX, id, "SR_START_POINT_CREATED");
                 }
                 else
                 {
-                    client_print_color(id, print_team_red, "%s^3 You must be in spawnbox or stop moving.", PREFIX);
+                    client_print_color(id, print_team_red, "%s^3 %L", PREFIX, id, "SR_CANT_SAVE_START");
                 }
             }
         case 1:
             {
                 g_ePlayerInfo[id][m_bSavePoint] = false;
-                client_print_color(id, print_team_default, "%s^1 Start point removed.", PREFIX);
+                client_print_color(id, print_team_default, "%s^1 %L", PREFIX, id, "SR_START_REMOVED");
             }
         case 2:	Command_Start(id);
     }	
@@ -903,7 +903,14 @@ public Task_CheckFrames()
             if(fails_till_print[id] >= FAILS_TILL_PRINT)
             {
                 fails_till_print[id] = 0;
-                client_print_color(id, print_team_red, "%s^1 Incorrect ^3%d ^1fps. Auto attempt to set ^4%d^1!", PREFIX, floatround(get_user_fps(id)), g_iCategoryMaxFps[cat] > 0 ? g_iCategoryMaxFps[cat] : FPS_LIMIT);
+                client_print_color(id, print_team_red, 
+                    "%s^1 %L", 
+                    PREFIX, 
+                    id,
+                    "SR_INCORRECT_FPS",
+                    floatround(get_user_fps(id)), 
+                    g_iCategoryMaxFps[cat] > 0 ? g_iCategoryMaxFps[cat] : FPS_LIMIT
+                );
             }
             fails_till_print[id]++;
 

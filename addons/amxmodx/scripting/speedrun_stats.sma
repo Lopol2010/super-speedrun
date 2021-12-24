@@ -35,7 +35,6 @@
         - [ ] Почему ClientAuthorization(id) вызывается дважды? разве не достаточно только authorized?
                 Замена putinserver на authorized ломает игру, не открыть top15 и не работает таймер на спидран картах(возможно это из-за того что БД загружается в начале карты асинхронно)
         - [ ] speedrun_fatal
-        - [ ] Multilang for remaining client_prints: in hidemenu and core and stats, also in hidemenu add message when water not found
         - [ ] Bind 2k category's speed to knife alike low gravity 
         - [ ] Allow map change when 2 players afk and third player says rtv, so need kind of AFK-detector
         - [ ] Add world record bot (do a research on that, https://dev-cs.ru/resources/142/) (also check this file, or whole repo https://github.com/skyrim/qmxx/blob/master/scripting/q_kz_ghost.sma)
@@ -55,6 +54,7 @@
         - [ ] После телепорта если жать A или D то вектор скорость не вперёд, даже если смотришь вперёд, пример карта fu_replayhop (нормальое решение не найдено даже с помощью форума, угробил неделю)
         - [ ] box_system сделать удаление зон, или проверить удаляются ли они в оригинальном плагине (сейчас не удаляются)
         - [ ] Потестировать, возможно с помощью ClearSyncHud можно сделать не мерцающий hud, хотя и сейчас не мерцает 
+        - [x] Multilang for remaining client_prints: in hidemenu and core and stats, also in hidemenu add message when water not found
         - [x] Античит. Сделать подсчет кадров за всё время прохождения карты, так можно будет отловить тех у кого кадров окажется больше чем должно быть на выбранной категории фпс.
         - [x] Сделать хук спид для разных игроков свой(и обдумать как это лучше сделать)
         - [x] Add plugin to remove entities (entity remover, or use ripent)
@@ -349,7 +349,7 @@ public fwdUse(ent, id)
         {
             if(!antispam[id])
             {
-                client_print_color(id, print_team_default, "%s^1 Wait %f seconds after using hook!", PREFIX, HOOK_ANTICHEAT_TIME);
+                client_print_color(id, print_team_default, "%s^1 %L", PREFIX, id, "SR_HOOK_ANTICHEAT", HOOK_ANTICHEAT_TIME);
                 antispam[id] = true;
             }
             return HAM_IGNORED;
@@ -396,7 +396,6 @@ public plugin_precache()
 public Command_ToggleBeep(id)
 {
     g_ePlayerInfo[id][m_bBeep] = !g_ePlayerInfo[id][m_bBeep];
-    client_print_color(id, print_team_red, "%s^1 finish beep is %s^1.", PREFIX, g_ePlayerInfo[id][m_bBeep] ? "^4on" : "^3off");
 }
 
 public Command_ListPlayerIndexes(id, level, cid)
@@ -481,7 +480,7 @@ public Command_Rank(id)
     
     if(g_iBestTime[id][category] == 0 && g_iBestTime[id][category] == 0)
     {
-        client_print_color(id, print_team_default, "^4[^1%s^4]^1 You never reach finish.", g_szCategory[category]);
+        client_print_color(id, print_team_default, "^4[^1%s^4]^1 %L", g_szCategory[category], id, "SR_NEVER_REACH_FINISH");
         return PLUGIN_CONTINUE;
     }
     
@@ -503,7 +502,7 @@ public Command_Update(id)
     
     new szName[MAX_NAME_LENGTH * 3]; get_user_name(id, szName, charsmax(szName)); SQL_PrepareString(szName, szName, charsmax(szName));
     formatex(g_szQuery, charsmax(g_szQuery), "UPDATE `runners` SET nickname = '%s' WHERE id=%d", szName, g_ePlayerInfo[id][m_iPlayerIndex]);
-    client_print_color(id, print_team_default, "%s^1 Your nickname in top should be updated to ^4%n^1.", PREFIX, id);
+    client_print_color(id, print_team_default, "%s^1 %L", PREFIX, id, "SR_UPDATE_NICK", id);
     
     SQL_ThreadQuery(g_hTuple, "Query_IngnoredHandle", g_szQuery);
     
@@ -1046,8 +1045,8 @@ Forward_PlayerFinished(id)
         {
             if(g_ePlayerInfo[i][m_bCheater]) 
             {
-                client_print_color(i, print_team_red, "^4[^1%s^4] ^3%s finished in %s", 
-                    g_szCategory[category], szName, szTime);
+                client_print_color(i, print_team_red, "^4[^1%s^4] %L", 
+                    g_szCategory[category], id, "SR_TIME_FINISH", szName, szTime);
             }
         }
         return;
@@ -1164,7 +1163,7 @@ public Query_LoadRankHandle(failstate, Handle:query, error[], errnum, data[], si
     if(!is_user_connected(id) || !SQL_MoreResults(query)) return;
     
     new rank = SQL_ReadResult(query, 0) + 1;
-    client_print_color(id, print_team_default, "^4[^1%s^4]^1 Your rank is %d!", g_szCategory[category], rank);
+    client_print_color(id, print_team_default, "^4[^1%s^4]^1 %L", g_szCategory[category], id, "SR_YOUR_RANK_IS", rank);
 }
 
 ShowTop15_Redirect(id, category)
